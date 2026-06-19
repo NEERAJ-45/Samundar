@@ -1,0 +1,290 @@
+[
+  {
+    "id": "rev-dsa-1",
+    "knowledgeNodeId": "pillar-dsa",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-dsa-7",
+    "knowledgeNodeId": "pillar-dsa",
+    "stage": 7,
+    "dueDate": "2026-06-25T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-dsa-30",
+    "knowledgeNodeId": "pillar-dsa",
+    "stage": 30,
+    "dueDate": "2026-07-18T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-system-design-1",
+    "knowledgeNodeId": "pillar-system-design",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-system-design-7",
+    "knowledgeNodeId": "pillar-system-design",
+    "stage": 7,
+    "dueDate": "2026-06-25T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-java-1",
+    "knowledgeNodeId": "pillar-java",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-java-7",
+    "knowledgeNodeId": "pillar-java",
+    "stage": 7,
+    "dueDate": "2026-06-25T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-java-30",
+    "knowledgeNodeId": "pillar-java",
+    "stage": 30,
+    "dueDate": "2026-07-18T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-spring-boot-1",
+    "knowledgeNodeId": "pillar-spring-boot",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-spring-boot-7",
+    "knowledgeNodeId": "pillar-spring-boot",
+    "stage": 7,
+    "dueDate": "2026-06-25T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-dbms-1",
+    "knowledgeNodeId": "pillar-dbms",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-dbms-90",
+    "knowledgeNodeId": "pillar-dbms",
+    "stage": 90,
+    "dueDate": "2026-09-16T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-os-1",
+    "knowledgeNodeId": "pillar-os",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-cn-1",
+    "knowledgeNodeId": "pillar-cn",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-react-1",
+    "knowledgeNodeId": "pillar-react",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-react-7",
+    "knowledgeNodeId": "pillar-react",
+    "stage": 7,
+    "dueDate": "2026-06-25T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-docker-1",
+    "knowledgeNodeId": "pillar-docker",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-k8s-1",
+    "knowledgeNodeId": "pillar-kubernetes",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-aws-1",
+    "knowledgeNodeId": "pillar-aws",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-devops-1",
+    "knowledgeNodeId": "pillar-devops",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-security-1",
+    "knowledgeNodeId": "pillar-security",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-dist-sys-1",
+    "knowledgeNodeId": "pillar-distributed-systems",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-arrays-strings-1",
+    "knowledgeNodeId": "domain-arrays-strings",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-arrays-strings-7",
+    "knowledgeNodeId": "domain-arrays-strings",
+    "stage": 7,
+    "dueDate": "2026-06-25T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-sql-opt-1",
+    "knowledgeNodeId": "domain-sql-optimization",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-design-fundamentals-1",
+    "knowledgeNodeId": "domain-design-fundamentals",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-design-fundamentals-7",
+    "knowledgeNodeId": "domain-design-fundamentals",
+    "stage": 7,
+    "dueDate": "2026-06-25T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-design-fundamentals-30",
+    "knowledgeNodeId": "domain-design-fundamentals",
+    "stage": 30,
+    "dueDate": "2026-07-18T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-mod-array-manipulation-1",
+    "knowledgeNodeId": "mod-array-manipulation",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-mod-react-hooks-1",
+    "knowledgeNodeId": "mod-react-hooks",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-mod-nextjs-1",
+    "knowledgeNodeId": "mod-nextjs",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "rev-mod-kafka-1",
+    "knowledgeNodeId": "mod-kafka",
+    "stage": 1,
+    "dueDate": "2026-06-19T00:00:00.000Z",
+    "completed": false,
+    "completedAt": null,
+    "createdAt": "2026-06-18T10:00:00.000Z"
+  }
+]

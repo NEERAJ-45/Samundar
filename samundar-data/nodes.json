@@ -1,0 +1,1586 @@
+[
+  {
+    "id": "pillar-dsa",
+    "type": "PILLAR",
+    "name": "Data Structures & Algorithms",
+    "description": "Foundational problem-solving skills using data structures and algorithmic techniques for coding interviews and competitive programming.",
+    "parentId": null,
+    "order": 1
+  },
+  {
+    "id": "pillar-system-design",
+    "type": "PILLAR",
+    "name": "System Design",
+    "description": "Architecting scalable, reliable, and maintainable distributed systems for real-world applications.",
+    "parentId": null,
+    "order": 2
+  },
+  {
+    "id": "pillar-java",
+    "type": "PILLAR",
+    "name": "Java",
+    "description": "Deep understanding of the Java programming language, its ecosystem, and runtime environment.",
+    "parentId": null,
+    "order": 3
+  },
+  {
+    "id": "pillar-spring-boot",
+    "type": "PILLAR",
+    "name": "Spring Boot",
+    "description": "Building production-grade Spring-based applications with Spring Boot, Data, Security, and Cloud.",
+    "parentId": null,
+    "order": 4
+  },
+  {
+    "id": "pillar-dbms",
+    "type": "PILLAR",
+    "name": "Database Management Systems",
+    "description": "Relational and NoSQL databases, query optimization, indexing, and data modeling principles.",
+    "parentId": null,
+    "order": 5
+  },
+  {
+    "id": "pillar-os",
+    "type": "PILLAR",
+    "name": "Operating Systems",
+    "description": "Core OS concepts including process management, memory management, file systems, and concurrency.",
+    "parentId": null,
+    "order": 6
+  },
+  {
+    "id": "pillar-cn",
+    "type": "PILLAR",
+    "name": "Computer Networks",
+    "description": "Networking fundamentals, protocols, transport layer, and network security.",
+    "parentId": null,
+    "order": 7
+  },
+  {
+    "id": "pillar-distributed-systems",
+    "type": "PILLAR",
+    "name": "Distributed Systems",
+    "description": "Consistency models, distributed storage, consensus algorithms, and message-passing architectures.",
+    "parentId": null,
+    "order": 8
+  },
+  {
+    "id": "pillar-react",
+    "type": "PILLAR",
+    "name": "React",
+    "description": "Building modern user interfaces with React, hooks, state management, and the React ecosystem.",
+    "parentId": null,
+    "order": 9
+  },
+  {
+    "id": "pillar-frontend",
+    "type": "PILLAR",
+    "name": "Frontend Architecture",
+    "description": "Frontend engineering including HTML, CSS, TypeScript, build tools, and testing strategies.",
+    "parentId": null,
+    "order": 10
+  },
+  {
+    "id": "pillar-docker",
+    "type": "PILLAR",
+    "name": "Docker",
+    "description": "Containerization with Docker, image management, Compose, and container best practices.",
+    "parentId": null,
+    "order": 11
+  },
+  {
+    "id": "pillar-kubernetes",
+    "type": "PILLAR",
+    "name": "Kubernetes",
+    "description": "Orchestrating containerized applications with Kubernetes, pods, services, and deployments.",
+    "parentId": null,
+    "order": 12
+  },
+  {
+    "id": "pillar-aws",
+    "type": "PILLAR",
+    "name": "AWS",
+    "description": "Amazon Web Services cloud platform including compute, storage, networking, and serverless offerings.",
+    "parentId": null,
+    "order": 13
+  },
+  {
+    "id": "pillar-devops",
+    "type": "PILLAR",
+    "name": "DevOps",
+    "description": "CI/CD pipelines, monitoring, infrastructure as code, and version control practices.",
+    "parentId": null,
+    "order": 14
+  },
+  {
+    "id": "pillar-security",
+    "type": "PILLAR",
+    "name": "Security",
+    "description": "Application and network security, cryptography, identity management, and secure coding practices.",
+    "parentId": null,
+    "order": 15
+  },
+  {
+    "id": "pillar-ai",
+    "type": "PILLAR",
+    "name": "AI Engineering",
+    "description": "Machine learning fundamentals, LLMs, prompt engineering, AI agents, and MLOps.",
+    "parentId": null,
+    "order": 16
+  },
+  {
+    "id": "pillar-software-architecture",
+    "type": "PILLAR",
+    "name": "Software Architecture",
+    "description": "Design patterns, architectural patterns, domain-driven design, and clean architecture principles.",
+    "parentId": null,
+    "order": 17
+  },
+  {
+    "id": "pillar-projects",
+    "type": "PILLAR",
+    "name": "Projects",
+    "description": "End-to-end project development including planning, code quality, documentation, and deployment.",
+    "parentId": null,
+    "order": 18
+  },
+  {
+    "id": "pillar-interview-prep",
+    "type": "PILLAR",
+    "name": "Interview Preparation",
+    "description": "Structured preparation for technical interviews including DSA, system design, and behavioral rounds.",
+    "parentId": null,
+    "order": 19
+  },
+  {
+    "id": "pillar-books-research",
+    "type": "PILLAR",
+    "name": "Books & Research",
+    "description": "Tracking technical books, research papers, and continuous learning through reading.",
+    "parentId": null,
+    "order": 20
+  },
+  {
+    "id": "domain-arrays-strings",
+    "type": "DOMAIN",
+    "name": "Arrays & Strings",
+    "description": "Core array manipulations, sliding window, two-pointer techniques, and string algorithms.",
+    "parentId": "pillar-dsa",
+    "order": 1
+  },
+  {
+    "id": "domain-linked-lists-trees",
+    "type": "DOMAIN",
+    "name": "Linked Lists & Trees",
+    "description": "Singly and doubly linked lists, binary trees, BSTs, tree traversals, and tree-based algorithms.",
+    "parentId": "pillar-dsa",
+    "order": 2
+  },
+  {
+    "id": "domain-graphs",
+    "type": "DOMAIN",
+    "name": "Graphs",
+    "description": "Graph representations, BFS, DFS, shortest paths, MST, and topological sorting.",
+    "parentId": "pillar-dsa",
+    "order": 3
+  },
+  {
+    "id": "domain-dynamic-programming",
+    "type": "DOMAIN",
+    "name": "Dynamic Programming",
+    "description": "Memoization, tabulation, knapsack, LCS, LIS, and DP on trees and graphs.",
+    "parentId": "pillar-dsa",
+    "order": 4
+  },
+  {
+    "id": "domain-recursion-backtracking",
+    "type": "DOMAIN",
+    "name": "Recursion & Backtracking",
+    "description": "Recursive problem-solving, permutations, combinations, subset generation, and constraint satisfaction.",
+    "parentId": "pillar-dsa",
+    "order": 5
+  },
+  {
+    "id": "domain-sorting-searching",
+    "type": "DOMAIN",
+    "name": "Sorting & Searching",
+    "description": "Comparison-based and linear-time sorting, binary search variants, and search algorithms.",
+    "parentId": "pillar-dsa",
+    "order": 6
+  },
+  {
+    "id": "domain-design-fundamentals",
+    "type": "DOMAIN",
+    "name": "Design Fundamentals",
+    "description": "Load balancers, caching, CDNs, proxies, and horizontal vs vertical scaling.",
+    "parentId": "pillar-system-design",
+    "order": 1
+  },
+  {
+    "id": "domain-scalability-patterns",
+    "type": "DOMAIN",
+    "name": "Scalability Patterns",
+    "description": "Sharding, partitioning, replication, consistent hashing, and rate limiting.",
+    "parentId": "pillar-system-design",
+    "order": 2
+  },
+  {
+    "id": "domain-database-design-sd",
+    "type": "DOMAIN",
+    "name": "Database Design",
+    "description": "Schema design, indexing strategies, read replicas, and data partitioning approaches.",
+    "parentId": "pillar-system-design",
+    "order": 3
+  },
+  {
+    "id": "domain-api-design",
+    "type": "DOMAIN",
+    "name": "API Design",
+    "description": "REST, GraphQL, gRPC, API versioning, pagination, and idempotency.",
+    "parentId": "pillar-system-design",
+    "order": 4
+  },
+  {
+    "id": "domain-microservices",
+    "type": "DOMAIN",
+    "name": "Microservices",
+    "description": "Service decomposition, inter-service communication, service mesh, and observability.",
+    "parentId": "pillar-system-design",
+    "order": 5
+  },
+  {
+    "id": "domain-core-java",
+    "type": "DOMAIN",
+    "name": "Core Java",
+    "description": "Language syntax, generics, exception handling, lambdas, streams, and I/O.",
+    "parentId": "pillar-java",
+    "order": 1
+  },
+  {
+    "id": "domain-collections-framework",
+    "type": "DOMAIN",
+    "name": "Collections Framework",
+    "description": "List, Set, Map, Queue, Deque implementations, sorting, and concurrent collections.",
+    "parentId": "pillar-java",
+    "order": 2
+  },
+  {
+    "id": "domain-multithreading",
+    "type": "DOMAIN",
+    "name": "Multithreading & Concurrency",
+    "description": "Thread lifecycle, synchronization, locks, executors, and CompletableFuture.",
+    "parentId": "pillar-java",
+    "order": 3
+  },
+  {
+    "id": "domain-jvm-internals",
+    "type": "DOMAIN",
+    "name": "JVM Internals",
+    "description": "Class loading, memory model, garbage collection, bytecode, and JIT compilation.",
+    "parentId": "pillar-java",
+    "order": 4
+  },
+  {
+    "id": "domain-spring-core-data",
+    "type": "DOMAIN",
+    "name": "Spring Core & Data",
+    "description": "IoC container, dependency injection, Spring Data JPA, and transaction management.",
+    "parentId": "pillar-spring-boot",
+    "order": 1
+  },
+  {
+    "id": "domain-spring-security",
+    "type": "DOMAIN",
+    "name": "Spring Security",
+    "description": "Authentication, authorization, JWT, OAuth2, method security, and CSRF protection.",
+    "parentId": "pillar-spring-boot",
+    "order": 2
+  },
+  {
+    "id": "domain-spring-cloud",
+    "type": "DOMAIN",
+    "name": "Spring Cloud",
+    "description": "Service discovery, config server, circuit breakers, API gateways, and distributed tracing.",
+    "parentId": "pillar-spring-boot",
+    "order": 3
+  },
+  {
+    "id": "domain-sql-optimization",
+    "type": "DOMAIN",
+    "name": "SQL & Query Optimization",
+    "description": "Complex queries, joins, subqueries, window functions, indexing, and execution plans.",
+    "parentId": "pillar-dbms",
+    "order": 1
+  },
+  {
+    "id": "domain-nosql",
+    "type": "DOMAIN",
+    "name": "NoSQL Databases",
+    "description": "Document stores, key-value stores, column families, graph databases, and use case selection.",
+    "parentId": "pillar-dbms",
+    "order": 2
+  },
+  {
+    "id": "domain-database-internals",
+    "type": "DOMAIN",
+    "name": "Database Internals",
+    "description": "B-trees, LSM trees, ACID, MVCC, isolation levels, and replication strategies.",
+    "parentId": "pillar-dbms",
+    "order": 3
+  },
+  {
+    "id": "domain-process-memory",
+    "type": "DOMAIN",
+    "name": "Process & Memory Management",
+    "description": "Process states, scheduling algorithms, virtual memory, paging, and segmentation.",
+    "parentId": "pillar-os",
+    "order": 1
+  },
+  {
+    "id": "domain-file-systems",
+    "type": "DOMAIN",
+    "name": "File Systems",
+    "description": "File system architecture, inodes, directory structure, mounting, and storage allocation.",
+    "parentId": "pillar-os",
+    "order": 2
+  },
+  {
+    "id": "domain-concurrency-os",
+    "type": "DOMAIN",
+    "name": "Concurrency & Synchronization",
+    "description": "Threads, mutexes, semaphores, deadlocks, and classical synchronization problems.",
+    "parentId": "pillar-os",
+    "order": 3
+  },
+  {
+    "id": "domain-networking-fundamentals",
+    "type": "DOMAIN",
+    "name": "Networking Fundamentals",
+    "description": "OSI and TCP/IP models, IP addressing, routing, ARP, and DNS.",
+    "parentId": "pillar-cn",
+    "order": 1
+  },
+  {
+    "id": "domain-transport-application",
+    "type": "DOMAIN",
+    "name": "Transport & Application Layer",
+    "description": "TCP, UDP, flow control, congestion control, HTTP/2, HTTP/3, and WebSockets.",
+    "parentId": "pillar-cn",
+    "order": 2
+  },
+  {
+    "id": "domain-network-security",
+    "type": "DOMAIN",
+    "name": "Network Security",
+    "description": "Firewalls, TLS/SSL, VPNs, DDoS mitigation, and secure network architecture.",
+    "parentId": "pillar-cn",
+    "order": 3
+  },
+  {
+    "id": "domain-cap-consistency",
+    "type": "DOMAIN",
+    "name": "CAP Theorem & Consistency",
+    "description": "CAP theorem, PACELC, consistency models, quorums, and conflict resolution.",
+    "parentId": "pillar-distributed-systems",
+    "order": 1
+  },
+  {
+    "id": "domain-distributed-storage",
+    "type": "DOMAIN",
+    "name": "Distributed Storage",
+    "description": "Distributed file systems, key-value stores, consensus algorithms, and replication.",
+    "parentId": "pillar-distributed-systems",
+    "order": 2
+  },
+  {
+    "id": "domain-message-queues",
+    "type": "DOMAIN",
+    "name": "Message Queues",
+    "description": "Kafka, RabbitMQ, pub-sub patterns, event sourcing, and stream processing.",
+    "parentId": "pillar-distributed-systems",
+    "order": 3
+  },
+  {
+    "id": "domain-react-core-state",
+    "type": "DOMAIN",
+    "name": "React Core & State",
+    "description": "Components, hooks, context, refs, and state management patterns in React.",
+    "parentId": "pillar-react",
+    "order": 1
+  },
+  {
+    "id": "domain-react-ecosystem",
+    "type": "DOMAIN",
+    "name": "React Ecosystem",
+    "description": "Next.js, React Router, React Query, Form libraries, and component libraries.",
+    "parentId": "pillar-react",
+    "order": 2
+  },
+  {
+    "id": "domain-react-performance",
+    "type": "DOMAIN",
+    "name": "React Performance",
+    "description": "Memoization, code splitting, lazy loading, virtualization, and rendering optimization.",
+    "parentId": "pillar-react",
+    "order": 3
+  },
+  {
+    "id": "domain-html-css-js",
+    "type": "DOMAIN",
+    "name": "HTML, CSS & JavaScript",
+    "description": "Semantic HTML, CSS layouts, animations, ES6+, modules, and browser APIs.",
+    "parentId": "pillar-frontend",
+    "order": 1
+  },
+  {
+    "id": "domain-typescript",
+    "type": "DOMAIN",
+    "name": "TypeScript",
+    "description": "Type system, generics, utility types, advanced patterns, and TypeScript configuration.",
+    "parentId": "pillar-frontend",
+    "order": 2
+  },
+  {
+    "id": "domain-build-tools-testing",
+    "type": "DOMAIN",
+    "name": "Build Tools & Testing",
+    "description": "Webpack, Vite, ESLint, Prettier, Jest, Testing Library, and E2E testing.",
+    "parentId": "pillar-frontend",
+    "order": 3
+  },
+  {
+    "id": "domain-docker-fundamentals",
+    "type": "DOMAIN",
+    "name": "Docker Fundamentals",
+    "description": "Dockerfile, images, containers, volumes, networking, and Docker Compose.",
+    "parentId": "pillar-docker",
+    "order": 1
+  },
+  {
+    "id": "domain-container-best-practices",
+    "type": "DOMAIN",
+    "name": "Container Best Practices",
+    "description": "Multi-stage builds, image optimization, security scanning, and registry management.",
+    "parentId": "pillar-docker",
+    "order": 2
+  },
+  {
+    "id": "domain-k8s-fundamentals",
+    "type": "DOMAIN",
+    "name": "Kubernetes Fundamentals",
+    "description": "Pods, deployments, services, ConfigMaps, secrets, and namespaces.",
+    "parentId": "pillar-kubernetes",
+    "order": 1
+  },
+  {
+    "id": "domain-k8s-operations",
+    "type": "DOMAIN",
+    "name": "Kubernetes Operations",
+    "description": "Ingress, Helm, operators, autoscaling, persistent volumes, and cluster management.",
+    "parentId": "pillar-kubernetes",
+    "order": 2
+  },
+  {
+    "id": "domain-aws-compute-storage",
+    "type": "DOMAIN",
+    "name": "AWS Compute & Storage",
+    "description": "EC2, Lambda, S3, EBS, EFS, and storage lifecycle management.",
+    "parentId": "pillar-aws",
+    "order": 1
+  },
+  {
+    "id": "domain-aws-networking-serverless",
+    "type": "DOMAIN",
+    "name": "AWS Networking & Serverless",
+    "description": "VPC, Route 53, CloudFront, API Gateway, DynamoDB, and Step Functions.",
+    "parentId": "pillar-aws",
+    "order": 2
+  },
+  {
+    "id": "domain-cicd",
+    "type": "DOMAIN",
+    "name": "CI/CD",
+    "description": "GitHub Actions, Jenkins, pipeline design, automated testing, and deployment strategies.",
+    "parentId": "pillar-devops",
+    "order": 1
+  },
+  {
+    "id": "domain-monitoring-iac",
+    "type": "DOMAIN",
+    "name": "Monitoring & Infrastructure as Code",
+    "description": "Prometheus, Grafana, Terraform, Ansible, log aggregation, and alerting.",
+    "parentId": "pillar-devops",
+    "order": 2
+  },
+  {
+    "id": "domain-git-version-control",
+    "type": "DOMAIN",
+    "name": "Git & Version Control",
+    "description": "Branching strategies, rebasing, merging, GitHub workflows, and Git internals.",
+    "parentId": "pillar-devops",
+    "order": 3
+  },
+  {
+    "id": "domain-app-network-security",
+    "type": "DOMAIN",
+    "name": "Application & Network Security",
+    "description": "OWASP Top 10, secure coding, input validation, authN/authZ, and penetration testing.",
+    "parentId": "pillar-security",
+    "order": 1
+  },
+  {
+    "id": "domain-cryptography-iam",
+    "type": "DOMAIN",
+    "name": "Cryptography & IAM",
+    "description": "Symmetric and asymmetric encryption, hashing, digital signatures, and identity management.",
+    "parentId": "pillar-security",
+    "order": 2
+  },
+  {
+    "id": "domain-ml-llm",
+    "type": "DOMAIN",
+    "name": "ML & LLMs",
+    "description": "Supervised and unsupervised learning, neural networks, transformers, and prompt engineering.",
+    "parentId": "pillar-ai",
+    "order": 1
+  },
+  {
+    "id": "domain-ai-agents-mlops",
+    "type": "DOMAIN",
+    "name": "AI Agents & MLOps",
+    "description": "Autonomous agents, RAG, model deployment, monitoring, and ML pipeline orchestration.",
+    "parentId": "pillar-ai",
+    "order": 2
+  },
+  {
+    "id": "domain-design-patterns",
+    "type": "DOMAIN",
+    "name": "Design Patterns",
+    "description": "Creational, structural, and behavioral patterns, and their practical applications.",
+    "parentId": "pillar-software-architecture",
+    "order": 1
+  },
+  {
+    "id": "domain-architectural-patterns",
+    "type": "DOMAIN",
+    "name": "Architectural Patterns",
+    "description": "Layered, hexagonal, event-driven, CQRS, and event sourcing architectures.",
+    "parentId": "pillar-software-architecture",
+    "order": 2
+  },
+  {
+    "id": "domain-ddd-clean",
+    "type": "DOMAIN",
+    "name": "DDD & Clean Architecture",
+    "description": "Ubiquitous language, bounded contexts, entities, value objects, and dependency inversion.",
+    "parentId": "pillar-software-architecture",
+    "order": 3
+  },
+  {
+    "id": "domain-project-planning",
+    "type": "DOMAIN",
+    "name": "Project Planning",
+    "description": "Requirements gathering, scope definition, sprint planning, estimation, and risk management.",
+    "parentId": "pillar-projects",
+    "order": 1
+  },
+  {
+    "id": "domain-code-quality-docs",
+    "type": "DOMAIN",
+    "name": "Code Quality & Documentation",
+    "description": "Code reviews, static analysis, refactoring, technical writing, and API documentation.",
+    "parentId": "pillar-projects",
+    "order": 2
+  },
+  {
+    "id": "domain-deployment-ops",
+    "type": "DOMAIN",
+    "name": "Deployment & Operations",
+    "description": "Release management, rollback strategies, blue-green deployment, and incident response.",
+    "parentId": "pillar-projects",
+    "order": 3
+  },
+  {
+    "id": "domain-dsa-practice",
+    "type": "DOMAIN",
+    "name": "DSA Practice",
+    "description": "Pattern-based problem solving, timed mock interviews, and company-specific preparation.",
+    "parentId": "pillar-interview-prep",
+    "order": 1
+  },
+  {
+    "id": "domain-sd-behavioral",
+    "type": "DOMAIN",
+    "name": "System Design & Behavioral Prep",
+    "description": "Whiteboarding system designs, STAR method, leadership principles, and negotiation.",
+    "parentId": "pillar-interview-prep",
+    "order": 2
+  },
+  {
+    "id": "domain-books-research-tracking",
+    "type": "DOMAIN",
+    "name": "Books & Research Tracking",
+    "description": "Tracking reading progress, synthesizing knowledge, and maintaining a research backlog.",
+    "parentId": "pillar-books-research",
+    "order": 1
+  },
+  {
+    "id": "mod-array-manipulation",
+    "type": "MODULE",
+    "name": "Array Manipulation",
+    "description": "Two-pointer, sliding window, prefix sums, and rotation techniques.",
+    "parentId": "domain-arrays-strings",
+    "order": 1
+  },
+  {
+    "id": "mod-string-algorithms",
+    "type": "MODULE",
+    "name": "String Algorithms",
+    "description": "Pattern matching, KMP, Rabin-Karp, trie-based string operations.",
+    "parentId": "domain-arrays-strings",
+    "order": 2
+  },
+  {
+    "id": "mod-linked-lists",
+    "type": "MODULE",
+    "name": "Linked Lists",
+    "description": "Singly, doubly, and circular linked lists with fast and slow pointer techniques.",
+    "parentId": "domain-linked-lists-trees",
+    "order": 1
+  },
+  {
+    "id": "mod-binary-trees",
+    "type": "MODULE",
+    "name": "Binary Trees",
+    "description": "Tree traversals, views, serialization, and tree construction from traversals.",
+    "parentId": "domain-linked-lists-trees",
+    "order": 2
+  },
+  {
+    "id": "mod-bst",
+    "type": "MODULE",
+    "name": "Binary Search Trees",
+    "description": "BST operations, validation, LCA, and balanced tree variants.",
+    "parentId": "domain-linked-lists-trees",
+    "order": 3
+  },
+  {
+    "id": "mod-graph-traversal",
+    "type": "MODULE",
+    "name": "Graph Traversal",
+    "description": "BFS, DFS, topological sort, and cycle detection.",
+    "parentId": "domain-graphs",
+    "order": 1
+  },
+  {
+    "id": "mod-shortest-paths",
+    "type": "MODULE",
+    "name": "Shortest Paths",
+    "description": "Dijkstra, Bellman-Ford, Floyd-Warshall, and A* search.",
+    "parentId": "domain-graphs",
+    "order": 2
+  },
+  {
+    "id": "mod-mst-union-find",
+    "type": "MODULE",
+    "name": "MST & Union-Find",
+    "description": "Kruskal, Prim, Disjoint Set Union with path compression.",
+    "parentId": "domain-graphs",
+    "order": 3
+  },
+  {
+    "id": "mod-dp-fundamentals",
+    "type": "MODULE",
+    "name": "DP Fundamentals",
+    "description": "Memoization, tabulation, and state definition patterns.",
+    "parentId": "domain-dynamic-programming",
+    "order": 1
+  },
+  {
+    "id": "mod-dp-classic",
+    "type": "MODULE",
+    "name": "Classic DP Problems",
+    "description": "Knapsack, LCS, LIS, edit distance, and matrix chain multiplication.",
+    "parentId": "domain-dynamic-programming",
+    "order": 2
+  },
+  {
+    "id": "mod-dp-on-trees",
+    "type": "MODULE",
+    "name": "DP on Trees & Graphs",
+    "description": "Tree DP, graph DP, and DP with bitmasking.",
+    "parentId": "domain-dynamic-programming",
+    "order": 3
+  },
+  {
+    "id": "mod-recursion-fundamentals",
+    "type": "MODULE",
+    "name": "Recursion Fundamentals",
+    "description": "Base cases, recurrence relations, and tail recursion optimization.",
+    "parentId": "domain-recursion-backtracking",
+    "order": 1
+  },
+  {
+    "id": "mod-backtracking",
+    "type": "MODULE",
+    "name": "Backtracking",
+    "description": "N-Queens, Sudoku, permutations, subsets, and constraint satisfaction.",
+    "parentId": "domain-recursion-backtracking",
+    "order": 2
+  },
+  {
+    "id": "mod-sorting",
+    "type": "MODULE",
+    "name": "Sorting Algorithms",
+    "description": "Merge, quick, heap, counting, radix, and bucket sort.",
+    "parentId": "domain-sorting-searching",
+    "order": 1
+  },
+  {
+    "id": "mod-binary-search",
+    "type": "MODULE",
+    "name": "Binary Search",
+    "description": "Classic binary search, rotated arrays, search space optimization.",
+    "parentId": "domain-sorting-searching",
+    "order": 2
+  },
+  {
+    "id": "mod-load-balancing",
+    "type": "MODULE",
+    "name": "Load Balancing",
+    "description": "Round-robin, least connections, consistent hashing, and geo-routing.",
+    "parentId": "domain-design-fundamentals",
+    "order": 1
+  },
+  {
+    "id": "mod-caching",
+    "type": "MODULE",
+    "name": "Caching Strategies",
+    "description": "LRU, LFU, TTL-based caches, distributed caching with Redis.",
+    "parentId": "domain-design-fundamentals",
+    "order": 2
+  },
+  {
+    "id": "mod-sharding",
+    "type": "MODULE",
+    "name": "Sharding & Partitioning",
+    "description": "Horizontal sharding, range-based sharding, and rebalancing.",
+    "parentId": "domain-scalability-patterns",
+    "order": 1
+  },
+  {
+    "id": "mod-rate-limiting",
+    "type": "MODULE",
+    "name": "Rate Limiting",
+    "description": "Token bucket, leaky bucket, sliding window, and distributed rate limiting.",
+    "parentId": "domain-scalability-patterns",
+    "order": 2
+  },
+  {
+    "id": "mod-schema-design",
+    "type": "MODULE",
+    "name": "Schema Design",
+    "description": "Normalization, denormalization, and schema for read/write patterns.",
+    "parentId": "domain-database-design-sd",
+    "order": 1
+  },
+  {
+    "id": "mod-replication",
+    "type": "MODULE",
+    "name": "Replication Strategies",
+    "description": "Leader-follower, multi-leader, and quorum-based replication.",
+    "parentId": "domain-database-design-sd",
+    "order": 2
+  },
+  {
+    "id": "mod-rest-api",
+    "type": "MODULE",
+    "name": "REST API Design",
+    "description": "Resource modeling, pagination, filtering, and idempotent endpoints.",
+    "parentId": "domain-api-design",
+    "order": 1
+  },
+  {
+    "id": "mod-graphql-grpc",
+    "type": "MODULE",
+    "name": "GraphQL & gRPC",
+    "description": "Schema definition, resolvers, protobuf, and bidirectional streaming.",
+    "parentId": "domain-api-design",
+    "order": 2
+  },
+  {
+    "id": "mod-service-decomposition",
+    "type": "MODULE",
+    "name": "Service Decomposition",
+    "description": "Bounded contexts, domain boundaries, and service granularity.",
+    "parentId": "domain-microservices",
+    "order": 1
+  },
+  {
+    "id": "mod-service-mesh",
+    "type": "MODULE",
+    "name": "Service Mesh",
+    "description": "Istio, sidecar proxy, traffic management, and observability.",
+    "parentId": "domain-microservices",
+    "order": 2
+  },
+  {
+    "id": "mod-java-lang-features",
+    "type": "MODULE",
+    "name": "Java Language Features",
+    "description": "Generics, enums, annotations, records, sealed classes, and pattern matching.",
+    "parentId": "domain-core-java",
+    "order": 1
+  },
+  {
+    "id": "mod-streams-lambdas",
+    "type": "MODULE",
+    "name": "Streams & Lambdas",
+    "description": "Functional programming in Java, stream pipelines, collectors, and parallel streams.",
+    "parentId": "domain-core-java",
+    "order": 2
+  },
+  {
+    "id": "mod-list-set-map",
+    "type": "MODULE",
+    "name": "List, Set & Map",
+    "description": "ArrayList, LinkedList, HashSet, TreeSet, HashMap, TreeMap, and ConcurrentHashMap.",
+    "parentId": "domain-collections-framework",
+    "order": 1
+  },
+  {
+    "id": "mod-queue-deque",
+    "type": "MODULE",
+    "name": "Queue & Deque",
+    "description": "PriorityQueue, ArrayDeque, blocking queues, and delay queues.",
+    "parentId": "domain-collections-framework",
+    "order": 2
+  },
+  {
+    "id": "mod-threads-executors",
+    "type": "MODULE",
+    "name": "Threads & Executors",
+    "description": "Thread lifecycle, thread pools, Callable, Future, and fork-join framework.",
+    "parentId": "domain-multithreading",
+    "order": 1
+  },
+  {
+    "id": "mod-synchronization",
+    "type": "MODULE",
+    "name": "Synchronization Primitives",
+    "description": "Synchronized, locks, semaphores, latches, barriers, and volatile.",
+    "parentId": "domain-multithreading",
+    "order": 2
+  },
+  {
+    "id": "mod-class-loaders",
+    "type": "MODULE",
+    "name": "Class Loaders",
+    "description": "Class loading hierarchy, custom class loaders, and module system.",
+    "parentId": "domain-jvm-internals",
+    "order": 1
+  },
+  {
+    "id": "mod-garbage-collection",
+    "type": "MODULE",
+    "name": "Garbage Collection",
+    "description": "GC algorithms, generational collection, G1, ZGC, and tuning.",
+    "parentId": "domain-jvm-internals",
+    "order": 2
+  },
+  {
+    "id": "mod-di-ioc",
+    "type": "MODULE",
+    "name": "DI & IoC",
+    "description": "Bean lifecycle, scopes, qualifiers, profiles, and configuration.",
+    "parentId": "domain-spring-core-data",
+    "order": 1
+  },
+  {
+    "id": "mod-jpa-hibernate",
+    "type": "MODULE",
+    "name": "JPA & Hibernate",
+    "description": "Entity mapping, relationships, caching, and N+1 query optimization.",
+    "parentId": "domain-spring-core-data",
+    "order": 2
+  },
+  {
+    "id": "mod-auth-jwt",
+    "type": "MODULE",
+    "name": "Authentication & JWT",
+    "description": "JWT tokens, OAuth2 flows, session management, and security filters.",
+    "parentId": "domain-spring-security",
+    "order": 1
+  },
+  {
+    "id": "mod-rbac-abac",
+    "type": "MODULE",
+    "name": "Authorization Models",
+    "description": "Role-based and attribute-based access control, method security, and ACLs.",
+    "parentId": "domain-spring-security",
+    "order": 2
+  },
+  {
+    "id": "mod-service-discovery",
+    "type": "MODULE",
+    "name": "Service Discovery",
+    "description": "Eureka, Consul, Kubernetes services, and client-side load balancing.",
+    "parentId": "domain-spring-cloud",
+    "order": 1
+  },
+  {
+    "id": "mod-circuit-breaker",
+    "type": "MODULE",
+    "name": "Circuit Breaker",
+    "description": "Resilience4j, retry, bulkhead, time limiter, and cache patterns.",
+    "parentId": "domain-spring-cloud",
+    "order": 2
+  },
+  {
+    "id": "mod-advanced-sql",
+    "type": "MODULE",
+    "name": "Advanced SQL",
+    "description": "Window functions, CTEs, recursive queries, and pivot tables.",
+    "parentId": "domain-sql-optimization",
+    "order": 1
+  },
+  {
+    "id": "mod-query-optimization",
+    "type": "MODULE",
+    "name": "Query Optimization",
+    "description": "Indexing strategies, execution plans, covering indexes, and query rewriting.",
+    "parentId": "domain-sql-optimization",
+    "order": 2
+  },
+  {
+    "id": "mod-document-stores",
+    "type": "MODULE",
+    "name": "Document Stores",
+    "description": "MongoDB, Firestore, document modeling, and aggregation pipelines.",
+    "parentId": "domain-nosql",
+    "order": 1
+  },
+  {
+    "id": "mod-key-value-column",
+    "type": "MODULE",
+    "name": "Key-Value & Column Stores",
+    "description": "Redis, DynamoDB, Cassandra, and wide-column data modeling.",
+    "parentId": "domain-nosql",
+    "order": 2
+  },
+  {
+    "id": "mod-b-tree-lsm",
+    "type": "MODULE",
+    "name": "B-Tree & LSM Trees",
+    "description": "B-tree internals, LSM tree structure, compaction, and bloom filters.",
+    "parentId": "domain-database-internals",
+    "order": 1
+  },
+  {
+    "id": "mod-acid-mvcc",
+    "type": "MODULE",
+    "name": "ACID & MVCC",
+    "description": "Transaction isolation levels, read phenomena, and multi-version concurrency control.",
+    "parentId": "domain-database-internals",
+    "order": 2
+  },
+  {
+    "id": "mod-process-scheduling",
+    "type": "MODULE",
+    "name": "Process Scheduling",
+    "description": "Scheduling algorithms, context switching, and system calls.",
+    "parentId": "domain-process-memory",
+    "order": 1
+  },
+  {
+    "id": "mod-virtual-memory",
+    "type": "MODULE",
+    "name": "Virtual Memory",
+    "description": "Paging, segmentation, TLB, page replacement, and demand paging.",
+    "parentId": "domain-process-memory",
+    "order": 2
+  },
+  {
+    "id": "mod-fs-architecture",
+    "type": "MODULE",
+    "name": "File System Architecture",
+    "description": "Inodes, directory structure, file allocation methods, and journaling.",
+    "parentId": "domain-file-systems",
+    "order": 1
+  },
+  {
+    "id": "mod-storage-management",
+    "type": "MODULE",
+    "name": "Storage Management",
+    "description": "Disk scheduling, RAID levels, and flash storage considerations.",
+    "parentId": "domain-file-systems",
+    "order": 2
+  },
+  {
+    "id": "mod-deadlock",
+    "type": "MODULE",
+    "name": "Deadlock",
+    "description": "Deadlock characterization, prevention, avoidance, and detection.",
+    "parentId": "domain-concurrency-os",
+    "order": 1
+  },
+  {
+    "id": "mod-sync-problems",
+    "type": "MODULE",
+    "name": "Classic Sync Problems",
+    "description": "Producer-consumer, readers-writers, dining philosophers, and barrier synchronization.",
+    "parentId": "domain-concurrency-os",
+    "order": 2
+  },
+  {
+    "id": "mod-ip-routing",
+    "type": "MODULE",
+    "name": "IP & Routing",
+    "description": "IPv4, IPv6, subnetting, CIDR, routing protocols, and ARP.",
+    "parentId": "domain-networking-fundamentals",
+    "order": 1
+  },
+  {
+    "id": "mod-dns",
+    "type": "MODULE",
+    "name": "DNS",
+    "description": "DNS hierarchy, resolution process, record types, and DNSSEC.",
+    "parentId": "domain-networking-fundamentals",
+    "order": 2
+  },
+  {
+    "id": "mod-tcp-udp",
+    "type": "MODULE",
+    "name": "TCP & UDP",
+    "description": "TCP handshake, flow control, congestion control, and UDP use cases.",
+    "parentId": "domain-transport-application",
+    "order": 1
+  },
+  {
+    "id": "mod-http",
+    "type": "MODULE",
+    "name": "HTTP Protocol",
+    "description": "HTTP/1.1, HTTP/2, HTTP/3, caching headers, and CDN integration.",
+    "parentId": "domain-transport-application",
+    "order": 2
+  },
+  {
+    "id": "mod-tls-ssl",
+    "type": "MODULE",
+    "name": "TLS & SSL",
+    "description": "Handshake protocol, certificate chain, cipher suites, and mTLS.",
+    "parentId": "domain-network-security",
+    "order": 1
+  },
+  {
+    "id": "mod-ddos-mitigation",
+    "type": "MODULE",
+    "name": "DDoS Mitigation",
+    "description": "SYN flood, DNS amplification, rate limiting, and CDN-based protection.",
+    "parentId": "domain-network-security",
+    "order": 2
+  },
+  {
+    "id": "mod-consistency-models",
+    "type": "MODULE",
+    "name": "Consistency Models",
+    "description": "Strong, eventual, causal, and read-your-writes consistency.",
+    "parentId": "domain-cap-consistency",
+    "order": 1
+  },
+  {
+    "id": "mod-quorum-consensus",
+    "type": "MODULE",
+    "name": "Quorum & Consensus",
+    "description": "Raft, Paxos, Zab, and quorum-based read/write strategies.",
+    "parentId": "domain-cap-consistency",
+    "order": 2
+  },
+  {
+    "id": "mod-distributed-fs",
+    "type": "MODULE",
+    "name": "Distributed File Systems",
+    "description": "HDFS, Google File System, and object storage architectures.",
+    "parentId": "domain-distributed-storage",
+    "order": 1
+  },
+  {
+    "id": "mod-distributed-kv",
+    "type": "MODULE",
+    "name": "Distributed Key-Value Stores",
+    "description": "Dynamo-style, Cassandra, and FoundationDB architectures.",
+    "parentId": "domain-distributed-storage",
+    "order": 2
+  },
+  {
+    "id": "mod-kafka",
+    "type": "MODULE",
+    "name": "Apache Kafka",
+    "description": "Topic partitioning, consumer groups, exactly-once semantics, and Kafka Connect.",
+    "parentId": "domain-message-queues",
+    "order": 1
+  },
+  {
+    "id": "mod-rabbitmq",
+    "type": "MODULE",
+    "name": "RabbitMQ",
+    "description": "Exchanges, queues, bindings, and AMQP protocol.",
+    "parentId": "domain-message-queues",
+    "order": 2
+  },
+  {
+    "id": "mod-react-hooks",
+    "type": "MODULE",
+    "name": "React Hooks",
+    "description": "useState, useEffect, useCallback, useMemo, useRef, and custom hooks.",
+    "parentId": "domain-react-core-state",
+    "order": 1
+  },
+  {
+    "id": "mod-state-management",
+    "type": "MODULE",
+    "name": "State Management",
+    "description": "Context API, useReducer, Zustand, and Redux Toolkit.",
+    "parentId": "domain-react-core-state",
+    "order": 2
+  },
+  {
+    "id": "mod-nextjs",
+    "type": "MODULE",
+    "name": "Next.js",
+    "description": "App router, server components, data fetching, and middleware.",
+    "parentId": "domain-react-ecosystem",
+    "order": 1
+  },
+  {
+    "id": "mod-react-query",
+    "type": "MODULE",
+    "name": "React Query",
+    "description": "Data fetching, caching, mutations, optimistic updates, and infinite queries.",
+    "parentId": "domain-react-ecosystem",
+    "order": 2
+  },
+  {
+    "id": "mod-rendering-patterns",
+    "type": "MODULE",
+    "name": "Rendering Patterns",
+    "description": "SSR, SSG, ISR, and streaming server-side rendering.",
+    "parentId": "domain-react-performance",
+    "order": 1
+  },
+  {
+    "id": "mod-performance-opt",
+    "type": "MODULE",
+    "name": "Performance Optimization",
+    "description": "Code splitting, lazy loading, virtualization, and bundle analysis.",
+    "parentId": "domain-react-performance",
+    "order": 2
+  },
+  {
+    "id": "mod-css-layouts",
+    "type": "MODULE",
+    "name": "CSS Layouts",
+    "description": "Flexbox, Grid, responsive design, and CSS custom properties.",
+    "parentId": "domain-html-css-js",
+    "order": 1
+  },
+  {
+    "id": "mod-es6-modules",
+    "type": "MODULE",
+    "name": "ES6+ & Modules",
+    "description": "Arrow functions, destructuring, promises, async/await, and ES modules.",
+    "parentId": "domain-html-css-js",
+    "order": 2
+  },
+  {
+    "id": "mod-type-system",
+    "type": "MODULE",
+    "name": "Type System",
+    "description": "Interfaces, types, unions, intersections, and conditional types.",
+    "parentId": "domain-typescript",
+    "order": 1
+  },
+  {
+    "id": "mod-ts-advanced",
+    "type": "MODULE",
+    "name": "Advanced TypeScript",
+    "description": "Mapped types, template literal types, infer, and declaration files.",
+    "parentId": "domain-typescript",
+    "order": 2
+  },
+  {
+    "id": "mod-vite-webpack",
+    "type": "MODULE",
+    "name": "Vite & Webpack",
+    "description": "Configuration, plugins, tree shaking, and HMR.",
+    "parentId": "domain-build-tools-testing",
+    "order": 1
+  },
+  {
+    "id": "mod-testing-strategies",
+    "type": "MODULE",
+    "name": "Testing Strategies",
+    "description": "Unit, integration, E2E testing, and testing library patterns.",
+    "parentId": "domain-build-tools-testing",
+    "order": 2
+  },
+  {
+    "id": "mod-dockerfile",
+    "type": "MODULE",
+    "name": "Dockerfile Best Practices",
+    "description": "Layer caching, multi-stage builds, and minimal base images.",
+    "parentId": "domain-docker-fundamentals",
+    "order": 1
+  },
+  {
+    "id": "mod-docker-compose",
+    "type": "MODULE",
+    "name": "Docker Compose",
+    "description": "Multi-service setup, networking, volumes, and profiles.",
+    "parentId": "domain-docker-fundamentals",
+    "order": 2
+  },
+  {
+    "id": "mod-image-optimization",
+    "type": "MODULE",
+    "name": "Image Optimization",
+    "description": "Layer reduction, distroless images, and image vulnerability scanning.",
+    "parentId": "domain-container-best-practices",
+    "order": 1
+  },
+  {
+    "id": "mod-container-security",
+    "type": "MODULE",
+    "name": "Container Security",
+    "description": "Secrets management, runtime security, and image signing.",
+    "parentId": "domain-container-best-practices",
+    "order": 2
+  },
+  {
+    "id": "mod-pods-deployments",
+    "type": "MODULE",
+    "name": "Pods & Deployments",
+    "description": "Pod lifecycle, deployment strategies, rolling updates, and health probes.",
+    "parentId": "domain-k8s-fundamentals",
+    "order": 1
+  },
+  {
+    "id": "mod-services-ingress",
+    "type": "MODULE",
+    "name": "Services & Ingress",
+    "description": "ClusterIP, NodePort, LoadBalancer, Ingress controllers, and DNS.",
+    "parentId": "domain-k8s-fundamentals",
+    "order": 2
+  },
+  {
+    "id": "mod-helm",
+    "type": "MODULE",
+    "name": "Helm",
+    "description": "Charts, templates, values, releases, and dependency management.",
+    "parentId": "domain-k8s-operations",
+    "order": 1
+  },
+  {
+    "id": "mod-autoscaling",
+    "type": "MODULE",
+    "name": "Autoscaling",
+    "description": "HPA, VPA, cluster autoscaler, and event-driven scaling.",
+    "parentId": "domain-k8s-operations",
+    "order": 2
+  },
+  {
+    "id": "mod-ec2-lambda",
+    "type": "MODULE",
+    "name": "EC2 & Lambda",
+    "description": "Instance types, AMIs, Lambda triggers, cold starts, and runtime configuration.",
+    "parentId": "domain-aws-compute-storage",
+    "order": 1
+  },
+  {
+    "id": "mod-s3-efs-ebs",
+    "type": "MODULE",
+    "name": "S3, EFS & EBS",
+    "description": "Storage classes, lifecycle policies, encryption, and access control.",
+    "parentId": "domain-aws-compute-storage",
+    "order": 2
+  },
+  {
+    "id": "mod-vpc-cloudfront",
+    "type": "MODULE",
+    "name": "VPC & CloudFront",
+    "description": "VPC design, subnets, security groups, CDN, and WAF.",
+    "parentId": "domain-aws-networking-serverless",
+    "order": 1
+  },
+  {
+    "id": "mod-api-gateway-dynamodb",
+    "type": "MODULE",
+    "name": "API Gateway & DynamoDB",
+    "description": "REST/HTTP APIs, throttling, DynamoDB tables, indexes, and DAX.",
+    "parentId": "domain-aws-networking-serverless",
+    "order": 2
+  },
+  {
+    "id": "mod-github-actions",
+    "type": "MODULE",
+    "name": "GitHub Actions",
+    "description": "Workflows, runners, matrices, artifacts, and environment management.",
+    "parentId": "domain-cicd",
+    "order": 1
+  },
+  {
+    "id": "mod-pipeline-design",
+    "type": "MODULE",
+    "name": "Pipeline Design",
+    "description": "Stage gates, parallel execution, caching, and deployment approvals.",
+    "parentId": "domain-cicd",
+    "order": 2
+  },
+  {
+    "id": "mod-prometheus-grafana",
+    "type": "MODULE",
+    "name": "Prometheus & Grafana",
+    "description": "Metrics collection, alerting rules, dashboards, and service monitors.",
+    "parentId": "domain-monitoring-iac",
+    "order": 1
+  },
+  {
+    "id": "mod-terraform",
+    "type": "MODULE",
+    "name": "Terraform",
+    "description": "State management, modules, workspaces, and provider configuration.",
+    "parentId": "domain-monitoring-iac",
+    "order": 2
+  },
+  {
+    "id": "mod-git-branching",
+    "type": "MODULE",
+    "name": "Git Branching",
+    "description": "Merge vs rebase, git flow, trunk-based development, and conflict resolution.",
+    "parentId": "domain-git-version-control",
+    "order": 1
+  },
+  {
+    "id": "mod-github-workflows",
+    "type": "MODULE",
+    "name": "GitHub Workflows",
+    "description": "PR templates, code review automation, and branch protection rules.",
+    "parentId": "domain-git-version-control",
+    "order": 2
+  },
+  {
+    "id": "mod-owasp",
+    "type": "MODULE",
+    "name": "OWASP Top 10",
+    "description": "Injection, XSS, CSRF, SSRF, and insecure deserialization prevention.",
+    "parentId": "domain-app-network-security",
+    "order": 1
+  },
+  {
+    "id": "mod-pentesting",
+    "type": "MODULE",
+    "name": "Penetration Testing",
+    "description": "Vulnerability scanning, fuzzing, and security audit methodologies.",
+    "parentId": "domain-app-network-security",
+    "order": 2
+  },
+  {
+    "id": "mod-encryption",
+    "type": "MODULE",
+    "name": "Encryption",
+    "description": "AES, RSA, ECC, key exchange, and digital signatures.",
+    "parentId": "domain-cryptography-iam",
+    "order": 1
+  },
+  {
+    "id": "mod-iam",
+    "type": "MODULE",
+    "name": "Identity & Access Management",
+    "description": "OAuth2, OpenID Connect, SAML, and RBAC implementation.",
+    "parentId": "domain-cryptography-iam",
+    "order": 2
+  },
+  {
+    "id": "mod-supervised-learning",
+    "type": "MODULE",
+    "name": "Supervised Learning",
+    "description": "Linear regression, decision trees, SVM, and ensemble methods.",
+    "parentId": "domain-ml-llm",
+    "order": 1
+  },
+  {
+    "id": "mod-llm-transformers",
+    "type": "MODULE",
+    "name": "LLMs & Transformers",
+    "description": "Attention mechanism, GPT, BERT, fine-tuning, and prompt engineering.",
+    "parentId": "domain-ml-llm",
+    "order": 2
+  },
+  {
+    "id": "mod-rag-agents",
+    "type": "MODULE",
+    "name": "RAG & AI Agents",
+    "description": "Retrieval-augmented generation, tool use, and autonomous agent architectures.",
+    "parentId": "domain-ai-agents-mlops",
+    "order": 1
+  },
+  {
+    "id": "mod-ml-pipelines",
+    "type": "MODULE",
+    "name": "ML Pipelines",
+    "description": "Model training, serving, monitoring, and A/B testing infrastructure.",
+    "parentId": "domain-ai-agents-mlops",
+    "order": 2
+  },
+  {
+    "id": "mod-creational-patterns",
+    "type": "MODULE",
+    "name": "Creational Patterns",
+    "description": "Singleton, factory, builder, prototype, and object pool.",
+    "parentId": "domain-design-patterns",
+    "order": 1
+  },
+  {
+    "id": "mod-structural-patterns",
+    "type": "MODULE",
+    "name": "Structural Patterns",
+    "description": "Adapter, decorator, proxy, facade, and composite.",
+    "parentId": "domain-design-patterns",
+    "order": 2
+  },
+  {
+    "id": "mod-behavioral-patterns",
+    "type": "MODULE",
+    "name": "Behavioral Patterns",
+    "description": "Observer, strategy, command, template method, and visitor.",
+    "parentId": "domain-design-patterns",
+    "order": 3
+  },
+  {
+    "id": "mod-hexagonal-cqrs",
+    "type": "MODULE",
+    "name": "Hexagonal & CQRS",
+    "description": "Ports and adapters, command query separation, and event sourcing.",
+    "parentId": "domain-architectural-patterns",
+    "order": 1
+  },
+  {
+    "id": "mod-event-driven",
+    "type": "MODULE",
+    "name": "Event-Driven Architecture",
+    "description": "Event sourcing, choreography, orchestration, and saga patterns.",
+    "parentId": "domain-architectural-patterns",
+    "order": 2
+  },
+  {
+    "id": "mod-bounded-contexts",
+    "type": "MODULE",
+    "name": "Bounded Contexts",
+    "description": "Context mapping, anti-corruption layer, and shared kernel patterns.",
+    "parentId": "domain-ddd-clean",
+    "order": 1
+  },
+  {
+    "id": "mod-clean-architecture",
+    "type": "MODULE",
+    "name": "Clean Architecture",
+    "description": "Dependency rule, use cases, entities, and interface adapters.",
+    "parentId": "domain-ddd-clean",
+    "order": 2
+  },
+  {
+    "id": "mod-sprint-agile",
+    "type": "MODULE",
+    "name": "Sprint & Agile Planning",
+    "description": "Story estimation, sprint planning, retrospectives, and velocity tracking.",
+    "parentId": "domain-project-planning",
+    "order": 1
+  },
+  {
+    "id": "mod-risk-management",
+    "type": "MODULE",
+    "name": "Risk Management",
+    "description": "Technical debt tracking, mitigation strategies, and contingency planning.",
+    "parentId": "domain-project-planning",
+    "order": 2
+  },
+  {
+    "id": "mod-code-reviews",
+    "type": "MODULE",
+    "name": "Code Reviews",
+    "description": "Review checklists, constructive feedback, and static analysis integration.",
+    "parentId": "domain-code-quality-docs",
+    "order": 1
+  },
+  {
+    "id": "mod-technical-writing",
+    "type": "MODULE",
+    "name": "Technical Writing",
+    "description": "API documentation, architecture decision records, and runbooks.",
+    "parentId": "domain-code-quality-docs",
+    "order": 2
+  },
+  {
+    "id": "mod-release-management",
+    "type": "MODULE",
+    "name": "Release Management",
+    "description": "Versioning, changelogs, rollback strategies, and feature flags.",
+    "parentId": "domain-deployment-ops",
+    "order": 1
+  },
+  {
+    "id": "mod-incident-response",
+    "type": "MODULE",
+    "name": "Incident Response",
+    "description": "On-call rotation, incident severity, postmortems, and blameless culture.",
+    "parentId": "domain-deployment-ops",
+    "order": 2
+  },
+  {
+    "id": "mod-pattern-recognition",
+    "type": "MODULE",
+    "name": "Pattern Recognition",
+    "description": "Recognizing problem patterns and mapping to optimal solutions.",
+    "parentId": "domain-dsa-practice",
+    "order": 1
+  },
+  {
+    "id": "mod-mock-interviews",
+    "type": "MODULE",
+    "name": "Mock Interviews",
+    "description": "Timed practice, whiteboarding, and company-specific problem sets.",
+    "parentId": "domain-dsa-practice",
+    "order": 2
+  },
+  {
+    "id": "mod-whiteboarding",
+    "type": "MODULE",
+    "name": "Whiteboarding",
+    "description": "System design walkthroughs, trade-off analysis, and diagramming.",
+    "parentId": "domain-sd-behavioral",
+    "order": 1
+  },
+  {
+    "id": "mod-behavioral-stories",
+    "type": "MODULE",
+    "name": "Behavioral Stories",
+    "description": "STAR framework, leadership principles, and conflict resolution examples.",
+    "parentId": "domain-sd-behavioral",
+    "order": 2
+  },
+  {
+    "id": "mod-reading-log",
+    "type": "MODULE",
+    "name": "Reading Log",
+    "description": "Tracking books, key takeaways, and chapter-by-chapter summaries.",
+    "parentId": "domain-books-research-tracking",
+    "order": 1
+  },
+  {
+    "id": "mod-paper-synthesis",
+    "type": "MODULE",
+    "name": "Paper Synthesis",
+    "description": "Reading, summarizing, and applying research paper findings.",
+    "parentId": "domain-books-research-tracking",
+    "order": 2
+  }
+]

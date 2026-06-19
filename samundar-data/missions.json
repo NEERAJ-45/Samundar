@@ -1,0 +1,128 @@
+[
+  {
+    "id": "mission-1",
+    "title": "Master Software Engineering Fundamentals",
+    "description": "Achieve interview-ready mastery across all core CS pillars: DSA, System Design, OS, Networks, and DBMS within 12 months.",
+    "type": "MISSION",
+    "targetDate": "2027-06-18T00:00:00.000Z",
+    "completed": false,
+    "order": 1
+  },
+  {
+    "id": "mission-2",
+    "title": "Build Production-Grade Projects",
+    "description": "Design, build, and deploy three full-stack projects that demonstrate end-to-end engineering excellence.",
+    "type": "MISSION",
+    "targetDate": "2027-06-18T00:00:00.000Z",
+    "completed": false,
+    "order": 2
+  },
+  {
+    "id": "mission-3",
+    "title": "Become a Cloud-Native Engineer",
+    "description": "Master containerization, orchestration, cloud platforms, and DevOps practices to architect and operate distributed systems.",
+    "type": "MISSION",
+    "targetDate": "2027-06-18T00:00:00.000Z",
+    "completed": false,
+    "order": 3
+  },
+  {
+    "id": "vision-1",
+    "title": "Staff Engineer at a Top Tech Company",
+    "description": "Reach Staff-level engineering impact by combining deep technical expertise with strong architectural vision and mentorship.",
+    "type": "VISION",
+    "targetDate": null,
+    "completed": false,
+    "order": 1
+  },
+  {
+    "id": "vision-2",
+    "title": "Open Source Thought Leader",
+    "description": "Contribute significantly to open source projects, author technical content, and build a recognized engineering brand.",
+    "type": "VISION",
+    "targetDate": null,
+    "completed": false,
+    "order": 2
+  },
+  {
+    "id": "goal-1",
+    "title": "Complete 500 DSA Problems",
+    "description": "Solve 500 curated DSA problems across all categories with written solution explanations.",
+    "type": "GOAL",
+    "targetDate": "2027-01-01T00:00:00.000Z",
+    "completed": false,
+    "order": 1
+  },
+  {
+    "id": "goal-2",
+    "title": "Finish 30 Technical Books",
+    "description": "Read and synthesize 30 engineering books across all pillars with detailed notes and takeaways.",
+    "type": "GOAL",
+    "targetDate": "2027-06-18T00:00:00.000Z",
+    "completed": false,
+    "order": 2
+  },
+  {
+    "id": "goal-3",
+    "title": "Pass AWS Solutions Architect Certification",
+    "description": "Earn the AWS Solutions Architect Associate certification to validate cloud architecture skills.",
+    "type": "GOAL",
+    "targetDate": "2026-12-31T00:00:00.000Z",
+    "completed": false,
+    "order": 3
+  },
+  {
+    "id": "goal-4",
+    "title": "Conduct 50 Mock Interviews",
+    "description": "Complete 50 mock interview sessions (30 DSA, 10 System Design, 10 Behavioral) with peers and mentors.",
+    "type": "GOAL",
+    "targetDate": "2027-06-18T00:00:00.000Z",
+    "completed": false,
+    "order": 4
+  },
+  {
+    "id": "principle-1",
+    "title": "Learn by Building",
+    "description": "Always apply theoretical knowledge through practical projects. Every concept should have a corresponding implementation.",
+    "type": "PRINCIPLE",
+    "targetDate": null,
+    "completed": false,
+    "order": 1
+  },
+  {
+    "id": "principle-2",
+    "title": "Spaced Repetition",
+    "description": "Use systematic review schedules to reinforce learning and move knowledge from short-term to long-term memory.",
+    "type": "PRINCIPLE",
+    "targetDate": null,
+    "completed": false,
+    "order": 2
+  },
+  {
+    "id": "principle-3",
+    "title": "Teach to Learn",
+    "description": "Explain concepts in writing, through diagrams, and in discussion. True mastery is the ability to teach.",
+    "type": "PRINCIPLE",
+    "targetDate": null,
+    "completed": false,
+    "order": 3
+  },
+  {
+    "id": "principle-4",
+    "title": "Depth Before Breadth",
+    "description": "Focus on achieving depth in core pillars before expanding to adjacent areas. Foundation strength determines ceiling height.",
+    "type": "PRINCIPLE",
+    "targetDate": null,
+    "completed": false,
+    "order": 4
+  },
+  {
+    "id": "career-1",
+    "title": "Engineering Career Roadmap",
+    "description": "Strategic career progression from Senior to Staff Engineer with target companies and preparation milestones.",
+    "type": "GOAL",
+    "targetDate": null,
+    "completed": false,
+    "order": 5
+  }
+]

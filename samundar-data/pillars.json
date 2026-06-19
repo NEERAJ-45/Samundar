@@ -1,0 +1,162 @@
+[
+  {
+    "id": "pillar-dsa",
+    "type": "PILLAR",
+    "name": "Data Structures & Algorithms",
+    "description": "Foundational problem-solving skills using data structures and algorithmic techniques for coding interviews and competitive programming.",
+    "parentId": null,
+    "order": 1
+  },
+  {
+    "id": "pillar-system-design",
+    "type": "PILLAR",
+    "name": "System Design",
+    "description": "Architecting scalable, reliable, and maintainable distributed systems for real-world applications.",
+    "parentId": null,
+    "order": 2
+  },
+  {
+    "id": "pillar-java",
+    "type": "PILLAR",
+    "name": "Java",
+    "description": "Deep understanding of the Java programming language, its ecosystem, and runtime environment.",
+    "parentId": null,
+    "order": 3
+  },
+  {
+    "id": "pillar-spring-boot",
+    "type": "PILLAR",
+    "name": "Spring Boot",
+    "description": "Building production-grade Spring-based applications with Spring Boot, Data, Security, and Cloud.",
+    "parentId": null,
+    "order": 4
+  },
+  {
+    "id": "pillar-dbms",
+    "type": "PILLAR",
+    "name": "Database Management Systems",
+    "description": "Relational and NoSQL databases, query optimization, indexing, and data modeling principles.",
+    "parentId": null,
+    "order": 5
+  },
+  {
+    "id": "pillar-os",
+    "type": "PILLAR",
+    "name": "Operating Systems",
+    "description": "Core OS concepts including process management, memory management, file systems, and concurrency.",
+    "parentId": null,
+    "order": 6
+  },
+  {
+    "id": "pillar-cn",
+    "type": "PILLAR",
+    "name": "Computer Networks",
+    "description": "Networking fundamentals, protocols, transport layer, and network security.",
+    "parentId": null,
+    "order": 7
+  },
+  {
+    "id": "pillar-distributed-systems",
+    "type": "PILLAR",
+    "name": "Distributed Systems",
+    "description": "Consistency models, distributed storage, consensus algorithms, and message-passing architectures.",
+    "parentId": null,
+    "order": 8
+  },
+  {
+    "id": "pillar-react",
+    "type": "PILLAR",
+    "name": "React",
+    "description": "Building modern user interfaces with React, hooks, state management, and the React ecosystem.",
+    "parentId": null,
+    "order": 9
+  },
+  {
+    "id": "pillar-frontend",
+    "type": "PILLAR",
+    "name": "Frontend Architecture",
+    "description": "Frontend engineering including HTML, CSS, TypeScript, build tools, and testing strategies.",
+    "parentId": null,
+    "order": 10
+  },
+  {
+    "id": "pillar-docker",
+    "type": "PILLAR",
+    "name": "Docker",
+    "description": "Containerization with Docker, image management, Compose, and container best practices.",
+    "parentId": null,
+    "order": 11
+  },
+  {
+    "id": "pillar-kubernetes",
+    "type": "PILLAR",
+    "name": "Kubernetes",
+    "description": "Orchestrating containerized applications with Kubernetes, pods, services, and deployments.",
+    "parentId": null,
+    "order": 12
+  },
+  {
+    "id": "pillar-aws",
+    "type": "PILLAR",
+    "name": "AWS",
+    "description": "Amazon Web Services cloud platform including compute, storage, networking, and serverless offerings.",
+    "parentId": null,
+    "order": 13
+  },
+  {
+    "id": "pillar-devops",
+    "type": "PILLAR",
+    "name": "DevOps",
+    "description": "CI/CD pipelines, monitoring, infrastructure as code, and version control practices.",
+    "parentId": null,
+    "order": 14
+  },
+  {
+    "id": "pillar-security",
+    "type": "PILLAR",
+    "name": "Security",
+    "description": "Application and network security, cryptography, identity management, and secure coding practices.",
+    "parentId": null,
+    "order": 15
+  },
+  {
+    "id": "pillar-ai",
+    "type": "PILLAR",
+    "name": "AI Engineering",
+    "description": "Machine learning fundamentals, LLMs, prompt engineering, AI agents, and MLOps.",
+    "parentId": null,
+    "order": 16
+  },
+  {
+    "id": "pillar-software-architecture",
+    "type": "PILLAR",
+    "name": "Software Architecture",
+    "description": "Design patterns, architectural patterns, domain-driven design, and clean architecture principles.",
+    "parentId": null,
+    "order": 17
+  },
+  {
+    "id": "pillar-projects",
+    "type": "PILLAR",
+    "name": "Projects",
+    "description": "End-to-end project development including planning, code quality, documentation, and deployment.",
+    "parentId": null,
+    "order": 18
+  },
+  {
+    "id": "pillar-interview-prep",
+    "type": "PILLAR",
+    "name": "Interview Preparation",
+    "description": "Structured preparation for technical interviews including DSA, system design, and behavioral rounds.",
+    "parentId": null,
+    "order": 19
+  },
+  {
+    "id": "pillar-books-research",
+    "type": "PILLAR",
+    "name": "Books & Research",
+    "description": "Tracking technical books, research papers, and continuous learning through reading.",
+    "parentId": null,
+    "order": 20
+  }
+]

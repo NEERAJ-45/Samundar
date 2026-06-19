@@ -1,0 +1,466 @@
+[
+  {
+    "id": "domain-arrays-strings",
+    "type": "DOMAIN",
+    "name": "Arrays & Strings",
+    "description": "Core array manipulations, sliding window, two-pointer techniques, and string algorithms.",
+    "parentId": "pillar-dsa",
+    "order": 1
+  },
+  {
+    "id": "domain-linked-lists-trees",
+    "type": "DOMAIN",
+    "name": "Linked Lists & Trees",
+    "description": "Singly and doubly linked lists, binary trees, BSTs, tree traversals, and tree-based algorithms.",
+    "parentId": "pillar-dsa",
+    "order": 2
+  },
+  {
+    "id": "domain-graphs",
+    "type": "DOMAIN",
+    "name": "Graphs",
+    "description": "Graph representations, BFS, DFS, shortest paths, MST, and topological sorting.",
+    "parentId": "pillar-dsa",
+    "order": 3
+  },
+  {
+    "id": "domain-dynamic-programming",
+    "type": "DOMAIN",
+    "name": "Dynamic Programming",
+    "description": "Memoization, tabulation, knapsack, LCS, LIS, and DP on trees and graphs.",
+    "parentId": "pillar-dsa",
+    "order": 4
+  },
+  {
+    "id": "domain-recursion-backtracking",
+    "type": "DOMAIN",
+    "name": "Recursion & Backtracking",
+    "description": "Recursive problem-solving, permutations, combinations, subset generation, and constraint satisfaction.",
+    "parentId": "pillar-dsa",
+    "order": 5
+  },
+  {
+    "id": "domain-sorting-searching",
+    "type": "DOMAIN",
+    "name": "Sorting & Searching",
+    "description": "Comparison-based and linear-time sorting, binary search variants, and search algorithms.",
+    "parentId": "pillar-dsa",
+    "order": 6
+  },
+  {
+    "id": "domain-design-fundamentals",
+    "type": "DOMAIN",
+    "name": "Design Fundamentals",
+    "description": "Load balancers, caching, CDNs, proxies, and horizontal vs vertical scaling.",
+    "parentId": "pillar-system-design",
+    "order": 1
+  },
+  {
+    "id": "domain-scalability-patterns",
+    "type": "DOMAIN",
+    "name": "Scalability Patterns",
+    "description": "Sharding, partitioning, replication, consistent hashing, and rate limiting.",
+    "parentId": "pillar-system-design",
+    "order": 2
+  },
+  {
+    "id": "domain-database-design-sd",
+    "type": "DOMAIN",
+    "name": "Database Design",
+    "description": "Schema design, indexing strategies, read replicas, and data partitioning approaches.",
+    "parentId": "pillar-system-design",
+    "order": 3
+  },
+  {
+    "id": "domain-api-design",
+    "type": "DOMAIN",
+    "name": "API Design",
+    "description": "REST, GraphQL, gRPC, API versioning, pagination, and idempotency.",
+    "parentId": "pillar-system-design",
+    "order": 4
+  },
+  {
+    "id": "domain-microservices",
+    "type": "DOMAIN",
+    "name": "Microservices",
+    "description": "Service decomposition, inter-service communication, service mesh, and observability.",
+    "parentId": "pillar-system-design",
+    "order": 5
+  },
+  {
+    "id": "domain-core-java",
+    "type": "DOMAIN",
+    "name": "Core Java",
+    "description": "Language syntax, generics, exception handling, lambdas, streams, and I/O.",
+    "parentId": "pillar-java",
+    "order": 1
+  },
+  {
+    "id": "domain-collections-framework",
+    "type": "DOMAIN",
+    "name": "Collections Framework",
+    "description": "List, Set, Map, Queue, Deque implementations, sorting, and concurrent collections.",
+    "parentId": "pillar-java",
+    "order": 2
+  },
+  {
+    "id": "domain-multithreading",
+    "type": "DOMAIN",
+    "name": "Multithreading & Concurrency",
+    "description": "Thread lifecycle, synchronization, locks, executors, and CompletableFuture.",
+    "parentId": "pillar-java",
+    "order": 3
+  },
+  {
+    "id": "domain-jvm-internals",
+    "type": "DOMAIN",
+    "name": "JVM Internals",
+    "description": "Class loading, memory model, garbage collection, bytecode, and JIT compilation.",
+    "parentId": "pillar-java",
+    "order": 4
+  },
+  {
+    "id": "domain-spring-core-data",
+    "type": "DOMAIN",
+    "name": "Spring Core & Data",
+    "description": "IoC container, dependency injection, Spring Data JPA, and transaction management.",
+    "parentId": "pillar-spring-boot",
+    "order": 1
+  },
+  {
+    "id": "domain-spring-security",
+    "type": "DOMAIN",
+    "name": "Spring Security",
+    "description": "Authentication, authorization, JWT, OAuth2, method security, and CSRF protection.",
+    "parentId": "pillar-spring-boot",
+    "order": 2
+  },
+  {
+    "id": "domain-spring-cloud",
+    "type": "DOMAIN",
+    "name": "Spring Cloud",
+    "description": "Service discovery, config server, circuit breakers, API gateways, and distributed tracing.",
+    "parentId": "pillar-spring-boot",
+    "order": 3
+  },
+  {
+    "id": "domain-sql-optimization",
+    "type": "DOMAIN",
+    "name": "SQL & Query Optimization",
+    "description": "Complex queries, joins, subqueries, window functions, indexing, and execution plans.",
+    "parentId": "pillar-dbms",
+    "order": 1
+  },
+  {
+    "id": "domain-nosql",
+    "type": "DOMAIN",
+    "name": "NoSQL Databases",
+    "description": "Document stores, key-value stores, column families, graph databases, and use case selection.",
+    "parentId": "pillar-dbms",
+    "order": 2
+  },
+  {
+    "id": "domain-database-internals",
+    "type": "DOMAIN",
+    "name": "Database Internals",
+    "description": "B-trees, LSM trees, ACID, MVCC, isolation levels, and replication strategies.",
+    "parentId": "pillar-dbms",
+    "order": 3
+  },
+  {
+    "id": "domain-process-memory",
+    "type": "DOMAIN",
+    "name": "Process & Memory Management",
+    "description": "Process states, scheduling algorithms, virtual memory, paging, and segmentation.",
+    "parentId": "pillar-os",
+    "order": 1
+  },
+  {
+    "id": "domain-file-systems",
+    "type": "DOMAIN",
+    "name": "File Systems",
+    "description": "File system architecture, inodes, directory structure, mounting, and storage allocation.",
+    "parentId": "pillar-os",
+    "order": 2
+  },
+  {
+    "id": "domain-concurrency-os",
+    "type": "DOMAIN",
+    "name": "Concurrency & Synchronization",
+    "description": "Threads, mutexes, semaphores, deadlocks, and classical synchronization problems.",
+    "parentId": "pillar-os",
+    "order": 3
+  },
+  {
+    "id": "domain-networking-fundamentals",
+    "type": "DOMAIN",
+    "name": "Networking Fundamentals",
+    "description": "OSI and TCP/IP models, IP addressing, routing, ARP, and DNS.",
+    "parentId": "pillar-cn",
+    "order": 1
+  },
+  {
+    "id": "domain-transport-application",
+    "type": "DOMAIN",
+    "name": "Transport & Application Layer",
+    "description": "TCP, UDP, flow control, congestion control, HTTP/2, HTTP/3, and WebSockets.",
+    "parentId": "pillar-cn",
+    "order": 2
+  },
+  {
+    "id": "domain-network-security",
+    "type": "DOMAIN",
+    "name": "Network Security",
+    "description": "Firewalls, TLS/SSL, VPNs, DDoS mitigation, and secure network architecture.",
+    "parentId": "pillar-cn",
+    "order": 3
+  },
+  {
+    "id": "domain-cap-consistency",
+    "type": "DOMAIN",
+    "name": "CAP Theorem & Consistency",
+    "description": "CAP theorem, PACELC, consistency models, quorums, and conflict resolution.",
+    "parentId": "pillar-distributed-systems",
+    "order": 1
+  },
+  {
+    "id": "domain-distributed-storage",
+    "type": "DOMAIN",
+    "name": "Distributed Storage",
+    "description": "Distributed file systems, key-value stores, consensus algorithms, and replication.",
+    "parentId": "pillar-distributed-systems",
+    "order": 2
+  },
+  {
+    "id": "domain-message-queues",
+    "type": "DOMAIN",
+    "name": "Message Queues",
+    "description": "Kafka, RabbitMQ, pub-sub patterns, event sourcing, and stream processing.",
+    "parentId": "pillar-distributed-systems",
+    "order": 3
+  },
+  {
+    "id": "domain-react-core-state",
+    "type": "DOMAIN",
+    "name": "React Core & State",
+    "description": "Components, hooks, context, refs, and state management patterns in React.",
+    "parentId": "pillar-react",
+    "order": 1
+  },
+  {
+    "id": "domain-react-ecosystem",
+    "type": "DOMAIN",
+    "name": "React Ecosystem",
+    "description": "Next.js, React Router, React Query, Form libraries, and component libraries.",
+    "parentId": "pillar-react",
+    "order": 2
+  },
+  {
+    "id": "domain-react-performance",
+    "type": "DOMAIN",
+    "name": "React Performance",
+    "description": "Memoization, code splitting, lazy loading, virtualization, and rendering optimization.",
+    "parentId": "pillar-react",
+    "order": 3
+  },
+  {
+    "id": "domain-html-css-js",
+    "type": "DOMAIN",
+    "name": "HTML, CSS & JavaScript",
+    "description": "Semantic HTML, CSS layouts, animations, ES6+, modules, and browser APIs.",
+    "parentId": "pillar-frontend",
+    "order": 1
+  },
+  {
+    "id": "domain-typescript",
+    "type": "DOMAIN",
+    "name": "TypeScript",
+    "description": "Type system, generics, utility types, advanced patterns, and TypeScript configuration.",
+    "parentId": "pillar-frontend",
+    "order": 2
+  },
+  {
+    "id": "domain-build-tools-testing",
+    "type": "DOMAIN",
+    "name": "Build Tools & Testing",
+    "description": "Webpack, Vite, ESLint, Prettier, Jest, Testing Library, and E2E testing.",
+    "parentId": "pillar-frontend",
+    "order": 3
+  },
+  {
+    "id": "domain-docker-fundamentals",
+    "type": "DOMAIN",
+    "name": "Docker Fundamentals",
+    "description": "Dockerfile, images, containers, volumes, networking, and Docker Compose.",
+    "parentId": "pillar-docker",
+    "order": 1
+  },
+  {
+    "id": "domain-container-best-practices",
+    "type": "DOMAIN",
+    "name": "Container Best Practices",
+    "description": "Multi-stage builds, image optimization, security scanning, and registry management.",
+    "parentId": "pillar-docker",
+    "order": 2
+  },
+  {
+    "id": "domain-k8s-fundamentals",
+    "type": "DOMAIN",
+    "name": "Kubernetes Fundamentals",
+    "description": "Pods, deployments, services, ConfigMaps, secrets, and namespaces.",
+    "parentId": "pillar-kubernetes",
+    "order": 1
+  },
+  {
+    "id": "domain-k8s-operations",
+    "type": "DOMAIN",
+    "name": "Kubernetes Operations",
+    "description": "Ingress, Helm, operators, autoscaling, persistent volumes, and cluster management.",
+    "parentId": "pillar-kubernetes",
+    "order": 2
+  },
+  {
+    "id": "domain-aws-compute-storage",
+    "type": "DOMAIN",
+    "name": "AWS Compute & Storage",
+    "description": "EC2, Lambda, S3, EBS, EFS, and storage lifecycle management.",
+    "parentId": "pillar-aws",
+    "order": 1
+  },
+  {
+    "id": "domain-aws-networking-serverless",
+    "type": "DOMAIN",
+    "name": "AWS Networking & Serverless",
+    "description": "VPC, Route 53, CloudFront, API Gateway, DynamoDB, and Step Functions.",
+    "parentId": "pillar-aws",
+    "order": 2
+  },
+  {
+    "id": "domain-cicd",
+    "type": "DOMAIN",
+    "name": "CI/CD",
+    "description": "GitHub Actions, Jenkins, pipeline design, automated testing, and deployment strategies.",
+    "parentId": "pillar-devops",
+    "order": 1
+  },
+  {
+    "id": "domain-monitoring-iac",
+    "type": "DOMAIN",
+    "name": "Monitoring & Infrastructure as Code",
+    "description": "Prometheus, Grafana, Terraform, Ansible, log aggregation, and alerting.",
+    "parentId": "pillar-devops",
+    "order": 2
+  },
+  {
+    "id": "domain-git-version-control",
+    "type": "DOMAIN",
+    "name": "Git & Version Control",
+    "description": "Branching strategies, rebasing, merging, GitHub workflows, and Git internals.",
+    "parentId": "pillar-devops",
+    "order": 3
+  },
+  {
+    "id": "domain-app-network-security",
+    "type": "DOMAIN",
+    "name": "Application & Network Security",
+    "description": "OWASP Top 10, secure coding, input validation, authN/authZ, and penetration testing.",
+    "parentId": "pillar-security",
+    "order": 1
+  },
+  {
+    "id": "domain-cryptography-iam",
+    "type": "DOMAIN",
+    "name": "Cryptography & IAM",
+    "description": "Symmetric and asymmetric encryption, hashing, digital signatures, and identity management.",
+    "parentId": "pillar-security",
+    "order": 2
+  },
+  {
+    "id": "domain-ml-llm",
+    "type": "DOMAIN",
+    "name": "ML & LLMs",
+    "description": "Supervised and unsupervised learning, neural networks, transformers, and prompt engineering.",
+    "parentId": "pillar-ai",
+    "order": 1
+  },
+  {
+    "id": "domain-ai-agents-mlops",
+    "type": "DOMAIN",
+    "name": "AI Agents & MLOps",
+    "description": "Autonomous agents, RAG, model deployment, monitoring, and ML pipeline orchestration.",
+    "parentId": "pillar-ai",
+    "order": 2
+  },
+  {
+    "id": "domain-design-patterns",
+    "type": "DOMAIN",
+    "name": "Design Patterns",
+    "description": "Creational, structural, and behavioral patterns, and their practical applications.",
+    "parentId": "pillar-software-architecture",
+    "order": 1
+  },
+  {
+    "id": "domain-architectural-patterns",
+    "type": "DOMAIN",
+    "name": "Architectural Patterns",
+    "description": "Layered, hexagonal, event-driven, CQRS, and event sourcing architectures.",
+    "parentId": "pillar-software-architecture",
+    "order": 2
+  },
+  {
+    "id": "domain-ddd-clean",
+    "type": "DOMAIN",
+    "name": "DDD & Clean Architecture",
+    "description": "Ubiquitous language, bounded contexts, entities, value objects, and dependency inversion.",
+    "parentId": "pillar-software-architecture",
+    "order": 3
+  },
+  {
+    "id": "domain-project-planning",
+    "type": "DOMAIN",
+    "name": "Project Planning",
+    "description": "Requirements gathering, scope definition, sprint planning, estimation, and risk management.",
+    "parentId": "pillar-projects",
+    "order": 1
+  },
+  {
+    "id": "domain-code-quality-docs",
+    "type": "DOMAIN",
+    "name": "Code Quality & Documentation",
+    "description": "Code reviews, static analysis, refactoring, technical writing, and API documentation.",
+    "parentId": "pillar-projects",
+    "order": 2
+  },
+  {
+    "id": "domain-deployment-ops",
+    "type": "DOMAIN",
+    "name": "Deployment & Operations",
+    "description": "Release management, rollback strategies, blue-green deployment, and incident response.",
+    "parentId": "pillar-projects",
+    "order": 3
+  },
+  {
+    "id": "domain-dsa-practice",
+    "type": "DOMAIN",
+    "name": "DSA Practice",
+    "description": "Pattern-based problem solving, timed mock interviews, and company-specific preparation.",
+    "parentId": "pillar-interview-prep",
+    "order": 1
+  },
+  {
+    "id": "domain-sd-behavioral",
+    "type": "DOMAIN",
+    "name": "System Design & Behavioral Prep",
+    "description": "Whiteboarding system designs, STAR method, leadership principles, and negotiation.",
+    "parentId": "pillar-interview-prep",
+    "order": 2
+  },
+  {
+    "id": "domain-books-research-tracking",
+    "type": "DOMAIN",
+    "name": "Books & Research Tracking",
+    "description": "Tracking reading progress, synthesizing knowledge, and maintaining a research backlog.",
+    "parentId": "pillar-books-research",
+    "order": 1
+  }
+]

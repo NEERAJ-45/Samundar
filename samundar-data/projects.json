@@ -1,0 +1,151 @@
+[
+  {
+    "id": "proj-notification-service",
+    "name": "Notification Service",
+    "description": "A scalable, multi-channel notification service supporting email, SMS, push notifications, and in-app alerts with templating, delivery tracking, and retry logic.",
+    "vision": "Build a reliable notification infrastructure that guarantees delivery across all channels with exactly-once semantics and real-time tracking.",
+    "architecture": "Microservices architecture with Kafka for event ingestion, dedicated workers per channel (SES for email, SNS for SMS, Firebase for push), PostgreSQL for delivery logs, and Redis for rate limiting and deduplication.",
+    "features": [
+      "Multi-channel delivery (email, SMS, push, in-app)",
+      "Template engine with variable substitution",
+      "Delivery status tracking and webhook callbacks",
+      "Rate limiting per channel and per recipient",
+      "Retry with exponential backoff and dead-letter queues",
+      "Bulk notification scheduling",
+      "Recipient preferences management",
+      "Real-time delivery analytics dashboard"
+    ],
+    "technologies": [
+      "Java 21",
+      "Spring Boot 3",
+      "Apache Kafka",
+      "PostgreSQL",
+      "Redis",
+      "Docker",
+      "Kubernetes",
+      "Terraform",
+      "AWS SES",
+      "AWS SNS",
+      "Firebase Cloud Messaging"
+    ],
+    "linkedConceptIds": [
+      "mod-kafka",
+      "mod-rest-api",
+      "domain-design-fundamentals",
+      "domain-scalability-patterns",
+      "domain-spring-core-data",
+      "mod-dockerfile",
+      "mod-pods-deployments",
+      "mod-terraform"
+    ],
+    "status": "IN_PROGRESS",
+    "lessons": [
+      "Designing for idempotency early prevents duplicate delivery issues",
+      "Channel health monitoring is critical for failover logic"
+    ],
+    "deploymentStrategy": "Blue-green deployment on Kubernetes with canary analysis for notification channels",
+    "productionIncidents": [],
+    "createdAt": "2026-01-15T08:00:00.000Z",
+    "updatedAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "proj-ecommerce-platform",
+    "description": "A full-stack e-commerce platform with product catalog, shopping cart, order management, payment processing, and inventory management.",
+    "name": "E-Commerce Platform",
+    "vision": "Create a modular, event-driven e-commerce backbone that supports multi-tenant deployments and handles peak traffic without degradation.",
+    "architecture": "Modular monolith with clear bounded contexts (Catalog, Cart, Orders, Payments, Inventory). Event-driven communication between modules via RabbitMQ. PostgreSQL for transactional data, Elasticsearch for product search, and Redis for session and cart caching.",
+    "features": [
+      "Product catalog with categories, variants, and search",
+      "Shopping cart with persistent and guest modes",
+      "Order lifecycle management (placement, fulfillment, delivery)",
+      "Payment gateway integration (Stripe, PayPal)",
+      "Real-time inventory tracking and reservation",
+      "Admin dashboard for product and order management",
+      "Discount and coupon engine",
+      "User reviews and ratings"
+    ],
+    "technologies": [
+      "Java 21",
+      "Spring Boot 3",
+      "RabbitMQ",
+      "PostgreSQL",
+      "Elasticsearch",
+      "Redis",
+      "React",
+      "Next.js",
+      "Docker",
+      "Kubernetes",
+      "Stripe API"
+    ],
+    "linkedConceptIds": [
+      "mod-rabbitmq",
+      "domain-ddd-clean",
+      "mod-clean-architecture",
+      "domain-sql-optimization",
+      "mod-advanced-sql",
+      "mod-rest-api",
+      "mod-react-hooks",
+      "mod-nextjs",
+      "mod-docker-compose",
+      "mod-services-ingress",
+      "domain-cicd"
+    ],
+    "status": "IN_PROGRESS",
+    "lessons": [
+      "Eventual consistency in inventory requires careful UX to avoid overselling",
+      "Bounded contexts help keep the monolith maintainable as features grow"
+    ],
+    "deploymentStrategy": "Incremental rollout with feature flags and database migration automation",
+    "productionIncidents": [],
+    "createdAt": "2026-03-01T09:00:00.000Z",
+    "updatedAt": "2026-06-18T10:00:00.000Z"
+  },
+  {
+    "id": "proj-task-management-system",
+    "description": "A real-time collaborative task management system with Kanban boards, sprint planning, time tracking, and team analytics.",
+    "name": "Task Management System",
+    "vision": "Deliver an intuitive, high-performance project management tool that supports agile methodologies with real-time collaboration.",
+    "architecture": "React frontend with WebSocket connections for real-time updates. Spring Boot backend with PostgreSQL for persistence. Event sourcing for task activity log and CQRS for separating read and write models.",
+    "features": [
+      "Kanban boards with drag-and-drop",
+      "Sprint planning and backlog management",
+      "Real-time collaboration via WebSockets",
+      "Time tracking and timesheet reports",
+      "Team workload and velocity analytics",
+      "File attachments and comments on tasks",
+      "Custom workflow states",
+      "Email and in-app notifications for task updates"
+    ],
+    "technologies": [
+      "React 19",
+      "TypeScript",
+      "Next.js 16",
+      "Spring Boot 3",
+      "PostgreSQL",
+      "WebSocket (STOMP)",
+      "Redis",
+      "Docker",
+      "GitHub Actions"
+    ],
+    "linkedConceptIds": [
+      "mod-react-hooks",
+      "mod-state-management",
+      "mod-nextjs",
+      "mod-websockets",
+      "mod-rest-api",
+      "domain-ddd-clean",
+      "mod-clean-architecture",
+      "domain-cicd",
+      "mod-github-actions",
+      "mod-dockerfile",
+      "domain-html-css-js",
+      "domain-typescript"
+    ],
+    "status": "IDEA",
+    "lessons": [],
+    "deploymentStrategy": "Containerized deployment on single VM with Docker Compose, migrating to Kubernetes as team grows",
+    "productionIncidents": [],
+    "createdAt": "2026-06-10T14:00:00.000Z",
+    "updatedAt": "2026-06-18T10:00:00.000Z"
+  }
+]
