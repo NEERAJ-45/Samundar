@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { Suspense, useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { PatternCard } from "@/components/patterns/PatternCard";
 import { ProblemsTable } from "@/components/patterns/ProblemsTable";
 import { Loader2, Search } from "lucide-react";
@@ -13,6 +14,7 @@ interface ProblemItem {
 
 interface PatternData {
   name: string;
+  description?: string;
   easy: ProblemItem[];
   medium: ProblemItem[];
   hard: ProblemItem[];
@@ -22,11 +24,22 @@ interface PatternsData {
   patterns: Record<string, PatternData>;
 }
 
-export default function PatternsPage() {
+function PatternsContent() {
+  const searchParams = useSearchParams();
   const [data, setData] = useState<PatternsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+
+  const urlPattern = searchParams.get("pattern");
+  useEffect(() => {
+    if (urlPattern && data) {
+      const found = Object.keys(data.patterns).find(
+        (k) => k === urlPattern || data.patterns[k].name.toLowerCase().replace(/\s+/g, "-") === urlPattern
+      );
+      if (found) setSelectedKey(found);
+    }
+  }, [urlPattern, data]);
 
   useEffect(() => {
     fetch("/api/patterns")
@@ -54,6 +67,7 @@ export default function PatternsPage() {
         medium: p.medium.length,
         hard: p.hard.length,
         total: p.easy.length + p.medium.length + p.hard.length,
+        description: p.description,
       }));
   }, [data, search]);
 
@@ -87,17 +101,17 @@ export default function PatternsPage() {
               DSA Patterns
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {patternEntries.length} patterns &middot; 30 problems each
+              {patternEntries.length} patterns
             </p>
           </div>
 
-          <div className="relative mb-6">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="mb-6 flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 transition-colors focus-within:border-primary/50 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/20">
+            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search patterns..."
-              className="w-full rounded-lg border border-border bg-muted/40 py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary/50 focus:bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full bg-transparent py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
           </div>
 
@@ -107,6 +121,7 @@ export default function PatternsPage() {
                 key={entry.key}
                 name={entry.name}
                 total={entry.total}
+                description={entry.description}
                 selected={false}
                 onSelect={() => setSelectedKey(entry.key)}
               />
@@ -121,5 +136,20 @@ export default function PatternsPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function PatternsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-full items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <p className="text-sm">Loading patterns...</p>
+        </div>
+      </div>
+    }>
+      <PatternsContent />
+    </Suspense>
   );
 }

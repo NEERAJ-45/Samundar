@@ -31,7 +31,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Command Center", href: "/command-center", icon: LayoutDashboard },
-  { label: "DSA Patterns", href: "/knowledge-graph", icon: GitBranch },
+  { label: "DSA Patterns", href: "/patterns", icon: GitBranch },
   { label: "Learning Roadmaps", href: "/roadmaps", icon: Map },
   { label: "Mastery Tracking", href: "/mastery", icon: Target },
   { label: "Revision Engine", href: "/revision", icon: RefreshCw },

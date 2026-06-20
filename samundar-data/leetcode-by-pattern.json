@@ -157,7 +157,8 @@
           "title": "Candy",
           "link": "https://leetcode.com/problems/candy/"
         }
-      ]
+      ],
+      "description": "Use two pointers to traverse data structures efficiently, often on sorted arrays or linked lists."
     },
     "fast-slow-pointers": {
       "name": "Fast & Slow Pointers",
@@ -316,7 +317,8 @@
           "title": "Copy List with Random Pointer",
           "link": "https://leetcode.com/problems/copy-list-with-random-pointer/"
         }
-      ]
+      ],
+      "description": "Detect cycles in linked lists using pointers moving at different speeds."
     },
     "merge-intervals": {
       "name": "Merge Intervals",
@@ -475,7 +477,8 @@
           "title": "The Skyline Problem",
           "link": "https://leetcode.com/problems/the-skyline-problem/"
         }
-      ]
+      ],
+      "description": "Merge overlapping intervals to produce non-overlapping ranges."
     },
     "cyclic-sort": {
       "name": "Cyclic Sort",
@@ -634,7 +637,8 @@
           "title": "Minimum Difference Between Largest and Smallest Value in Three Moves",
           "link": "https://leetcode.com/problems/minimum-difference-between-largest-and-smallest-value-in-three-moves/"
         }
-      ]
+      ],
+      "description": "Place each number at its correct index by swapping, used for arrays with numbers in a continuous range."
     },
     "linked-list-reversal": {
       "name": "Linked List Reversal",
@@ -793,7 +797,8 @@
           "title": "All O`one Data Structure",
           "link": "https://leetcode.com/problems/all-o-one-data-structure/"
         }
-      ]
+      ],
+      "description": "Reverse linked list pointers in-place — full, partial, or per group."
     },
     "monotonic-stack": {
       "name": "Monotonic Stack",
@@ -952,7 +957,8 @@
           "title": "Steps to Make Array Non-decreasing",
           "link": "https://leetcode.com/problems/steps-to-make-array-non-decreasing/"
         }
-      ]
+      ],
+      "description": "Maintain a stack of elements in increasing/decreasing order for next-greater-element type problems."
     },
     "prefix-sum": {
       "name": "Prefix Sum",
@@ -1111,7 +1117,8 @@
           "title": "Minimum Interval to Include Each Query",
           "link": "https://leetcode.com/problems/minimum-interval-to-include-each-query/"
         }
-      ]
+      ],
+      "description": "Precompute cumulative sums to answer range-sum queries in constant time."
     },
     "kadanes-algorithm": {
       "name": "Kadane's Algorithm",
@@ -1270,7 +1277,8 @@
           "title": "Substring With Largest Variance",
           "link": "https://leetcode.com/problems/substring-with-largest-variance/"
         }
-      ]
+      ],
+      "description": "Find the maximum subarray sum in linear time by tracking running and best sums."
     },
     "binary-search": {
       "name": "Binary Search",
@@ -1429,7 +1437,8 @@
           "title": "Ugly Number III",
           "link": "https://leetcode.com/problems/ugly-number-iii/"
         }
-      ]
+      ],
+      "description": "Efficiently find a target in a sorted array by repeatedly halving the search space."
     },
     "binary-search-on-answer": {
       "name": "Binary Search on Answer",
@@ -1588,7 +1597,8 @@
           "title": "Divide Chocolate",
           "link": "https://leetcode.com/problems/divide-chocolate/"
         }
-      ]
+      ],
+      "description": "Search over a range of possible answers instead of array indices, used for minimax problems."
     },
     "top-k-elements": {
       "name": "Heap / Priority Queue – Top K Elements",
@@ -1747,7 +1757,8 @@
           "title": "The Skyline Problem",
           "link": "https://leetcode.com/problems/the-skyline-problem/"
         }
-      ]
+      ],
+      "description": "Use a heap (priority queue) to keep track of the top or bottom k elements in a stream."
     },
     "two-heaps": {
       "name": "Two Heaps",
@@ -1906,7 +1917,8 @@
           "title": "The Skyline Problem",
           "link": "https://leetcode.com/problems/the-skyline-problem/"
         }
-      ]
+      ],
+      "description": "Maintain a min-heap and a max-heap to efficiently find medians or sliding window medians."
     },
     "k-way-merge": {
       "name": "K-way Merge",
@@ -2065,7 +2077,8 @@
           "title": "The Skyline Problem",
           "link": "https://leetcode.com/problems/the-skyline-problem/"
         }
-      ]
+      ],
+      "description": "Merge k sorted lists or arrays into one sorted output using a min-heap."
     },
     "subsets": {
       "name": "Subsets",
@@ -2224,7 +2237,8 @@
           "title": "Number of Squareful Arrays",
           "link": "https://leetcode.com/problems/number-of-squareful-arrays/"
         }
-      ]
+      ],
+      "description": "Generate all possible subsets of a set using recursion, bitmasking, or BFS."
     },
     "permutations": {
       "name": "Permutations",
@@ -2383,7 +2397,8 @@
           "title": "Unique Paths III",
           "link": "https://leetcode.com/problems/unique-paths-iii/"
         }
-      ]
+      ],
+      "description": "Generate all permutations of a given set of elements."
     },
     "combinations": {
       "name": "Combinations / Combination Sum",
@@ -2542,7 +2557,8 @@
           "title": "Word Pattern II",
           "link": "https://leetcode.com/problems/word-pattern-ii/"
         }
-      ]
+      ],
+      "description": "Generate all combinations or combination sums that satisfy a target condition."
     },
     "backtracking": {
       "name": "Backtracking",
@@ -2701,7 +2717,8 @@
           "title": "Word Ladder II",
           "link": "https://leetcode.com/problems/word-ladder-ii/"
         }
-      ]
+      ],
+      "description": "Explore all candidates via state-space recursion, pruning invalid branches."
     },
     "tree-bfs": {
       "name": "Tree BFS",
@@ -2860,7 +2877,8 @@
           "title": "Closest Binary Search Tree Value II",
           "link": "https://leetcode.com/problems/closest-binary-search-tree-value-ii/"
         }
-      ]
+      ],
+      "description": "Level-order traversal of a tree using a queue."
     },
     "tree-dfs": {
       "name": "Tree DFS",
@@ -3019,7 +3037,8 @@
           "title": "Recover a Tree From Preorder Traversal",
           "link": "https://leetcode.com/problems/recover-a-tree-from-preorder-traversal/"
         }
-      ]
+      ],
+      "description": "Traverse a tree depth-first — preorder, inorder, or postorder."
     },
     "lowest-common-ancestor": {
       "name": "Lowest Common Ancestor",
@@ -3178,7 +3197,8 @@
           "title": "Determine if Two Events Have Conflict",
           "link": "https://leetcode.com/problems/determine-if-two-events-have-conflict/"
         }
-      ]
+      ],
+      "description": "Find the deepest common ancestor of two nodes in a binary tree."
     },
     "trie": {
       "name": "Trie",
@@ -3337,7 +3357,8 @@
           "title": "Maximum XOR With an Element From Array",
           "link": "https://leetcode.com/problems/maximum-xor-with-an-element-from-array/"
         }
-      ]
+      ],
+      "description": "Prefix tree for fast string insertion, search, and prefix lookup."
     },
     "graph-bfs": {
       "name": "Graph BFS",
@@ -3496,7 +3517,8 @@
           "title": "Bus Routes",
           "link": "https://leetcode.com/problems/bus-routes/"
         }
-      ]
+      ],
+      "description": "Breadth-first traversal of a graph, useful for shortest path in unweighted graphs."
     },
     "graph-dfs": {
       "name": "Graph DFS",
@@ -3655,7 +3677,8 @@
           "title": "Number of Squareful Arrays",
           "link": "https://leetcode.com/problems/number-of-squareful-arrays/"
         }
-      ]
+      ],
+      "description": "Depth-first traversal of a graph for connectivity, cycle detection, and path finding."
     },
     "topological-sort": {
       "name": "Topological Sort",
@@ -3814,7 +3837,8 @@
           "title": "Strange Printer II",
           "link": "https://leetcode.com/problems/strange-printer-ii/"
         }
-      ]
+      ],
+      "description": "Order nodes in a DAG linearly using Kahn's algorithm or DFS."
     },
     "union-find": {
       "name": "Union Find (Disjoint Set)",
@@ -3973,7 +3997,8 @@
           "title": "Groups of Strings",
           "link": "https://leetcode.com/problems/groups-of-strings/"
         }
-      ]
+      ],
+      "description": "Disjoint-set data structure for efficiently detecting connected components and cycles."
     },
     "dijkstra": {
       "name": "Shortest Path – Dijkstra",
@@ -4132,7 +4157,8 @@
           "title": "Modify Graph Edge Weights",
           "link": "https://leetcode.com/problems/modify-graph-edge-weights/"
         }
-      ]
+      ],
+      "description": "Find shortest paths from a source node to all others in a weighted graph with non-negative edges."
     },
     "minimum-spanning-tree": {
       "name": "Minimum Spanning Tree (Kruskal / Prim)",
@@ -4291,7 +4317,8 @@
           "title": "Detect Cycles in 2D Grid",
           "link": "https://leetcode.com/problems/detect-cycles-in-2d-grid/"
         }
-      ]
+      ],
+      "description": "Connect all nodes in a weighted graph with minimum total edge weight."
     },
     "greedy": {
       "name": "Greedy",
@@ -4450,7 +4477,8 @@
           "title": "Minimum Number of Refueling Stops",
           "link": "https://leetcode.com/problems/minimum-number-of-refueling-stops/"
         }
-      ]
+      ],
+      "description": "Make locally optimal choices at each step to reach a globally optimal solution."
     },
     "dp-1d": {
       "name": "Dynamic Programming – 1D",
@@ -4609,7 +4637,8 @@
           "title": "Minimum Number of Refueling Stops",
           "link": "https://leetcode.com/problems/minimum-number-of-refueling-stops/"
         }
-      ]
+      ],
+      "description": "Solve optimization problems using 1D dynamic programming with overlapping subproblems."
     },
     "knapsack-01": {
       "name": "0/1 Knapsack",
@@ -4768,7 +4797,8 @@
           "title": "Count Special Quadruplets",
           "link": "https://leetcode.com/problems/count-special-quadruplets/"
         }
-      ]
+      ],
+      "description": "Choose items with given weights and values to maximize value without exceeding capacity."
     },
     "dp-grid-2d": {
       "name": "Dynamic Programming – Grid / 2D",
@@ -4927,7 +4957,8 @@
           "title": "Cherry Pickup",
           "link": "https://leetcode.com/problems/cherry-pickup/"
         }
-      ]
+      ],
+      "description": "Solve path-finding and grid-based optimization using 2D dynamic programming."
     },
     "lis": {
       "name": "Longest Increasing Subsequence (LIS)",
@@ -5086,7 +5117,8 @@
           "title": "Longest Increasing Subsequence II",
           "link": "https://leetcode.com/problems/longest-increasing-subsequence-ii/"
         }
-      ]
+      ],
+      "description": "Find the longest subsequence that is strictly increasing."
     },
     "lcs": {
       "name": "Longest Common Subsequence (LCS)",
@@ -5245,7 +5277,8 @@
           "title": "Shortest Common Supersequence",
           "link": "https://leetcode.com/problems/shortest-common-supersequence/"
         }
-      ]
+      ],
+      "description": "Find the longest subsequence common to two strings."
     },
     "bit-manipulation": {
       "name": "Bit Manipulation (XOR / Bitmasking)",
@@ -5404,7 +5437,8 @@
           "title": "Minimum Obstacle Removal to Reach Corner",
           "link": "https://leetcode.com/problems/minimum-obstacle-removal-to-reach-corner/"
         }
-      ]
+      ],
+      "description": "Solve problems using XOR, bit shifting, and bitmasking techniques."
     },
     "string-pattern-matching": {
       "name": "String Pattern Matching (KMP / Rabin–Karp)",
@@ -5563,7 +5597,8 @@
           "title": "Lexicographically Smallest Generated String",
           "link": "https://leetcode.com/problems/lexicographically-smallest-generated-string/"
         }
-      ]
+      ],
+      "description": "Efficiently find occurrences of a pattern in a text using KMP or Rabin-Karp."
     }
   }
 }

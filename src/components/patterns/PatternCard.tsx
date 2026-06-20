@@ -7,6 +7,7 @@ interface PatternCardProps {
   total: number;
   selected: boolean;
   onSelect: () => void;
+  description?: string;
 }
 
 export function PatternCard({
@@ -14,12 +15,13 @@ export function PatternCard({
   total,
   selected,
   onSelect,
+  description,
 }: PatternCardProps) {
   return (
     <button
       onClick={onSelect}
       className={cn(
-        "flex flex-col rounded-lg border p-4 text-left transition-all",
+        "group relative flex flex-col rounded-lg border p-4 text-left transition-all",
         selected
           ? "border-primary bg-primary/5 shadow-sm"
           : "border-border bg-card hover:border-primary/50 hover:shadow-sm"
@@ -27,10 +29,13 @@ export function PatternCard({
     >
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-sm font-semibold text-foreground">{name}</h3>
-        <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-          {total}
-        </span>
       </div>
+      {description && (
+        <div className="pointer-events-none absolute -top-1 left-1/2 z-10 w-64 -translate-x-1/2 -translate-y-full rounded-lg border border-border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-lg opacity-0 transition-opacity group-hover:opacity-100">
+          {description}
+          <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-popover" />
+        </div>
+      )}
     </button>
   );
 }

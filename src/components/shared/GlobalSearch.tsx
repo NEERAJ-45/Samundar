@@ -55,7 +55,7 @@ export function GlobalSearch() {
   const handleSelect = useCallback(
     (item: (typeof allItems)[0]) => {
       setOpen(false);
-      router.push(`/patterns/${item.slug}`);
+      router.push(`/patterns?pattern=${item.slug}`);
     },
     [router]
   );
