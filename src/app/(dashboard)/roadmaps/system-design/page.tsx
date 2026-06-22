@@ -1,0 +1,204 @@
+'use client';
+
+import * as React from 'react';
+import { Clock, ArrowLeft, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Navbar } from '@/components/layout/navbar';
+
+const pillars = [
+  {
+    name: 'System Design Concepts',
+    slug: 'concepts',
+    progress: 48,
+    hours: 140,
+    difficulty: 'Medium-Hard' as const,
+    color: 'from-violet-600 to-violet-400',
+    domains: [
+      { name: 'Databases & Caching', progress: 78, modules: ['Relational DBs', 'Indexing', 'ACID', 'Replication', 'Sharding', 'Cache Patterns', 'Eviction'] },
+      { name: 'System & Infra Principles', progress: 0, modules: ['Async Processing', 'Load Balancers', 'Resiliency', 'DNS', 'CDNs', 'Security', 'DFS'] },
+    ],
+  },
+  {
+    name: 'System Design Problems',
+    slug: 'problems',
+    progress: 0,
+    hours: 110,
+    difficulty: 'Hard' as const,
+    color: 'from-purple-600 to-purple-400',
+    domains: [
+      { name: 'Core System Designs', progress: 0, modules: ['TinyURL', 'Pastebin', 'Instagram', 'Dropbox', 'Messenger', 'Twitter', 'YouTube', 'Rate Limiter'] },
+      { name: 'Advanced System Designs', progress: 0, modules: ['Unique ID', 'Reddit', 'Notification', 'Calendar', 'LeetCode', 'Payment', 'Flash Sale'] },
+    ],
+  },
+];
+
+const difficultyColors: Record<string, string> = {
+  Easy: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  Medium: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+  'Medium-Hard': 'bg-orange-500/15 text-orange-400 border-orange-500/30',
+  Hard: 'bg-red-500/15 text-red-400 border-red-500/30',
+};
+
+function RoadmapCard({
+  pillar,
+}: {
+  pillar: (typeof pillars)[0];
+}) {
+  return (
+    <Link href={`/roadmaps/system-design/${pillar.slug}`} className="block">
+      <Card
+        className="group cursor-pointer border-zinc-800 bg-zinc-900/50 transition-all hover:border-zinc-700 hover:bg-zinc-900"
+      >
+        <CardHeader className="p-5 pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg font-semibold text-zinc-100 group-hover:text-zinc-50 transition-colors">
+                {pillar.name}
+              </CardTitle>
+              <div className="flex items-center gap-3 mt-2">
+                <Badge
+                  variant="secondary"
+                  className={cn('text-xs font-medium border', difficultyColors[pillar.difficulty])}
+                >
+                  {pillar.difficulty}
+                </Badge>
+                <div className="flex items-center gap-1 text-xs text-zinc-400">
+                  <Clock className="h-3 w-3" />
+                  {pillar.hours}h
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 ml-3">
+              <span className="text-sm font-semibold text-zinc-200">{pillar.progress}%</span>
+              <ArrowRight className="h-4 w-4 text-zinc-500 transition-transform group-hover:translate-x-1 group-hover:text-zinc-300" />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-5 pt-0">
+          <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
+            <div
+              className={cn('h-full rounded-full bg-gradient-to-r transition-all duration-500', pillar.color)}
+              style={{ width: `${pillar.progress}%` }}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
+export default function SystemDesignRoadmapPage() {
+  const [progressData, setProgressData] = React.useState({
+    concepts: { overall: 36, databases: 78, infra: 0 },
+    problems: { overall: 0, core: 0, advanced: 0 }
+  });
+
+  React.useEffect(() => {
+    const getCompletedCountInRange = (prefix: string, rangeStart: number, rangeEnd: number) => {
+      try {
+        const raw = localStorage.getItem(`${prefix}-completed`);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        const keys = Object.keys(data).map(Number);
+        return keys.filter(k => k >= rangeStart && k <= rangeEnd).length;
+      } catch {
+        return null;
+      }
+    };
+
+    const getOverallCount = (prefix: string) => {
+      try {
+        const raw = localStorage.getItem(`${prefix}-completed`);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        return Object.keys(data).length;
+      } catch {
+        return null;
+      }
+    };
+
+    const conceptsOverallCount = getOverallCount('system-design-concepts');
+    const conceptsDatabasesCount = getCompletedCountInRange('system-design-concepts', 401, 447);
+    const conceptsInfraCount = getCompletedCountInRange('system-design-concepts', 448, 477);
+
+    const sdConceptsOverall = conceptsOverallCount !== null ? conceptsOverallCount : 37;
+    const sdConceptsDatabases = conceptsDatabasesCount !== null ? conceptsDatabasesCount : 37;
+    const sdConceptsInfra = conceptsInfraCount !== null ? conceptsInfraCount : 0;
+
+    const problemsOverallCount = getOverallCount('system-design-problems');
+    const problemsCoreCount = getCompletedCountInRange('system-design-problems', 501, 515);
+    const problemsAdvancedCount = getCompletedCountInRange('system-design-problems', 516, 527);
+
+    const sdProblemsOverall = problemsOverallCount !== null ? problemsOverallCount : 0;
+    const sdProblemsCore = problemsCoreCount !== null ? problemsCoreCount : 0;
+    const sdProblemsAdvanced = problemsAdvancedCount !== null ? problemsAdvancedCount : 0;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setProgressData({
+      concepts: {
+        overall: Math.round((sdConceptsOverall / 77) * 100),
+        databases: Math.round((sdConceptsDatabases / 47) * 100),
+        infra: Math.round((sdConceptsInfra / 30) * 100),
+      },
+      problems: {
+        overall: Math.round((sdProblemsOverall / 27) * 100),
+        core: Math.round((sdProblemsCore / 15) * 100),
+        advanced: Math.round((sdProblemsAdvanced / 12) * 100),
+      }
+    });
+  }, []);
+
+  const dynamicPillars = React.useMemo(() => {
+    return [
+      {
+        ...pillars[0],
+        progress: progressData.concepts.overall,
+        domains: [
+          { ...pillars[0].domains[0], progress: progressData.concepts.databases },
+          { ...pillars[0].domains[1], progress: progressData.concepts.infra },
+        ]
+      },
+      {
+        ...pillars[1],
+        progress: progressData.problems.overall,
+        domains: [
+          { ...pillars[1].domains[0], progress: progressData.problems.core },
+          { ...pillars[1].domains[1], progress: progressData.problems.advanced },
+        ]
+      }
+    ];
+  }, [progressData]);
+
+  return (
+    <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
+      <Navbar />
+      <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+        <div className="mb-6">
+          <Link
+            href="/roadmaps"
+            className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-200 mb-4 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Roadmaps
+          </Link>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-100">System Design & Architecture</h1>
+          <p className="text-sm text-zinc-500 mt-1">
+            Learn how to design highly scalable, reliable, and fault-tolerant distributed systems.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          {dynamicPillars.map((pillar) => (
+            <RoadmapCard
+              key={pillar.name}
+              pillar={pillar}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
