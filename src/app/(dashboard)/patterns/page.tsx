@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { PatternCard } from "@/components/patterns/PatternCard";
 import { ProblemsTable } from "@/components/patterns/ProblemsTable";
 import { Loader2, Search } from "lucide-react";
-import { LazyAppear } from "@/components/shared/LazyAppear";
 
 interface ProblemItem {
   id: number;
@@ -31,6 +30,24 @@ function PatternsContent() {
   const [loading, setLoading] = useState(true);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [completedVersion, setCompletedVersion] = useState(0);
+  const [completions, setCompletions] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    fetch("/api/db/completions")
+      .then((res) => res.json())
+      .then((d) => {
+        if (d?.data) {
+          const counts: Record<string, number> = {};
+          for (const c of d.data) {
+            const prefix = c.storagePrefix?.replace("completed-", "");
+            if (prefix) counts[prefix] = (counts[prefix] || 0) + 1;
+          }
+          setCompletions(counts);
+        }
+      })
+      .catch(() => {});
+  }, [completedVersion]);
 
   const urlPattern = searchParams.get("pattern");
   useEffect(() => {
@@ -68,9 +85,10 @@ function PatternsContent() {
         medium: p.medium.length,
         hard: p.hard.length,
         total: p.easy.length + p.medium.length + p.hard.length,
+        completed: completions[p.name] || 0,
         description: p.description,
       }));
-  }, [data, search]);
+  }, [data, search, completions]);
 
   const selectedPattern = selectedKey && data ? data.patterns[selectedKey] : null;
 
@@ -93,7 +111,7 @@ function PatternsContent() {
           easy={selectedPattern.easy}
           medium={selectedPattern.medium}
           hard={selectedPattern.hard}
-          onBack={() => setSelectedKey(null)}
+          onBack={() => { setCompletedVersion(v => v + 1); setSelectedKey(null); }}
         />
       ) : (
         <>
@@ -116,23 +134,32 @@ function PatternsContent() {
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {patternEntries.map((entry, index) => (
-              <LazyAppear
-                key={entry.key}
-                delay={(index % 4) * 0.05}
-                yOffset={10}
-                placeholder={<div className="h-[54px] rounded-lg border border-zinc-800 bg-zinc-900/20 animate-pulse" />}
-              >
-                <PatternCard
-                  name={entry.name}
-                  total={entry.total}
-                  description={entry.description}
-                  selected={false}
-                  onSelect={() => setSelectedKey(entry.key)}
-                />
-              </LazyAppear>
-            ))}
+          <div className="overflow-hidden rounded-lg border border-border">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border bg-muted/30">
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground w-12">#</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground w-60 max-w-60">Pattern</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28">Progress</th>
+                  <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground w-20">Total</th>
+                  <th className="px-4 py-2.5 w-12"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {patternEntries.map((entry, index) => (
+                  <PatternCard
+                    key={entry.key}
+                    index={index + 1}
+                    name={entry.name}
+                    total={entry.total}
+                    completed={entry.completed}
+                    description={entry.description}
+                    selected={false}
+                    onSelect={() => setSelectedKey(entry.key)}
+                  />
+                ))}
+              </tbody>
+            </table>
           </div>
 
           {patternEntries.length === 0 && (

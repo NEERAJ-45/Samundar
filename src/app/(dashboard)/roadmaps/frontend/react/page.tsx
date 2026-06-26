@@ -130,7 +130,7 @@ export default function ReactQuestionsPage() {
             Back to Frontend Dashboard
           </Link>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">React & Next.js Roadmap</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">React</h1>
             <p className="text-sm text-zinc-500 mt-1">
               Virtual DOM, state management, hooks, suspense, SSR, server components, and layout files.
             </p>
