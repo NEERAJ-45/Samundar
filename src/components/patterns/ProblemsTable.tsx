@@ -104,7 +104,7 @@ function NotesDialog({
             value={val}
             onChange={(e) => setVal(e.target.value)}
             placeholder="Type your notes or key takeaways here..."
-            className="w-full min-h-[120px] bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 placeholder:text-zinc-605 outline-none focus:border-primary/50 transition-colors resize-y"
+            className="w-full min-h-[120px] bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 placeholder:text-zinc-605 outline-none focus:border-primary/50 transition-colors resize-none"
           />
         </div>
         <DialogFooter className="gap-2">
