@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { LazyAppear } from "@/components/shared/LazyAppear";
 import {
   Zap,
   TrendingUp,
@@ -106,133 +107,141 @@ export default function CommandCenterPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={stat.label}>
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <p className="text-xs text-zinc-400">{stat.label}</p>
-                      <p className="text-2xl font-bold">{stat.value}</p>
-                      <p className="text-xs text-zinc-500">{stat.sub}</p>
-                    </div>
-                    <div className="rounded-lg bg-zinc-800/50 p-2.5">
-                      <Icon className="h-5 w-5 text-zinc-300" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        <div>
-          <h2 className="text-sm font-medium text-zinc-300 mb-3">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-5 gap-4">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
+        <LazyAppear>
+          <div className="grid grid-cols-4 gap-4">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
               return (
-                <Card
-                  key={action.title}
-                  className="cursor-pointer transition hover:bg-zinc-800/50"
-                >
-                  <CardContent className="p-5 space-y-3">
-                    <div
-                      className={`rounded-lg bg-zinc-800/50 p-2.5 w-fit ${action.color}`}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{action.title}</p>
-                      <p className="text-xs text-zinc-400 mt-0.5">
-                        {action.description}
-                      </p>
+                <Card key={stat.label}>
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <p className="text-xs text-zinc-400">{stat.label}</p>
+                        <p className="text-2xl font-bold">{stat.value}</p>
+                        <p className="text-xs text-zinc-500">{stat.sub}</p>
+                      </div>
+                      <div className="rounded-lg bg-zinc-800/50 p-2.5">
+                        <Icon className="h-5 w-5 text-zinc-300" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               );
             })}
           </div>
-        </div>
+        </LazyAppear>
 
-        <div className="grid grid-cols-3 gap-6">
-          <Card className="col-span-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">
-                Today&apos;s Focus
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {focusItems.map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center justify-between"
-                >
-                  <div>
-                    <p className="text-xs text-zinc-400">{item.label}</p>
-                    <p className="text-sm font-medium mt-0.5">{item.value}</p>
+        <LazyAppear delay={0.1}>
+          <div>
+            <h2 className="text-sm font-medium text-zinc-300 mb-3">
+              Quick Actions
+            </h2>
+            <div className="grid grid-cols-5 gap-4">
+              {quickActions.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <Card
+                    key={action.title}
+                    className="cursor-pointer transition hover:bg-zinc-800/50"
+                  >
+                    <CardContent className="p-5 space-y-3">
+                      <div
+                        className={`rounded-lg bg-zinc-800/50 p-2.5 w-fit ${action.color}`}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">{action.title}</p>
+                        <p className="text-xs text-zinc-400 mt-0.5">
+                          {action.description}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </LazyAppear>
+
+        <LazyAppear delay={0.2}>
+          <div className="grid grid-cols-3 gap-6">
+            <Card className="col-span-2">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium">
+                  Today&apos;s Focus
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {focusItems.map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="text-xs text-zinc-400">{item.label}</p>
+                      <p className="text-sm font-medium mt-0.5">{item.value}</p>
+                    </div>
+                    <Badge variant="secondary" className="text-xs">
+                      {item.badge}
+                    </Badge>
                   </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {item.badge}
-                  </Badge>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                ))}
+              </CardContent>
+            </Card>
 
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium">
+                  Current Projects
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {projects.map((project) => (
+                  <div
+                    key={project.name}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {project.name}
+                      </p>
+                      <p className="text-xs text-zinc-400">
+                        {project.status.replace("_", " ")}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="text-xs ml-2 shrink-0">
+                      {project.progress}
+                    </Badge>
+                  </div>
+                ))}
+                <button className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200 transition-colors mt-2">
+                  View all <ArrowRight className="h-3 w-3" />
+                </button>
+              </CardContent>
+            </Card>
+          </div>
+        </LazyAppear>
+
+        <LazyAppear delay={0.3}>
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium">
-                Current Projects
+                Recent Activity
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {projects.map((project) => (
-                <div
-                  key={project.name}
-                  className="flex items-center justify-between"
-                >
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {project.name}
-                    </p>
-                    <p className="text-xs text-zinc-400">
-                      {project.status.replace("_", " ")}
-                    </p>
+            <CardContent>
+              <div className="space-y-3">
+                {activities.map((activity, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="h-1.5 w-1.5 rounded-full bg-zinc-600 shrink-0" />
+                    <p className="text-sm text-zinc-300">{activity}</p>
                   </div>
-                  <Badge variant="outline" className="text-xs ml-2 shrink-0">
-                    {project.progress}
-                  </Badge>
-                </div>
-              ))}
-              <button className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200 transition-colors mt-2">
-                View all <ArrowRight className="h-3 w-3" />
-              </button>
+                ))}
+              </div>
             </CardContent>
           </Card>
-        </div>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {activities.map((activity, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-zinc-600 shrink-0" />
-                  <p className="text-sm text-zinc-300">{activity}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        </LazyAppear>
       </div>
     </div>
   );

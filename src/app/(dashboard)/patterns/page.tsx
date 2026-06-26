@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { PatternCard } from "@/components/patterns/PatternCard";
 import { ProblemsTable } from "@/components/patterns/ProblemsTable";
 import { Loader2, Search } from "lucide-react";
+import { LazyAppear } from "@/components/shared/LazyAppear";
 
 interface ProblemItem {
   id: number;
@@ -116,15 +117,21 @@ function PatternsContent() {
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {patternEntries.map((entry) => (
-              <PatternCard
+            {patternEntries.map((entry, index) => (
+              <LazyAppear
                 key={entry.key}
-                name={entry.name}
-                total={entry.total}
-                description={entry.description}
-                selected={false}
-                onSelect={() => setSelectedKey(entry.key)}
-              />
+                delay={(index % 4) * 0.05}
+                yOffset={10}
+                placeholder={<div className="h-[54px] rounded-lg border border-zinc-800 bg-zinc-900/20 animate-pulse" />}
+              >
+                <PatternCard
+                  name={entry.name}
+                  total={entry.total}
+                  description={entry.description}
+                  selected={false}
+                  onSelect={() => setSelectedKey(entry.key)}
+                />
+              </LazyAppear>
             ))}
           </div>
 

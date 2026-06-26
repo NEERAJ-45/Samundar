@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/layout/navbar';
+import { LazyAppear } from '@/components/shared/LazyAppear';
 
 const categories = [
   {
@@ -151,61 +152,68 @@ export default function RoadmapsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {dynamicCategories.map((category) => (
-            <Link key={category.title} href={category.href} className="group">
-              <Card className="h-full flex flex-col justify-between border-zinc-800 bg-zinc-900/40 backdrop-blur-sm transition-all duration-300 group-hover:border-zinc-700 group-hover:bg-zinc-900/80 group-hover:shadow-lg group-hover:shadow-primary/5">
-                <CardHeader className="p-6 pb-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <Badge
-                      variant="outline"
-                      className={cn('text-xs font-semibold px-2.5 py-0.5 rounded-full border', difficultyColors[category.difficulty])}
-                    >
-                      {category.difficulty}
-                    </Badge>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-zinc-800/40 px-2 py-1 rounded-md">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>{category.hours} hours estimated</span>
-                    </div>
-                  </div>
-                  <CardTitle className="text-xl font-bold text-zinc-100 group-hover:text-primary transition-colors">
-                    {category.title}
-                  </CardTitle>
-                  <CardDescription className="text-zinc-400 mt-2 line-clamp-3 leading-relaxed text-sm">
-                    {category.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-6 pt-0 flex flex-col gap-4 flex-grow justify-end">
-                  <div className="flex flex-wrap gap-1.5 my-2">
-                    {category.topics.map((topic) => (
-                      <span
-                        key={topic}
-                        className="inline-flex items-center rounded-md bg-zinc-800/80 border border-zinc-700/50 px-2.5 py-0.5 text-xs font-medium text-zinc-300"
+          {dynamicCategories.map((category, index) => (
+            <LazyAppear
+              key={category.title}
+              delay={index * 0.08}
+              yOffset={15}
+              placeholder={<div className="h-[280px] rounded-lg border border-zinc-800 bg-zinc-900/20 animate-pulse" />}
+            >
+              <Link href={category.href} className="group">
+                <Card className="h-full flex flex-col justify-between border-zinc-800 bg-zinc-900/40 backdrop-blur-sm transition-all duration-300 group-hover:border-zinc-700 group-hover:bg-zinc-900/80 group-hover:shadow-lg group-hover:shadow-primary/5">
+                  <CardHeader className="p-6 pb-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <Badge
+                        variant="outline"
+                        className={cn('text-xs font-semibold px-2.5 py-0.5 rounded-full border', difficultyColors[category.difficulty])}
                       >
-                        {topic}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-semibold text-zinc-400">Roadmap Progress</span>
-                      <span className="text-xs font-bold text-zinc-200">{category.progress}%</span>
+                        {category.difficulty}
+                      </Badge>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-zinc-800/40 px-2 py-1 rounded-md">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>{category.hours} hours estimated</span>
+                      </div>
                     </div>
-                    <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
-                      <div
-                        className={cn('h-full rounded-full bg-gradient-to-r transition-all duration-500', category.color)}
-                        style={{ width: `${category.progress}%` }}
-                      />
+                    <CardTitle className="text-xl font-bold text-zinc-100 group-hover:text-primary transition-colors">
+                      {category.title}
+                    </CardTitle>
+                    <CardDescription className="text-zinc-400 mt-2 line-clamp-3 leading-relaxed text-sm">
+                      {category.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6 pt-0 flex flex-col gap-4 flex-grow justify-end">
+                    <div className="flex flex-wrap gap-1.5 my-2">
+                      {category.topics.map((topic) => (
+                        <span
+                          key={topic}
+                          className="inline-flex items-center rounded-md bg-zinc-800/80 border border-zinc-700/50 px-2.5 py-0.5 text-xs font-medium text-zinc-300"
+                        >
+                          {topic}
+                        </span>
+                      ))}
                     </div>
-                  </div>
 
-                  <div className="flex items-center justify-end text-xs font-bold text-zinc-200 group-hover:text-primary pt-2 transition-colors">
-                    <span>View Roadmap</span>
-                    <ArrowRight className="ml-1 h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform duration-200" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+                    <div>
+                      <div className="flex justify-between items-center mb-1.5">
+                        <span className="text-xs font-semibold text-zinc-400">Roadmap Progress</span>
+                        <span className="text-xs font-bold text-zinc-200">{category.progress}%</span>
+                      </div>
+                      <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
+                        <div
+                          className={cn('h-full rounded-full bg-gradient-to-r transition-all duration-500', category.color)}
+                          style={{ width: `${category.progress}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-end text-xs font-bold text-zinc-200 group-hover:text-primary pt-2 transition-colors">
+                      <span>View Roadmap</span>
+                      <ArrowRight className="ml-1 h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform duration-200" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </LazyAppear>
           ))}
         </div>
       </div>
