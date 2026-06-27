@@ -6,6 +6,7 @@ export interface ICustomTopic extends Document {
   title: string;
   difficulty: string;
   link: string;
+  userEmail?: string;
 }
 
 const CustomTopicSchema: Schema = new Schema({
@@ -14,8 +15,9 @@ const CustomTopicSchema: Schema = new Schema({
   title: { type: String, required: true },
   difficulty: { type: String, required: true },
   link: { type: String, default: '' },
+  userEmail: { type: String, required: true, default: 'NEERAJ' },
 });
 
-CustomTopicSchema.index({ storagePrefix: 1, id: 1 }, { unique: true });
+CustomTopicSchema.index({ storagePrefix: 1, id: 1, userEmail: 1 }, { unique: true });
 
 export default mongoose.models.CustomTopic || mongoose.model<ICustomTopic>('CustomTopic', CustomTopicSchema);

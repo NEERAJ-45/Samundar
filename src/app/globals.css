@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Kalam:wght@300;400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -64,4 +65,19 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
+}
+
+.font-handwritten {
+  font-family: 'Caveat', 'Kalam', cursive;
+}
+
+
+
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.24; }
+}
+
+@utility animate-grid-pulse {
+  animation: grid-pulse 6s ease-in-out infinite;
 }

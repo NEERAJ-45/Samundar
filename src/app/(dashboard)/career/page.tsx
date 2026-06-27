@@ -85,9 +85,7 @@ export default function CareerPage() {
             </p>
           </div>
 
-          <Card className="relative overflow-hidden bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 border-blue-500/10">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl" />
+          <Card className="relative overflow-hidden bg-zinc-900/40 border-zinc-800/80">
             <CardContent className="p-8 relative z-10">
               <div className="flex items-center gap-2 mb-4">
                 <Target className="h-5 w-5 text-blue-400" />
@@ -194,7 +192,7 @@ export default function CareerPage() {
             </Card>
           </div>
 
-          <Card className="bg-gradient-to-br from-amber-500/5 via-transparent to-rose-500/5 border-amber-500/10">
+          <Card className="bg-zinc-900/40 border-zinc-800/80">
             <CardContent className="p-8">
               <div className="flex items-center gap-2 mb-4">
                 <Quote className="h-5 w-5 text-amber-400" />

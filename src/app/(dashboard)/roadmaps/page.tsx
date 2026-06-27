@@ -4,10 +4,11 @@ import * as React from 'react';
 import Link from 'next/link';
 import { Clock, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/layout/navbar';
 import { LazyAppear } from '@/components/shared/LazyAppear';
+import { SpotlightCard } from '@/components/ui/SpotlightCard';
 
 const categories = [
   {
@@ -19,6 +20,7 @@ const categories = [
     difficulty: 'Medium-Hard',
     color: 'from-zinc-500 via-cyan-600 to-cyan-500',
     topics: ['Operating Systems', 'Computer Networks', 'DBMS'],
+    glow: 'rgba(6, 182, 212, 0.12)'
   },
   {
     title: 'System Design & Architecture',
@@ -29,6 +31,7 @@ const categories = [
     difficulty: 'Hard',
     color: 'from-violet-600 via-purple-600 to-purple-500',
     topics: ['System Design', 'Distributed Systems'],
+    glow: 'rgba(139, 92, 246, 0.12)'
   },
   {
     title: 'Backend Development',
@@ -39,6 +42,7 @@ const categories = [
     difficulty: 'Medium',
     color: 'from-orange-500 via-amber-600 to-green-500',
     topics: ['Java Core & JVM', 'Spring Boot & Microservices'],
+    glow: 'rgba(249, 115, 22, 0.12)'
   },
   {
     title: 'Frontend Development',
@@ -49,6 +53,7 @@ const categories = [
     difficulty: 'Medium-Hard',
     color: 'from-sky-500 via-indigo-500 to-cyan-400',
     topics: ['React Core', 'Next.js Framework', 'MicroFrontends'],
+    glow: 'rgba(14, 165, 233, 0.12)'
   },
   {
     title: 'DevOps & Cloud Engineering',
@@ -59,6 +64,7 @@ const categories = [
     difficulty: 'Medium-Hard',
     color: 'from-blue-500 via-violet-500 to-red-500',
     topics: ['Docker & K8s', 'AWS Cloud Services', 'CI/CD Pipelines'],
+    glow: 'rgba(59, 130, 246, 0.12)'
   },
   {
     title: 'Aptitude & Logical Reasoning',
@@ -69,16 +75,18 @@ const categories = [
     difficulty: 'Easy-Medium',
     color: 'from-teal-500 via-emerald-600 to-green-400',
     topics: ['Quantitative Aptitude', 'Logical Reasoning', 'Data Interpretation'],
+    glow: 'rgba(20, 184, 166, 0.12)'
   },
   {
-    title: 'Databases (SQL & NoSQL)',
-    description: 'Deep dive into relational (SQL) and non-relational (NoSQL) database technologies. Master schema design, indexes, transactional isolation, sharding, caching, and document/key-value/graph models.',
+    title: 'Database',
+    description: 'Syllabus on relational SQL database design, 50 LeetCode query problems, and distributed NoSQL storage architectures.',
     href: '/roadmaps/databases',
     progress: 0,
     hours: 180,
     difficulty: 'Medium-Hard',
-    color: 'from-pink-500 via-rose-600 to-red-500',
-    topics: ['SQL & Schema Design', 'NoSQL Architectures', 'Query Tuning & Scaling'],
+    color: 'from-rose-500 via-purple-600 to-indigo-500',
+    topics: ['SQL Relational (50)', 'NoSQL Non-Relational (50)', 'LeetCode SQL (50)'],
+    glow: 'rgba(244, 63, 94, 0.12)'
   },
 ];
 
@@ -97,7 +105,7 @@ export default function RoadmapsPage() {
   const [frontendProgress, setFrontendProgress] = React.useState(0);
   const [devopsProgress, setDevopsProgress] = React.useState(0);
   const [aptitudeProgress, setAptitudeProgress] = React.useState(0);
-  const [databasesProgress, setDatabasesProgress] = React.useState(0);
+  const [dbProgress, setDbProgress] = React.useState(0);
 
   React.useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -139,8 +147,11 @@ export default function RoadmapsPage() {
     const aptitudeCompleted = getCompletedCount('aptitude');
     setAptitudeProgress(Math.round((aptitudeCompleted / 50) * 100));
 
-    const databasesCompleted = getCompletedCount('databases');
-    setDatabasesProgress(Math.round((databasesCompleted / 50) * 100));
+    const sqlTheoryCompleted = getCompletedCount('databases-sql');
+    const nosqlTheoryCompleted = getCompletedCount('databases-nosql');
+    const sqlLeetcodeCompleted = getCompletedCount('databases-leetcode');
+    const totalDbCompleted = sqlTheoryCompleted + nosqlTheoryCompleted + sqlLeetcodeCompleted;
+    setDbProgress(Math.round((totalDbCompleted / 150) * 100));
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
@@ -172,17 +183,17 @@ export default function RoadmapsPage() {
       },
       {
         ...categories[6],
-        progress: databasesProgress,
+        progress: dbProgress,
       },
     ];
-  }, [csFoundationProgress, systemDesignProgress, backendProgress, frontendProgress, devopsProgress, aptitudeProgress, databasesProgress]);
+  }, [csFoundationProgress, systemDesignProgress, backendProgress, frontendProgress, devopsProgress, aptitudeProgress, dbProgress]);
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
       <Navbar />
       <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground/90 to-muted-foreground bg-clip-text">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Learning Roadmaps
           </h1>
           <p className="text-base text-muted-foreground mt-2 max-w-2xl">
@@ -196,32 +207,25 @@ export default function RoadmapsPage() {
               key={category.title}
               delay={index * 0.08}
               yOffset={15}
-              placeholder={<div className="h-[280px] rounded-lg border border-zinc-800 bg-zinc-900/20 animate-pulse" />}
             >
-              <Link href={category.href} className="group">
-                <Card className="h-full flex flex-col justify-between border-zinc-800 bg-zinc-900/40 backdrop-blur-sm transition-all duration-300 group-hover:border-zinc-700 group-hover:bg-zinc-900/80 group-hover:shadow-lg group-hover:shadow-primary/5">
-                  <CardHeader className="p-6 pb-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <Badge
-                        variant="outline"
-                        className={cn('text-xs font-semibold px-2.5 py-0.5 rounded-full border', difficultyColors[category.difficulty])}
-                      >
-                        {category.difficulty}
-                      </Badge>
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-zinc-800/40 px-2 py-1 rounded-md">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span>{category.hours} hours estimated</span>
+              <Link href={category.href} className="group block">
+                <SpotlightCard className="h-full hover:border-zinc-700/80 transition-all duration-350" spotlightColor={category.glow}>
+                  <div className="flex flex-col justify-between h-full space-y-6">
+                    <div>
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="text-lg font-bold text-zinc-150 group-hover:text-white transition-colors duration-200">
+                          {category.title}
+                        </h3>
+                        <Badge variant="outline" className={cn('text-xs capitalize font-semibold border', difficultyColors[category.difficulty])}>
+                          {category.difficulty}
+                        </Badge>
                       </div>
+                      <CardDescription className="text-sm text-zinc-450 leading-relaxed min-h-[72px]">
+                        {category.description}
+                      </CardDescription>
                     </div>
-                    <CardTitle className="text-xl font-bold text-zinc-100 group-hover:text-primary transition-colors">
-                      {category.title}
-                    </CardTitle>
-                    <CardDescription className="text-zinc-400 mt-2 line-clamp-3 leading-relaxed text-sm">
-                      {category.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-6 pt-0 flex flex-col gap-4 flex-grow justify-end">
-                    <div className="flex flex-wrap gap-1.5 my-2">
+
+                    <div className="flex flex-wrap gap-2">
                       {category.topics.map((topic) => (
                         <span
                           key={topic}
@@ -239,18 +243,13 @@ export default function RoadmapsPage() {
                       </div>
                       <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
                         <div
-                          className={cn('h-full rounded-full bg-gradient-to-r transition-all duration-500', category.color)}
+                          className="h-full rounded-full bg-indigo-600 transition-all duration-500"
                           style={{ width: `${category.progress}%` }}
                         />
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-end text-xs font-bold text-zinc-200 group-hover:text-primary pt-2 transition-colors">
-                      <span>View Roadmap</span>
-                      <ArrowRight className="ml-1 h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform duration-200" />
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </SpotlightCard>
               </Link>
             </LazyAppear>
           ))}

@@ -1,17 +1,17 @@
+'use client';
+
+import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from "@/components/layout/navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LazyAppear } from "@/components/shared/LazyAppear";
+import { useProfile } from "@/components/providers/ProfileProvider";
 import {
   Zap,
   TrendingUp,
   Calendar,
   BrainCircuit,
-  BookOpen,
-  RefreshCw,
-  FolderKanban,
-  StickyNote,
-  Clock,
   ArrowRight,
 } from "lucide-react";
 
@@ -34,39 +34,6 @@ const stats = [
     value: "73%",
     label: "Interview Readiness",
     sub: "Strong",
-  },
-];
-
-const quickActions = [
-  {
-    icon: BookOpen,
-    title: "Continue Learning",
-    description: "Resume Binary Search Trees",
-    color: "text-blue-400",
-  },
-  {
-    icon: RefreshCw,
-    title: "Start Revision",
-    description: "Review due concepts",
-    color: "text-emerald-400",
-  },
-  {
-    icon: FolderKanban,
-    title: "Open Project",
-    description: "ProdigyOS dashboard",
-    color: "text-violet-400",
-  },
-  {
-    icon: StickyNote,
-    title: "Add Note",
-    description: "Capture a new insight",
-    color: "text-amber-400",
-  },
-  {
-    icon: Clock,
-    title: "Log Session",
-    description: "Record learning hours",
-    color: "text-rose-400",
   },
 ];
 
@@ -94,34 +61,41 @@ const activities = [
 ];
 
 export default function CommandCenterPage() {
+  const { userName } = useProfile();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
       <Navbar />
-      <div className="flex-1 space-y-8 p-6 overflow-y-auto">
+      <div className="flex-1 space-y-8 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
             Command Center
           </h1>
           <p className="text-sm text-zinc-400 mt-1">
-            Your engineering mastery platform — overview at a glance.
+            Welcome back, {mounted ? userName : 'Neeraj'}! Let&apos;s build something great today.
           </p>
         </div>
 
         <LazyAppear>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat) => {
               const Icon = stat.icon;
               return (
-                <Card key={stat.label}>
+                <Card key={stat.label} className="border-zinc-800/80 bg-zinc-900/40">
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
-                        <p className="text-xs text-zinc-400">{stat.label}</p>
+                        <p className="text-xs text-zinc-500">{stat.label}</p>
                         <p className="text-2xl font-bold">{stat.value}</p>
-                        <p className="text-xs text-zinc-500">{stat.sub}</p>
+                        <p className="text-xs text-zinc-550">{stat.sub}</p>
                       </div>
                       <div className="rounded-lg bg-zinc-800/50 p-2.5">
-                        <Icon className="h-5 w-5 text-zinc-300" />
+                        <Icon className="h-5 w-5 text-zinc-400" />
                       </div>
                     </div>
                   </CardContent>
@@ -131,42 +105,9 @@ export default function CommandCenterPage() {
           </div>
         </LazyAppear>
 
-        <LazyAppear delay={0.1}>
-          <div>
-            <h2 className="text-sm font-medium text-zinc-300 mb-3">
-              Quick Actions
-            </h2>
-            <div className="grid grid-cols-5 gap-4">
-              {quickActions.map((action) => {
-                const Icon = action.icon;
-                return (
-                  <Card
-                    key={action.title}
-                    className="cursor-pointer transition hover:bg-zinc-800/50"
-                  >
-                    <CardContent className="p-5 space-y-3">
-                      <div
-                        className={`rounded-lg bg-zinc-800/50 p-2.5 w-fit ${action.color}`}
-                      >
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">{action.title}</p>
-                        <p className="text-xs text-zinc-400 mt-0.5">
-                          {action.description}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        </LazyAppear>
-
-        <LazyAppear delay={0.2}>
-          <div className="grid grid-cols-3 gap-6">
-            <Card className="col-span-2">
+        <LazyAppear delay={0.15}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="md:col-span-2 border-zinc-800/80 bg-zinc-900/40">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium">
                   Today&apos;s Focus
@@ -179,10 +120,10 @@ export default function CommandCenterPage() {
                     className="flex items-center justify-between"
                   >
                     <div>
-                      <p className="text-xs text-zinc-400">{item.label}</p>
+                      <p className="text-xs text-zinc-500">{item.label}</p>
                       <p className="text-sm font-medium mt-0.5">{item.value}</p>
                     </div>
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs bg-zinc-800 text-zinc-300">
                       {item.badge}
                     </Badge>
                   </div>
@@ -190,7 +131,7 @@ export default function CommandCenterPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-zinc-800/80 bg-zinc-900/40">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium">
                   Current Projects
@@ -206,16 +147,16 @@ export default function CommandCenterPage() {
                       <p className="text-sm font-medium truncate">
                         {project.name}
                       </p>
-                      <p className="text-xs text-zinc-400">
+                      <p className="text-xs text-zinc-550">
                         {project.status.replace("_", " ")}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-xs ml-2 shrink-0">
+                    <Badge variant="outline" className="text-xs ml-2 shrink-0 border-zinc-800 text-zinc-400">
                       {project.progress}
                     </Badge>
                   </div>
                 ))}
-                <button className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200 transition-colors mt-2">
+                <button className="inline-flex items-center gap-1 text-xs text-zinc-550 hover:text-zinc-300 transition-colors mt-2 cursor-pointer">
                   View all <ArrowRight className="h-3 w-3" />
                 </button>
               </CardContent>
@@ -223,8 +164,8 @@ export default function CommandCenterPage() {
           </div>
         </LazyAppear>
 
-        <LazyAppear delay={0.3}>
-          <Card>
+        <LazyAppear delay={0.2}>
+          <Card className="border-zinc-800/80 bg-zinc-900/40">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium">
                 Recent Activity
@@ -234,8 +175,8 @@ export default function CommandCenterPage() {
               <div className="space-y-3">
                 {activities.map((activity, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="h-1.5 w-1.5 rounded-full bg-zinc-600 shrink-0" />
-                    <p className="text-sm text-zinc-300">{activity}</p>
+                    <div className="h-1.5 w-1.5 rounded-full bg-zinc-700 shrink-0" />
+                    <p className="text-sm text-zinc-400">{activity}</p>
                   </div>
                 ))}
               </div>

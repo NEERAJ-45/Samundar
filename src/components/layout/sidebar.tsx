@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   PanelLeftClose,
   PanelLeft,
+  StickyNote,
 } from "lucide-react";
 
 interface NavItem {
@@ -31,6 +32,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Command Center", href: "/command-center", icon: LayoutDashboard },
+  { label: "Sticky Notes", href: "/sticky-notes", icon: StickyNote },
   { label: "DSA Patterns", href: "/patterns", icon: GitBranch },
   { label: "Learning Roadmaps", href: "/roadmaps", icon: Map },
   { label: "Mastery Tracking", href: "/mastery", icon: Target },

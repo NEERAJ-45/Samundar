@@ -21,6 +21,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import { useProfile } from "@/components/providers/ProfileProvider";
 
 interface ProblemItem {
   id: number;
@@ -36,8 +37,6 @@ interface ProblemsTableProps {
   hard: ProblemItem[];
   onBack: () => void;
 }
-
-const USER_NAME = "NEERAJ";
 
 type CompletedMap = Record<string, string>;
 type NotesMap = Record<string, string>;
@@ -84,40 +83,45 @@ function NotesDialog({
           className={cn(
             "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border font-medium transition-all cursor-pointer mx-auto",
             initialValue
-              ? "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
-              : "border-zinc-800 bg-zinc-900/30 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800/50"
+              ? "border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
+              : "border-zinc-850 bg-zinc-900/30 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800/50"
           )}
         >
           <StickyNote size={13} />
-          {initialValue ? 'Edit Notes' : 'Add Note'}
+          {initialValue ? 'View Sticky Note' : 'Add Sticky Note'}
         </button>
       </DialogTrigger>
-      <DialogContent className="border-zinc-800 bg-zinc-950 text-zinc-100 sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="text-zinc-100 flex items-center gap-2">
-            <NotebookPen size={18} className="text-primary" />
-            Problem Notes
+      <DialogContent className="border-none bg-amber-100/95 text-zinc-800 sm:max-w-[380px] p-6 shadow-2xl relative rotate-1 select-none overflow-hidden rounded-none border-t-[14px] border-t-amber-200">
+        {/* Sticky note shadow fold design effect */}
+        <div className="absolute bottom-0 right-0 w-8 h-8 bg-amber-200/50 rounded-tl-xl shadow-lg border-l border-t border-amber-300/30" />
+        
+        <DialogHeader className="border-b border-amber-200/60 pb-2 mb-3">
+          <DialogTitle className="text-zinc-700 flex items-center gap-2 font-handwritten text-xl font-bold">
+            <NotebookPen size={18} className="text-amber-600 shrink-0" />
+            Study Sticky Note
           </DialogTitle>
         </DialogHeader>
-        <div className="py-4">
+        
+        <div className="py-2">
           <textarea
             value={val}
             onChange={(e) => setVal(e.target.value)}
-            placeholder="Type your notes or key takeaways here..."
-            className="w-full min-h-[120px] bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 placeholder:text-zinc-605 outline-none focus:border-primary/50 transition-colors resize-none"
+            placeholder="Jot down notes, answers or reminders in handwriting..."
+            className="w-full min-h-[180px] bg-transparent border-none p-1 text-2xl text-amber-950 placeholder:text-amber-700/60 outline-none focus:outline-none resize-none font-handwritten leading-relaxed select-text"
           />
         </div>
-        <DialogFooter className="gap-2">
+        
+        <DialogFooter className="gap-2 pt-3 border-t border-amber-200/60 mt-3 justify-end flex-row">
           <DialogClose asChild>
-            <button className="px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-zinc-850 hover:bg-zinc-900 transition-colors text-zinc-400 cursor-pointer">
-              Cancel
+            <button className="px-3 py-1.5 rounded text-xs font-semibold border border-amber-300/40 text-amber-800 hover:bg-amber-200/40 transition-colors cursor-pointer">
+              Discard
             </button>
           </DialogClose>
           <button
             onClick={handleSave}
-            className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/95 transition-colors cursor-pointer"
+            className="px-3 py-1.5 rounded text-xs font-semibold bg-amber-800 text-amber-50 hover:bg-amber-900 transition-all cursor-pointer shadow shadow-amber-900/30"
           >
-            Save Notes
+            Save Note
           </button>
         </DialogFooter>
       </DialogContent>
@@ -223,12 +227,25 @@ export function ProblemsTable({
   hard,
   onBack,
 }: ProblemsTableProps) {
+  const { userEmail, userName, customDbUrl } = useProfile();
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const [completedMap, setCompletedMap] = useState<CompletedMap>({});
   const [notesMap, setNotesMap] = useState<NotesMap>({});
   const [customProblems, setCustomProblems] = useState<ProblemItem[]>([]);
   const [dbConnected, setDbConnected] = useState(false);
+
+  // Helper for requests
+  const getRequestHeaders = useCallback(() => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'x-user-email': userEmail,
+    };
+    if (customDbUrl) {
+      headers['x-mongodb-url'] = customDbUrl;
+    }
+    return headers;
+  }, [userEmail, customDbUrl]);
 
   // Load and Sync data on mount or when patternName changes
   useEffect(() => {
@@ -251,8 +268,10 @@ export function ProblemsTable({
 
     async function syncWithDB() {
       try {
+        const headers = getRequestHeaders();
+
         // Sync completions
-        const compRes = await fetch('/api/db/completions');
+        const compRes = await fetch(`/api/db/completions?userEmail=${encodeURIComponent(userEmail)}`, { headers });
         const compData = await compRes.json();
         if (compData.dbConnected) {
           setDbConnected(true);
@@ -272,11 +291,12 @@ export function ProblemsTable({
             if (!dbCompMap[id]) {
               fetch('/api/db/completions', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                   storagePrefix: `completed-${patternName}`,
                   itemId: id,
                   completedAt: dateStr,
+                  userEmail,
                 }),
               }).catch(() => {});
             }
@@ -284,7 +304,7 @@ export function ProblemsTable({
         }
 
         // Sync notes
-        const noteRes = await fetch('/api/db/notes');
+        const noteRes = await fetch(`/api/db/notes?userEmail=${encodeURIComponent(userEmail)}`, { headers });
         const noteData = await noteRes.json();
         if (noteData.dbConnected) {
           const dbNotes = noteData.data.filter(
@@ -303,11 +323,12 @@ export function ProblemsTable({
             if (!dbNoteMap[id]) {
               fetch('/api/db/notes', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                   storagePrefix: `notes-${patternName}`,
                   itemId: id,
                   note: noteText,
+                  userEmail,
                 }),
               }).catch(() => {});
             }
@@ -315,7 +336,7 @@ export function ProblemsTable({
         }
 
         // Sync custom problems
-        const customRes = await fetch('/api/db/custom-topics');
+        const customRes = await fetch(`/api/db/custom-topics?userEmail=${encodeURIComponent(userEmail)}`, { headers });
         const customData = await customRes.json();
         if (customData.dbConnected) {
           const dbCustoms = customData.data.filter(
@@ -342,13 +363,14 @@ export function ProblemsTable({
             if (!dbCustomMap.has(item.id)) {
               fetch('/api/db/custom-topics', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                   storagePrefix: `${patternName}-custom-problems`,
                   id: item.id,
                   title: item.title,
                   difficulty: item.difficulty || "MEDIUM",
                   link: item.link,
+                  userEmail,
                 }),
               }).catch(() => {});
             }
@@ -360,7 +382,7 @@ export function ProblemsTable({
     }
 
     syncWithDB();
-  }, [patternName]);
+  }, [patternName, userEmail, getRequestHeaders]);
 
   const saveCustomProblems = useCallback((list: ProblemItem[]) => {
     localStorage.setItem(`${patternName}-custom-problems`, JSON.stringify(list));
@@ -381,16 +403,17 @@ export function ProblemsTable({
     // Sync to DB
     fetch('/api/db/custom-topics', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getRequestHeaders(),
       body: JSON.stringify({
         storagePrefix: `${patternName}-custom-problems`,
         id: newId,
         title,
         difficulty,
         link,
+        userEmail,
       }),
     }).catch(() => {});
-  }, [customProblems, saveCustomProblems, patternName]);
+  }, [customProblems, saveCustomProblems, patternName, getRequestHeaders, userEmail]);
 
   const handleDeleteProblem = useCallback((id: number) => {
     const nextList = customProblems.filter((p) => p.id !== id);
@@ -408,30 +431,35 @@ export function ProblemsTable({
       return next;
     });
 
+    const headers = getRequestHeaders();
+
     // Delete custom topic from DB
-    fetch(`/api/db/custom-topics?storagePrefix=${patternName}-custom-problems&id=${id}`, {
+    fetch(`/api/db/custom-topics?storagePrefix=${patternName}-custom-problems&id=${id}&userEmail=${encodeURIComponent(userEmail)}`, {
       method: 'DELETE',
+      headers,
     }).catch(() => {});
 
     // Delete completions & notes associated with this custom question
     fetch('/api/db/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         storagePrefix: `completed-${patternName}`,
         itemId: String(id),
+        userEmail,
       }),
     }).catch(() => {});
 
     fetch('/api/db/notes', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         storagePrefix: `notes-${patternName}`,
         itemId: String(id),
+        userEmail,
       }),
     }).catch(() => {});
-  }, [customProblems, saveCustomProblems, patternName]);
+  }, [customProblems, saveCustomProblems, patternName, getRequestHeaders, userEmail]);
 
   const toggleCompleted = useCallback(
     (id: number) => {
@@ -454,15 +482,16 @@ export function ProblemsTable({
       // Sync completion state to DB
       fetch('/api/db/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getRequestHeaders(),
         body: JSON.stringify({
           storagePrefix: `completed-${patternName}`,
           itemId: String(id),
           completedAt: isCompleted ? compAtStr : undefined,
+          userEmail,
         }),
       }).catch(() => {});
     },
-    [patternName]
+    [patternName, getRequestHeaders, userEmail]
   );
 
   const updateNote = useCallback(
@@ -478,15 +507,16 @@ export function ProblemsTable({
       // Sync note to DB
       fetch('/api/db/notes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getRequestHeaders(),
         body: JSON.stringify({
           storagePrefix: `notes-${patternName}`,
           itemId: String(id),
           note: value || undefined,
+          userEmail,
         }),
       }).catch(() => {});
     },
-    [patternName]
+    [patternName, getRequestHeaders, userEmail]
   );
 
   const allProblems = useMemo(() => {
@@ -756,7 +786,7 @@ export function ProblemsTable({
         </span>
         <AddProblemDialog onAdd={handleAddProblem} />
         <div className="ml-auto flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
-          <span className="font-medium text-foreground">{USER_NAME}</span>
+          <span className="font-medium text-foreground">{userName}</span>
         </div>
       </div>
 
