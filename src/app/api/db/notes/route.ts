@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
-import Note from '@/lib/models/Note';
+import type { INote } from '@/lib/models/Note';
+import '@/lib/models/Note';
 
 export async function GET(request: Request) {
   try {
@@ -12,6 +13,7 @@ export async function GET(request: Request) {
     if (!conn) {
       return NextResponse.json({ dbConnected: false, data: [] });
     }
+    const Note = conn.model<INote>('Note');
     const list = await Note.find({ userEmail });
     return NextResponse.json({ dbConnected: true, data: list });
   } catch (error: any) {
@@ -34,6 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing storagePrefix or itemId' }, { status: 400 });
     }
 
+    const Note = conn.model<INote>('Note');
     if (note) {
       const doc = await Note.findOneAndUpdate(
         { storagePrefix, itemId, userEmail },

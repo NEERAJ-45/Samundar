@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Navbar } from "@/components/layout/navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,58 +15,108 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const stats = [
-  { icon: Zap, value: "12", label: "Current Streak", sub: "days" },
-  {
-    icon: TrendingUp,
-    value: "78%",
-    label: "Weekly Progress",
-    sub: "4 of 5 goals",
-  },
-  {
-    icon: Calendar,
-    value: "62%",
-    label: "Monthly Progress",
-    sub: "18 of 29 hrs",
-  },
-  {
-    icon: BrainCircuit,
-    value: "73%",
-    label: "Interview Readiness",
-    sub: "Strong",
-  },
-];
+interface StatItem {
+  icon: any;
+  value: string;
+  label: string;
+  sub: string;
+}
 
-const focusItems = [
-  {
-    label: "Active Pillar",
-    value: "Data Structures & Algorithms",
-    badge: "Trees",
-  },
-  { label: "Next Learning Unit", value: "AVL Tree Rotations", badge: "45 min" },
-  { label: "Due Revisions", value: "3 concepts need review", badge: "Overdue" },
-];
+interface FocusItem {
+  label: string;
+  value: string;
+  badge: string;
+}
 
-const projects = [
-  { name: "ProdigyOS Dashboard", status: "IN_PROGRESS", progress: "65%" },
-  { name: "CLI Task Manager", status: "MAINTAINING", progress: "90%" },
-  { name: "API Gateway", status: "COMPLETED", progress: "100%" },
-];
+interface ProjectItem {
+  name: string;
+  status: string;
+  progress: string;
+}
 
-const activities = [
-  'Completed "QuickSort Deep Dive" revision',
-  "Added 3 notes to System Design",
-  "Logged 2.5 hrs on Dynamic Programming",
-  "Updated AVL Tree mastery to level 3",
-];
+interface DashboardData {
+  stats: StatItem[];
+  focusItems: FocusItem[];
+  projects: ProjectItem[];
+  activities: string[];
+}
+
+const CACHE_KEY = 'samundar-command-center';
+
+const defaultData: DashboardData = {
+  stats: [
+    { icon: Zap, value: "12", label: "Current Streak", sub: "days" },
+    { icon: TrendingUp, value: "78%", label: "Weekly Progress", sub: "4 of 5 goals" },
+    { icon: Calendar, value: "62%", label: "Monthly Progress", sub: "18 of 29 hrs" },
+    { icon: BrainCircuit, value: "73%", label: "Interview Readiness", sub: "Strong" },
+  ],
+  focusItems: [
+    { label: "Active Pillar", value: "Data Structures & Algorithms", badge: "Trees" },
+    { label: "Next Learning Unit", value: "AVL Tree Rotations", badge: "45 min" },
+    { label: "Due Revisions", value: "3 concepts need review", badge: "Overdue" },
+  ],
+  projects: [
+    { name: "ProdigyOS Dashboard", status: "IN_PROGRESS", progress: "65%" },
+    { name: "CLI Task Manager", status: "MAINTAINING", progress: "90%" },
+    { name: "API Gateway", status: "COMPLETED", progress: "100%" },
+  ],
+  activities: [
+    'Completed "QuickSort Deep Dive" revision',
+    "Added 3 notes to System Design",
+    "Logged 2.5 hrs on Dynamic Programming",
+    "Updated AVL Tree mastery to level 3",
+  ],
+};
 
 export default function CommandCenterPage() {
-  const { userName } = useProfile();
+  const { userName, userEmail, customDbUrl } = useProfile();
   const [mounted, setMounted] = useState(false);
+  const [data, setData] = useState<DashboardData>(defaultData);
+  const [loading, setLoading] = useState(true);
+  const fetched = useRef(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const loadData = useCallback(async () => {
+    if (!mounted || fetched.current) return;
+    fetched.current = true;
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (userEmail) headers['x-user-email'] = userEmail;
+    if (customDbUrl) headers['x-mongodb-url'] = customDbUrl;
+
+    try {
+      const res = await fetch(`/api/db/command-center?userEmail=${encodeURIComponent(userEmail || '')}`, { headers });
+      const json = await res.json();
+      if (json.dbConnected) {
+        const payload: DashboardData = {
+          stats: json.stats.map((s: any) => ({ ...s, icon: iconMap[s.label as keyof typeof iconMap] || Zap })),
+          focusItems: json.focusItems,
+          projects: json.projects,
+          activities: json.activities,
+        };
+        setData(payload);
+        localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+        setLoading(false);
+        return;
+      }
+    } catch {}
+
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        setData(parsed);
+        setLoading(false);
+        return;
+      } catch {}
+    }
+
+    setLoading(false);
+  }, [mounted, userEmail, customDbUrl]);
+
+  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const current = data;
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
@@ -83,7 +133,7 @@ export default function CommandCenterPage() {
 
         <LazyAppear>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((stat) => {
+            {current.stats.map((stat) => {
               const Icon = stat.icon;
               return (
                 <Card key={stat.label} className="border-zinc-800/80 bg-zinc-900/40">
@@ -114,7 +164,7 @@ export default function CommandCenterPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {focusItems.map((item) => (
+                {current.focusItems.map((item) => (
                   <div
                     key={item.label}
                     className="flex items-center justify-between"
@@ -138,7 +188,7 @@ export default function CommandCenterPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {projects.map((project) => (
+                {current.projects.map((project) => (
                   <div
                     key={project.name}
                     className="flex items-center justify-between"
@@ -173,7 +223,7 @@ export default function CommandCenterPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {activities.map((activity, i) => (
+                {current.activities.map((activity, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <div className="h-1.5 w-1.5 rounded-full bg-zinc-700 shrink-0" />
                     <p className="text-sm text-zinc-400">{activity}</p>
@@ -187,3 +237,10 @@ export default function CommandCenterPage() {
     </div>
   );
 }
+
+const iconMap = {
+  'Current Streak': Zap,
+  'Weekly Progress': TrendingUp,
+  'Monthly Progress': Calendar,
+  'Interview Readiness': BrainCircuit,
+};

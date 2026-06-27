@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
-import CustomTopic from '@/lib/models/CustomTopic';
+import type { ICustomTopic } from '@/lib/models/CustomTopic';
+import '@/lib/models/CustomTopic';
 
 export async function GET(request: Request) {
   try {
@@ -12,6 +13,7 @@ export async function GET(request: Request) {
     if (!conn) {
       return NextResponse.json({ dbConnected: false, data: [] });
     }
+    const CustomTopic = conn.model<ICustomTopic>('CustomTopic');
     const list = await CustomTopic.find({ userEmail });
     return NextResponse.json({ dbConnected: true, data: list });
   } catch (error: any) {
@@ -34,6 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
+    const CustomTopic = conn.model<ICustomTopic>('CustomTopic');
     const doc = await CustomTopic.findOneAndUpdate(
       { storagePrefix, id, userEmail },
       { title, difficulty, link: link || '' },
@@ -62,6 +65,7 @@ export async function DELETE(request: Request) {
     }
 
     const id = Number(idStr);
+    const CustomTopic = conn.model<ICustomTopic>('CustomTopic');
     await CustomTopic.deleteOne({ storagePrefix, id, userEmail });
     return NextResponse.json({ success: true, deleted: true });
   } catch (error: any) {

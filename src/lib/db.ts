@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 let globalWithMongoose = global as typeof globalThis & {
-  mongooseCache?: Record<string, { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null }>;
+  mongooseCache?: Record<string, { conn: mongoose.Connection | null; promise: Promise<mongoose.Connection> | null }>;
 };
 
 if (!globalWithMongoose.mongooseCache) {
@@ -28,14 +28,17 @@ export async function connectToDatabase(customUri?: string) {
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
-      serverSelectionTimeoutMS: 3000,
-      connectTimeoutMS: 3000,
+      bufferCommands: true,
+      serverSelectionTimeoutMS: 15000,
+      connectTimeoutMS: 15000,
+      socketTimeoutMS: 30000,
     };
 
-    cached.promise = mongoose.connect(uri, opts).then((m) => {
-      return m;
-    });
+    if (customUri) {
+      cached.promise = mongoose.createConnection(uri, opts).asPromise();
+    } else {
+      cached.promise = mongoose.connect(uri, opts).then(() => mongoose.connection);
+    }
   }
 
   try {

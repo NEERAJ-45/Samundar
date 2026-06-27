@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
-import Revision from '@/lib/models/Revision';
+import type { IRevision } from '@/lib/models/Revision';
+import '@/lib/models/Revision';
 
 export async function GET(request: Request) {
   try {
@@ -12,6 +13,7 @@ export async function GET(request: Request) {
     if (!conn) {
       return NextResponse.json({ dbConnected: false, data: [] });
     }
+    const Revision = conn.model<IRevision>('Revision');
     const list = await Revision.find({ userEmail });
     return NextResponse.json({ dbConnected: true, data: list });
   } catch (error: any) {
@@ -34,6 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
+    const Revision = conn.model<IRevision>('Revision');
     const doc = await Revision.findOneAndUpdate(
       { id, userEmail },
       { concept, stage, dueDate, completed: !!completed },
@@ -64,6 +67,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Missing id' }, { status: 400 });
     }
 
+    const Revision = conn.model<IRevision>('Revision');
     await Revision.deleteOne({ id, userEmail });
     return NextResponse.json({ success: true, deleted: true });
   } catch (error: any) {
