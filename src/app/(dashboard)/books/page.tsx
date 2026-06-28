@@ -1,18 +1,31 @@
 'use client';
 
 import * as React from 'react';
-import { BookOpen, FileText, FileCode, Star, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import {
+  BookOpen,
+  FileText,
+  FileCode,
+  Star,
+  ExternalLink,
+  Library,
+} from 'lucide-react';
 import { Navbar } from '@/components/layout/navbar';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
+import books, { type BookEntry, categoryLabels } from '@/data/books';
 
 type BookStatus = 'TO_READ' | 'READING' | 'COMPLETED' | 'REFERENCE';
 
-interface Book {
+interface TrackedBook {
   id: string;
   title: string;
   author: string;
@@ -46,7 +59,7 @@ const paperStatusConfig: Record<PaperStatus, { label: string; className: string 
   COMPLETED: { label: 'Completed', className: 'bg-emerald-950 text-emerald-300 border-emerald-800' },
 };
 
-const books: Book[] = [
+const trackedBooks: TrackedBook[] = [
   { id: '1', title: 'Designing Data-Intensive Applications', author: 'Martin Kleppmann', status: 'READING', progress: 65, rating: 5 },
   { id: '2', title: 'Clean Architecture', author: 'Robert C. Martin', status: 'COMPLETED', progress: 100, rating: 4 },
   { id: '3', title: 'System Design Interview Vol. 1', author: 'Alex Xu', status: 'COMPLETED', progress: 100, rating: 4 },
@@ -57,9 +70,28 @@ const books: Book[] = [
 const papers: ResearchPaper[] = [
   { id: '1', title: 'MapReduce: Simplified Data Processing on Large Clusters', authors: 'Jeffrey Dean, Sanjay Ghemawat', source: 'OSDI', year: 2004, status: 'COMPLETED', url: 'https://research.google/pubs/pub62/' },
   { id: '2', title: 'The Google File System', authors: 'Sanjay Ghemawat, Howard Gobioff, Shun-Tak Leung', source: 'SOSP', year: 2003, status: 'COMPLETED', url: 'https://research.google/pubs/pub51/' },
-  { id: '3', title: 'Dynamo: Amazon\'s Highly Available Key-value Store', authors: 'Giuseppe DeCandia et al.', source: 'SOSP', year: 2007, status: 'READING', url: 'https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf' },
-  { id: '4', title: 'Spanner: Google\'s Globally Distributed Database', authors: 'James C. Corbett et al.', source: 'OSDI', year: 2012, status: 'TO_READ', url: 'https://research.google/pubs/pub39966/' },
+  { id: '3', title: "Dynamo: Amazon's Highly Available Key-value Store", authors: 'Giuseppe DeCandia et al.', source: 'SOSP', year: 2007, status: 'READING', url: 'https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf' },
+  { id: '4', title: "Spanner: Google's Globally Distributed Database", authors: 'James C. Corbett et al.', source: 'OSDI', year: 2012, status: 'TO_READ', url: 'https://research.google/pubs/pub39966/' },
 ];
+
+const categoryOrder = [
+  '01-Foundations',
+  '02-Distributed-Systems',
+  '03-Architecture',
+  '04-Performance',
+  '05-Deep-Mastery',
+  '06-Meta-Learning',
+  '07-Others',
+];
+
+function groupBooksByCategory(): Record<string, BookEntry[]> {
+  const grouped: Record<string, BookEntry[]> = {};
+  for (const book of books) {
+    if (!grouped[book.category]) grouped[book.category] = [];
+    grouped[book.category].push(book);
+  }
+  return grouped;
+}
 
 function RatingStars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'xs' }) {
   if (rating === 0) return null;
@@ -79,7 +111,31 @@ function RatingStars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'x
   );
 }
 
-function BookCard({ book }: { book: Book }) {
+function LibraryBookCard({ book }: { book: BookEntry }) {
+  return (
+    <Link href={`/books/${book.slug}`}>
+      <Card className="border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 hover:border-zinc-700 transition-all cursor-pointer group">
+        <CardHeader className="p-4 pb-2">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-sm font-medium text-zinc-100 group-hover:text-white transition-colors truncate">
+                {book.title}
+              </CardTitle>
+            </div>
+            <BookOpen className="h-4 w-4 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0" />
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <p className="text-[11px] text-zinc-600">
+            {categoryLabels[book.category] || book.category}
+          </p>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
+function TrackedBookCard({ book }: { book: TrackedBook }) {
   const config = bookStatusConfig[book.status];
   return (
     <Card className="border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 transition-colors">
@@ -95,16 +151,19 @@ function BookCard({ book }: { book: Book }) {
         </div>
       </CardHeader>
       <CardContent className="p-5 pt-0 space-y-3">
-        {book.status === 'READING' || book.status === 'COMPLETED' ? (
+        {(book.status === 'READING' || book.status === 'COMPLETED') && (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-zinc-500">Progress</span>
               <span className="text-zinc-400">{book.progress}%</span>
             </div>
-            <Progress value={book.progress} className="h-1.5 bg-zinc-800 [&>div]:bg-zinc-500" />
+            <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-zinc-500 transition-all duration-700"
+                style={{ width: `${book.progress}%` }}
+              />
+            </div>
           </div>
-        ) : (
-          <div className="h-[2.125rem]" />
         )}
         <RatingStars rating={book.rating} />
       </CardContent>
@@ -147,20 +206,26 @@ function PaperCard({ paper }: { paper: ResearchPaper }) {
 }
 
 export default function BooksPage() {
+  const grouped = React.useMemo(() => groupBooksByCategory(), []);
+
   return (
     <div className="flex flex-col h-full">
       <Navbar />
-      <div className="flex-1 p-6 space-y-6">
+      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">Books & Research</h1>
-          <p className="text-sm text-zinc-500 mt-1">Track your reading and research</p>
+          <p className="text-sm text-zinc-500 mt-1">Read, track, and organize your knowledge</p>
         </div>
 
-        <Tabs defaultValue="books" className="space-y-6">
+        <Tabs defaultValue="library" className="space-y-6">
           <TabsList className="bg-zinc-900 border border-zinc-800">
+            <TabsTrigger value="library" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100 text-zinc-500 text-xs gap-2">
+              <Library className="h-3.5 w-3.5" />
+              Library
+            </TabsTrigger>
             <TabsTrigger value="books" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100 text-zinc-500 text-xs gap-2">
               <BookOpen className="h-3.5 w-3.5" />
-              Books
+              Reading
             </TabsTrigger>
             <TabsTrigger value="papers" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100 text-zinc-500 text-xs gap-2">
               <FileText className="h-3.5 w-3.5" />
@@ -172,10 +237,29 @@ export default function BooksPage() {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="library" className="mt-0 space-y-8">
+            {categoryOrder.map((cat) => {
+              const catBooks = grouped[cat];
+              if (!catBooks) return null;
+              return (
+                <div key={cat} className="space-y-3">
+                  <h2 className="text-sm font-semibold text-zinc-300 tracking-wide uppercase">
+                    {categoryLabels[cat] || cat}
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    {catBooks.map((book) => (
+                      <LibraryBookCard key={book.slug} book={book} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </TabsContent>
+
           <TabsContent value="books" className="mt-0 space-y-4">
-            <div className="grid grid-cols-3 gap-4">
-              {books.map((book) => (
-                <BookCard key={book.id} book={book} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {trackedBooks.map((book) => (
+                <TrackedBookCard key={book.id} book={book} />
               ))}
             </div>
           </TabsContent>
