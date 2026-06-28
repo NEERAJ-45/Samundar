@@ -197,7 +197,7 @@ export default function TasksPage() {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto">
-        <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
+        <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto w-full">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">Task Tracker</h1>
@@ -356,27 +356,31 @@ export default function TasksPage() {
                   <Card key={task.id} className={cn('bg-card/50 border-zinc-800 transition-all', task.status === 'done' && 'opacity-60')}>
                     <CardContent className="p-4">
                       {isEditing ? (
-                        <div className="flex items-center gap-2">
-                          <Input
-                            value={editTitle}
-                            onChange={(e) => setEditTitle(e.target.value)}
-                            className="flex-1 h-8 text-sm bg-zinc-900 border-zinc-700"
-                            onKeyDown={(e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditingId(null); }}
-                            autoFocus
-                          />
-                          <Input
-                            value={editDescription}
-                            onChange={(e) => setEditDescription(e.target.value)}
-                            placeholder="Description"
-                            className="flex-1 h-8 text-sm bg-zinc-900 border-zinc-700"
-                            onKeyDown={(e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditingId(null); }}
-                          />
-                          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-green-500 hover:text-green-400" onClick={saveEdit}>
-                            <Check className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-red-500 hover:text-red-400" onClick={() => setEditingId(null)}>
-                            <X className="h-4 w-4" />
-                          </Button>
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                          <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0">
+                            <Input
+                              value={editTitle}
+                              onChange={(e) => setEditTitle(e.target.value)}
+                              className="flex-1 h-8 text-sm bg-zinc-900 border-zinc-700"
+                              onKeyDown={(e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditingId(null); }}
+                              autoFocus
+                            />
+                            <Input
+                              value={editDescription}
+                              onChange={(e) => setEditDescription(e.target.value)}
+                              placeholder="Description"
+                              className="flex-1 h-8 text-sm bg-zinc-900 border-zinc-700"
+                              onKeyDown={(e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditingId(null); }}
+                            />
+                          </div>
+                          <div className="flex gap-2 self-end sm:self-auto">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-green-500 hover:text-green-400" onClick={saveEdit}>
+                              <Check className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-red-500 hover:text-red-400" onClick={() => setEditingId(null)}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ) : (
                         <div className="flex items-start gap-3">

@@ -133,7 +133,7 @@ export default function LoginPage() {
       transition={{ type: 'spring', stiffness: 100, damping: 20 }}
       className="w-full max-w-lg my-8"
     >
-      <div className="relative border border-zinc-800 bg-zinc-950 p-8 md:p-10 rounded-2xl shadow-xl overflow-hidden">
+      <div className="relative border border-zinc-800 bg-zinc-950 p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden">
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0.8 }}

@@ -79,7 +79,7 @@ const fadeUp = (i: number) => ({
 
 export default function CareerPage() {
   return (
-    <div className="space-y-16 p-8 md:p-10 lg:p-12 max-w-4xl">
+    <div className="space-y-12 md:space-y-16 p-4 md:p-8 lg:p-12 max-w-4xl">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -100,7 +100,7 @@ export default function CareerPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.4, ease: easeOut }}
-          className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-100 leading-tight"
+          className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-100 leading-tight"
         >
           Career Mission Control
         </motion.h1>
@@ -116,7 +116,7 @@ export default function CareerPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.3 }}
-          className="flex items-center gap-4 mt-6 text-xs text-zinc-600"
+          className="flex flex-wrap items-center gap-4 mt-6 text-xs text-zinc-600"
         >
           <span className="flex items-center gap-1.5">
             <Sparkles className="h-3 w-3 text-blue-400/70" />

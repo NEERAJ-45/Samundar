@@ -264,7 +264,7 @@ export default function MasteryPage() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+      <div className="flex-1 p-4 md:p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">Mastery Tracking</h1>
           <p className="text-sm text-zinc-500 mt-1">

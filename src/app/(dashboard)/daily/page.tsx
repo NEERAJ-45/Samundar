@@ -621,16 +621,20 @@ export default function DailyPage() {
           </div>
 
           {showAddBlock && (
-            <div className="flex items-center gap-2 rounded-lg border border-dashed border-zinc-700 bg-zinc-900/30 p-3">
-              <Input value={newBlockPeriod} onChange={(e) => setNewBlockPeriod(e.target.value)} placeholder="Period name" className="h-8 text-sm bg-zinc-800 border-zinc-700 w-28" onKeyDown={(e) => { if (e.key === 'Enter') addBlock(); }} />
-              <Input value={newBlockTime} onChange={(e) => setNewBlockTime(e.target.value)} placeholder="e.g. 9:00 — 12:00" className="h-8 text-sm bg-zinc-800 border-zinc-700 w-36" onKeyDown={(e) => { if (e.key === 'Enter') addBlock(); }} />
-              <Input value={newBlockFocus} onChange={(e) => setNewBlockFocus(e.target.value)} placeholder="Focus description" className="h-8 text-sm bg-zinc-800 border-zinc-700 flex-1" onKeyDown={(e) => { if (e.key === 'Enter') addBlock(); }} />
-              <Button size="sm" onClick={addBlock} disabled={!newBlockPeriod.trim() || !newBlockTime.trim()}>
-                <Check className="h-3.5 w-3.5 mr-1" /> Add
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setShowAddBlock(false)}>
-                <X className="h-3.5 w-3.5" />
-              </Button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 rounded-lg border border-dashed border-zinc-700 bg-zinc-900/30 p-3">
+              <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0">
+                <Input value={newBlockPeriod} onChange={(e) => setNewBlockPeriod(e.target.value)} placeholder="Period name" className="h-8 text-sm bg-zinc-800 border-zinc-700 w-full sm:w-28" onKeyDown={(e) => { if (e.key === 'Enter') addBlock(); }} />
+                <Input value={newBlockTime} onChange={(e) => setNewBlockTime(e.target.value)} placeholder="e.g. 9:00 — 12:00" className="h-8 text-sm bg-zinc-800 border-zinc-700 w-full sm:w-36" onKeyDown={(e) => { if (e.key === 'Enter') addBlock(); }} />
+                <Input value={newBlockFocus} onChange={(e) => setNewBlockFocus(e.target.value)} placeholder="Focus description" className="h-8 text-sm bg-zinc-800 border-zinc-700 flex-1 min-w-0" onKeyDown={(e) => { if (e.key === 'Enter') addBlock(); }} />
+              </div>
+              <div className="flex gap-2 self-end sm:self-auto">
+                <Button size="sm" onClick={addBlock} disabled={!newBlockPeriod.trim() || !newBlockTime.trim()}>
+                  <Check className="h-3.5 w-3.5 mr-1" /> Add
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setShowAddBlock(false)}>
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              </div>
             </div>
           )}
 

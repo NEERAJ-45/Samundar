@@ -221,11 +221,11 @@ export default function RevisionPage() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">Revision Engine</h1>
-            <p className="text-sm text-zinc-500 mt-1">
+      <div className="flex-1 p-4 md:p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-8">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">Revision Engine</h1>
+            <p className="text-xs sm:text-sm text-zinc-500 mt-1">
               Spaced repetition for long-term technical concept retention.
             </p>
           </div>
@@ -238,7 +238,7 @@ export default function RevisionPage() {
                   setFormConcept('');
                   setFormDueDate(new Date().toISOString().split('T')[0]);
                 }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shrink-0"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
               >
                 <Plus size={14} />
                 Add Topic

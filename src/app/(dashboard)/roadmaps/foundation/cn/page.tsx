@@ -80,7 +80,7 @@ const cnQuestions: QuestionItem[] = [
 export default function CNQuestionsPage() {
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+      <div className="flex-1 p-4 md:p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div className="mb-6">
           <Link
             href="/roadmaps/foundation"

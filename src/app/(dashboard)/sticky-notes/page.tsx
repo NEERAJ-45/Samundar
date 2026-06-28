@@ -165,22 +165,22 @@ export default function StickyNotesPage() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <div className="flex-1 space-y-8 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+      <div className="flex-1 space-y-6 md:space-y-8 p-4 md:p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         {/* Digital Sticky Note Wall Header */}
         <LazyAppear>
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-4">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-zinc-200 flex items-center gap-2">
-                <StickyNote className="h-6 w-6 text-amber-500" />
-                Engineering Sticky Notes Wall
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800/80 pb-4">
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-200 flex items-center gap-2">
+                <StickyNote className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500 shrink-0" />
+                <span className="truncate">Engineering Sticky Notes Wall</span>
               </h1>
-              <p className="text-sm text-zinc-400 mt-1">
-                Jot down task lists, API routes, SQL tables or reminders. Drag elastic notes anywhere on the whiteboard!
+              <p className="text-xs sm:text-sm text-zinc-400 mt-1">
+                Jot down task lists, API routes, SQL tables or reminders.
               </p>
             </div>
             <button
               onClick={addStickyNote}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-amber-950 transition-all cursor-pointer shadow shadow-amber-900/10"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-amber-950 transition-all cursor-pointer shadow shadow-amber-900/10 shrink-0 self-start sm:self-auto"
             >
               <Plus size={15} />
               New Note
