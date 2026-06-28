@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import {
   Monitor, Cpu, ShieldAlert, Lock, User, Eye, EyeOff, CheckCircle,
 } from 'lucide-react';
+import { toast } from '@/components/ui/toast';
 
 const ROLES = [
   'Fullstack Engineer',
@@ -69,16 +70,26 @@ export default function RegisterPage() {
       });
       const data = await res.json();
 
-      if (!res.ok) { setError(data.error || 'Registration failed.'); return; }
+      if (!res.ok) {
+        setError(data.error || 'Registration failed.');
+        toast({ variant: 'destructive', title: 'Registration failed', description: data.error || 'Please try again.' });
+        return;
+      }
 
       // Auto sign-in
       const result = await signIn('credentials', { email, password, redirect: false });
-      if (result?.error) { setError('Account created but sign-in failed. Please go to /login.'); return; }
+      if (result?.error) {
+        setError('Account created but sign-in failed. Please go to /login.');
+        toast({ variant: 'destructive', title: 'Sign-in failed', description: 'Account created. Please log in manually.' });
+        return;
+      }
 
       setDone(true);
+      toast({ title: 'Account created', description: 'Welcome to ProdigyOS!' });
       setTimeout(() => router.push('/'), 1200);
     } catch {
       setError('Server error. Please try again.');
+      toast({ variant: 'destructive', title: 'Server error', description: 'Please try again later.' });
     } finally {
       setIsLoading(false);
     }

@@ -20,9 +20,11 @@ import {
   ChevronsRight,
   Trash2,
   Plus,
-  NotebookPen,
-  StickyNote,
+  Loader2,
+  ListOrdered,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { NotesDialog } from '@/components/shared/NotesDialog';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -58,79 +60,6 @@ const diffOrder: Record<string, number> = {
   MEDIUM: 1,
   HARD: 2,
 };
-
-function NotesDialog({
-  id,
-  initialValue,
-  onSave,
-}: {
-  id: number;
-  initialValue: string;
-  onSave: (id: number, val: string) => void;
-}) {
-  const [val, setVal] = useState(initialValue);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    setVal(initialValue);
-  }, [initialValue]);
-
-  const handleSave = () => {
-    onSave(id, val);
-    setOpen(false);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button
-          className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border font-medium transition-all cursor-pointer mx-auto",
-            initialValue
-              ? "border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
-              : "border-zinc-850 bg-zinc-900/30 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800/50"
-          )}
-        >
-          <StickyNote size={13} />
-          {initialValue ? 'View Sticky Note' : 'Add Sticky Note'}
-        </button>
-      </DialogTrigger>
-      <DialogContent className="border-none bg-amber-100/95 text-zinc-800 sm:max-w-[380px] p-6 shadow-2xl relative rotate-1 select-none overflow-hidden rounded-none border-t-[14px] border-t-amber-200">
-        <div className="absolute bottom-0 right-0 w-8 h-8 bg-amber-200/50 rounded-tl-xl shadow-lg border-l border-t border-amber-300/30" />
-        
-        <DialogHeader className="border-b border-amber-200/60 pb-2 mb-3">
-          <DialogTitle className="text-zinc-700 flex items-center gap-2 font-handwritten text-xl font-bold">
-            <NotebookPen size={18} className="text-amber-600 shrink-0" />
-            Study Sticky Note
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="py-2">
-          <textarea
-            value={val}
-            onChange={(e) => setVal(e.target.value)}
-            placeholder="Jot down notes, answers or reminders in handwriting..."
-            className="w-full min-h-[180px] bg-transparent border-none p-1 text-2xl text-amber-950 placeholder:text-amber-700/60 outline-none focus:outline-none resize-none font-handwritten leading-relaxed select-text"
-          />
-        </div>
-        
-        <DialogFooter className="gap-2 pt-3 border-t border-amber-200/60 mt-3 justify-end flex-row">
-          <DialogClose asChild>
-            <button className="px-3 py-1.5 rounded text-xs font-semibold border border-amber-300/40 text-amber-800 hover:bg-amber-200/40 transition-colors cursor-pointer">
-              Discard
-            </button>
-          </DialogClose>
-          <button
-            onClick={handleSave}
-            className="px-3 py-1.5 rounded text-xs font-semibold bg-amber-800 text-amber-50 hover:bg-amber-900 transition-all cursor-pointer shadow shadow-amber-900/30"
-          >
-            Save Note
-          </button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 function AddTopicDialog({
   onAdd,
@@ -203,17 +132,11 @@ function AddTopicDialog({
           </div>
           <DialogFooter className="gap-2 pt-2">
             <DialogClose asChild>
-              <button
-                type="button"
-                className="px-3.5 py-2 rounded-lg text-xs font-semibold border border-zinc-850 hover:bg-zinc-900 transition-colors text-zinc-400 cursor-pointer"
-              >
+              <button type="button" className="px-3.5 py-2 rounded-lg text-xs font-semibold border border-zinc-850 hover:bg-zinc-900 transition-colors text-zinc-400 cursor-pointer">
                 Cancel
               </button>
             </DialogClose>
-            <button
-              type="submit"
-              className="px-3.5 py-2 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/95 transition-colors cursor-pointer"
-            >
+            <button type="submit" className="px-3.5 py-2 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/95 transition-colors cursor-pointer">
               Add Topic
             </button>
           </DialogFooter>
@@ -284,7 +207,6 @@ export default function QuestionsTable({
   useEffect(() => {
     const initialCompleted = loadData<CompletedMap>('completed', {});
     const initialNotes = loadData<NotesMap>('notes', {});
-    
     let initialCustom: QuestionItem[] = [];
     if (typeof window !== 'undefined') {
       const rawCustom = localStorage.getItem(`${storagePrefix}-custom-questions`);
@@ -559,7 +481,7 @@ export default function QuestionsTable({
         header: '#',
         cell: (info) => (
           <span className="text-xs text-muted-foreground tabular-nums">
-            {info.row.index + 1}
+            {info.row.index + 1 + pagination.pageIndex * pagination.pageSize}
           </span>
         ),
         size: 44,
@@ -691,7 +613,6 @@ export default function QuestionsTable({
               });
             }
 
-            // Sync to MongoDB
             fetch('/api/db/completions', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -720,7 +641,7 @@ export default function QuestionsTable({
         minSize: 110,
       }),
     ],
-    [completedMap, toggleCompleted, notesMap, updateNote, handleDeleteQuestion, storagePrefix, saveData]
+    [completedMap, toggleCompleted, notesMap, updateNote, handleDeleteQuestion, storagePrefix, saveData, pagination.pageIndex, pagination.pageSize]
   );
 
   const table = useReactTable({
@@ -741,7 +662,6 @@ export default function QuestionsTable({
     return all.filter((q) => completedMap[q.id]).length;
   }, [completedMap, questions, customQuestions, mounted]);
 
-  // Reset to first page when filtering
   useEffect(() => {
     setPagination((p) => ({ ...p, pageIndex: 0 }));
   }, [search]);
@@ -750,10 +670,10 @@ export default function QuestionsTable({
 
   return (
     <div className="space-y-6">
-      {/* Progress Card & Search Bar */}
+      {/* Progress & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="w-full md:max-w-md flex items-center gap-3">
-          <div className="flex-grow flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 transition-colors focus-within:border-primary/50 focus-within:bg-zinc-900/80">
+          <div className="flex-grow flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 transition-all duration-200 focus-within:border-primary/50 focus-within:bg-zinc-900/80">
             <Search className="h-4 w-4 shrink-0 text-zinc-500" />
             <input
               value={search}
@@ -766,7 +686,12 @@ export default function QuestionsTable({
         </div>
 
         {mounted && (
-          <div className="flex items-center gap-4 bg-zinc-900/60 border border-zinc-800 px-4 py-2 rounded-lg shrink-0 self-start md:self-auto">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-4 bg-zinc-900/60 border border-zinc-800 px-4 py-2 rounded-lg shrink-0 self-start md:self-auto"
+          >
             <div className="text-right">
               <div className="text-xs text-zinc-500 font-medium">User Status</div>
               <div className="text-sm font-bold text-zinc-200">{userName}</div>
@@ -778,11 +703,11 @@ export default function QuestionsTable({
                 {solvedCount} / {totalCount} Solved ({totalCount > 0 ? Math.round((solvedCount / totalCount) * 100) : 0}%)
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 
-      {/* Table Section */}
+      {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900/10">
         <table className="w-full border-collapse">
           <thead>
@@ -815,42 +740,76 @@ export default function QuestionsTable({
             ))}
           </thead>
           <tbody>
-            {mounted &&
-              table.getRowModel().rows.map((row) => {
-                const id = row.original.id;
-                const done = !!completedMap[id];
-                return (
-                  <tr
-                    key={row.id}
-                    className={cn(
-                      'border-b border-zinc-800/60 transition-colors last:border-0 hover:bg-zinc-900/20',
-                      done && 'bg-zinc-900/10'
-                    )}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className="px-4 py-2.5"
-                        style={{ width: cell.column.getSize() }}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
+            <AnimatePresence mode="wait">
+              {!mounted ? (
+                <motion.tr
+                  key="loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <td colSpan={columns.length} className="px-4 py-16">
+                    <div className="flex flex-col items-center justify-center gap-3 text-zinc-500">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                      <p className="text-sm">Loading topics...</p>
+                    </div>
+                  </td>
+                </motion.tr>
+              ) : filteredQuestions.length === 0 ? (
+                <motion.tr
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <td colSpan={columns.length} className="px-4 py-16">
+                    <div className="flex flex-col items-center justify-center gap-3 text-zinc-500">
+                      <ListOrdered className="h-8 w-8" />
+                      <p className="text-sm">No topics found matching your search.</p>
+                    </div>
+                  </td>
+                </motion.tr>
+              ) : (
+                table.getRowModel().rows.map((row, i) => {
+                  const id = row.original.id;
+                  const done = !!completedMap[id];
+                  return (
+                    <motion.tr
+                      key={row.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, delay: i * 0.025, ease: 'easeOut' }}
+                      className={cn(
+                        'border-b border-zinc-800/60 transition-colors last:border-0 hover:bg-zinc-900/20',
+                        done && 'bg-zinc-900/10'
+                      )}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="px-4 py-2.5"
+                          style={{ width: cell.column.getSize() }}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </motion.tr>
+                  );
+                })
+              )}
+            </AnimatePresence>
           </tbody>
         </table>
-        {mounted && filteredQuestions.length === 0 && (
-          <div className="flex items-center justify-center p-8 text-sm text-zinc-500">
-            No topics found matching your search.
-          </div>
-        )}
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {mounted && filteredQuestions.length > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border border-zinc-800 rounded-lg bg-zinc-900/20 text-sm text-zinc-400">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border border-zinc-800 rounded-lg bg-zinc-900/20 text-sm text-zinc-400"
+        >
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span>Showing</span>
             <span className="font-semibold text-zinc-200">
@@ -869,7 +828,6 @@ export default function QuestionsTable({
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
-            {/* Page Size Selector */}
             <div className="flex items-center gap-2">
               <span className="text-xs">Show</span>
               <select
@@ -887,13 +845,12 @@ export default function QuestionsTable({
               </select>
             </div>
 
-            {/* Navigation Buttons */}
             <div className="flex items-center gap-1">
               <button
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
                 className="p-1.5 rounded border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 hover:text-zinc-200 disabled:opacity-50 disabled:pointer-events-none transition-colors"
-                title="First Page"
+                title="First"
               >
                 <ChevronsLeft className="h-4 w-4" />
               </button>
@@ -901,7 +858,7 @@ export default function QuestionsTable({
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
                 className="p-1.5 rounded border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 hover:text-zinc-200 disabled:opacity-50 disabled:pointer-events-none transition-colors"
-                title="Previous Page"
+                title="Previous"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -913,7 +870,7 @@ export default function QuestionsTable({
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
                 className="p-1.5 rounded border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 hover:text-zinc-200 disabled:opacity-50 disabled:pointer-events-none transition-colors"
-                title="Next Page"
+                title="Next"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -921,13 +878,13 @@ export default function QuestionsTable({
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
                 className="p-1.5 rounded border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 hover:text-zinc-200 disabled:opacity-50 disabled:pointer-events-none transition-colors"
-                title="Last Page"
+                title="Last"
               >
                 <ChevronsRight className="h-4 w-4" />
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );

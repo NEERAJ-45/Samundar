@@ -151,102 +151,100 @@ function GroupedRoadmapTable({
   }, [roadmapStats]);
 
   return (
-    <div>
-      {/* Column headers */}
-      <div className="grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 px-5 py-2 border-b border-zinc-800 text-[11px] font-medium text-zinc-500">
-        <span>Category / Roadmap</span>
-        <span className="text-right">Done</span>
-        <span className="text-right">Total</span>
-        <span>Progress</span>
-        <span className="text-right">%</span>
-      </div>
-
-      {grouped.map(({ cat, items, done, tot, pct }, gi) => {
-        const open = openCats.has(cat);
-        const catColor = CATEGORY_COLORS[cat] || '#6366f1';
-        return (
-          <div key={cat} className={cn(gi < grouped.length - 1 && 'border-b border-zinc-800/70')}>
-            {/* Category row — clickable */}
-            <button
-              onClick={() => toggle(cat)}
-              className="w-full grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 items-center px-5 py-3 hover:bg-zinc-800/40 transition-colors text-left"
-            >
-              <span className="flex items-center gap-2 font-medium text-zinc-200">
-                {open ? (
-                  <ChevronDown className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                ) : (
-                  <ChevronRight className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                )}
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: `${catColor}18`, color: catColor }}
-                >
-                  {cat}
-                </span>
-              </span>
-              <span className="text-right text-sm font-semibold text-zinc-200 tabular-nums">{done}</span>
-              <span className="text-right text-sm text-zinc-500 tabular-nums">{tot}</span>
-              <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{ width: `${pct}%`, backgroundColor: catColor }}
-                />
-              </div>
-              <span
-                className="text-right text-sm font-semibold tabular-nums"
-                style={{ color: pct >= 80 ? '#10b981' : pct >= 40 ? '#f59e0b' : '#52525b' }}
-              >
-                {pct}%
-              </span>
-            </button>
-
-            {/* Sub-roadmap rows */}
-            {open && (
-              <div className="border-t border-zinc-800/50 bg-zinc-950/30">
-                {items.map((r, ri) => (
-                  <div
-                    key={r.label}
-                    className={cn(
-                      'grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 items-center pl-10 pr-5 py-2 text-sm',
-                      ri < items.length - 1 && 'border-b border-zinc-800/40',
-                      'hover:bg-zinc-800/20 transition-colors'
-                    )}
-                  >
-                    <span className="flex items-center gap-2 text-zinc-400">
-                      <div className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
-                      {r.label}
-                    </span>
-                    <span className="text-right text-zinc-300 tabular-nums">{r.completed}</span>
-                    <span className="text-right text-zinc-600 tabular-nums">{r.total}</span>
-                    <div className="h-1 w-full rounded-full bg-zinc-800 overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
-                        style={{ width: `${r.pct}%`, backgroundColor: r.color }}
-                      />
-                    </div>
-                    <span
-                      className="text-right text-xs font-medium tabular-nums"
-                      style={{ color: r.pct >= 80 ? '#10b981' : r.pct >= 40 ? '#f59e0b' : '#52525b' }}
-                    >
-                      {r.pct}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })}
-
-      {/* Total footer */}
-      <div className="grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 items-center px-5 py-3 border-t border-zinc-700 bg-zinc-800/30">
-        <span className="font-semibold text-zinc-200 text-sm">Total</span>
-        <span className="text-right font-bold text-zinc-100 tabular-nums text-sm">{totalCompleted}</span>
-        <span className="text-right text-zinc-400 tabular-nums text-sm">{TOTAL_TOPICS}</span>
-        <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
-          <div className="h-full rounded-full bg-indigo-500 transition-all duration-700" style={{ width: `${overallPct}%` }} />
+    <div className="overflow-x-auto">
+      <div className="min-w-[500px]">
+        <div className="grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 px-5 py-2 border-b border-zinc-800 text-[11px] font-medium text-zinc-500">
+          <span>Category / Roadmap</span>
+          <span className="text-right">Done</span>
+          <span className="text-right">Total</span>
+          <span>Progress</span>
+          <span className="text-right">%</span>
         </div>
-        <span className="text-right font-bold text-indigo-400 tabular-nums text-sm">{overallPct}%</span>
+
+        {grouped.map(({ cat, items, done, tot, pct }, gi) => {
+          const open = openCats.has(cat);
+          const catColor = CATEGORY_COLORS[cat] || '#6366f1';
+          return (
+            <div key={cat} className={cn(gi < grouped.length - 1 && 'border-b border-zinc-800/70')}>
+              <button
+                onClick={() => toggle(cat)}
+                className="w-full grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 items-center px-5 py-3 hover:bg-zinc-800/40 transition-colors text-left"
+              >
+                <span className="flex items-center gap-2 font-medium text-zinc-200">
+                  {open ? (
+                    <ChevronDown className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                  )}
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full"
+                    style={{ backgroundColor: `${catColor}18`, color: catColor }}
+                  >
+                    {cat}
+                  </span>
+                </span>
+                <span className="text-right text-sm font-semibold text-zinc-200 tabular-nums">{done}</span>
+                <span className="text-right text-sm text-zinc-500 tabular-nums">{tot}</span>
+                <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{ width: `${pct}%`, backgroundColor: catColor }}
+                  />
+                </div>
+                <span
+                  className="text-right text-sm font-semibold tabular-nums"
+                  style={{ color: pct >= 80 ? '#10b981' : pct >= 40 ? '#f59e0b' : '#52525b' }}
+                >
+                  {pct}%
+                </span>
+              </button>
+
+              {open && (
+                <div className="border-t border-zinc-800/50 bg-zinc-950/30">
+                  {items.map((r, ri) => (
+                    <div
+                      key={r.label}
+                      className={cn(
+                        'grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 items-center pl-10 pr-5 py-2 text-sm',
+                        ri < items.length - 1 && 'border-b border-zinc-800/40',
+                        'hover:bg-zinc-800/20 transition-colors'
+                      )}
+                    >
+                      <span className="flex items-center gap-2 text-zinc-400">
+                        <div className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
+                        {r.label}
+                      </span>
+                      <span className="text-right text-zinc-300 tabular-nums">{r.completed}</span>
+                      <span className="text-right text-zinc-600 tabular-nums">{r.total}</span>
+                      <div className="h-1 w-full rounded-full bg-zinc-800 overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{ width: `${r.pct}%`, backgroundColor: r.color }}
+                        />
+                      </div>
+                      <span
+                        className="text-right text-xs font-medium tabular-nums"
+                        style={{ color: r.pct >= 80 ? '#10b981' : r.pct >= 40 ? '#f59e0b' : '#52525b' }}
+                      >
+                        {r.pct}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <div className="grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 items-center px-5 py-3 border-t border-zinc-700 bg-zinc-800/30">
+          <span className="font-semibold text-zinc-200 text-sm">Total</span>
+          <span className="text-right font-bold text-zinc-100 tabular-nums text-sm">{totalCompleted}</span>
+          <span className="text-right text-zinc-400 tabular-nums text-sm">{TOTAL_TOPICS}</span>
+          <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
+            <div className="h-full rounded-full bg-indigo-500 transition-all duration-700" style={{ width: `${overallPct}%` }} />
+          </div>
+          <span className="text-right font-bold text-indigo-400 tabular-nums text-sm">{overallPct}%</span>
+        </div>
       </div>
     </div>
   );
@@ -394,21 +392,6 @@ export default function AnalyticsPage() {
             <div>
               <h1 className="text-2xl font-semibold tracking-tight">Analytics Center</h1>
               <p className="text-sm text-muted-foreground mt-1">Live data from your roadmaps &amp; database</p>
-            </div>
-            <div className="flex items-center gap-2">
-              {loading ? (
-                <Badge variant="outline" className="gap-1.5 text-zinc-400 border-zinc-700">
-                  <Loader2 className="h-3 w-3 animate-spin" /> Syncing…
-                </Badge>
-              ) : dbConnected ? (
-                <Badge variant="outline" className="gap-1.5 text-emerald-400 border-emerald-500/30 bg-emerald-500/10">
-                  <Wifi className="h-3 w-3" /> Cloud DB
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="gap-1.5 text-amber-400 border-amber-500/30 bg-amber-500/10">
-                  <WifiOff className="h-3 w-3" /> Local Only
-                </Badge>
-              )}
             </div>
           </div>
 

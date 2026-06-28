@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useProfile } from '@/components/providers/ProfileProvider';
+import { toast } from '@/components/ui/toast';
 
 type Priority = 'low' | 'medium' | 'high' | 'critical';
 type Status = 'todo' | 'in-progress' | 'done';
@@ -65,15 +67,8 @@ function saveTasks(tasks: Task[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
-function showToast(msg: string) {
-  const el = document.createElement('div');
-  el.className = 'fixed bottom-4 right-4 z-50 bg-zinc-800 text-zinc-200 text-sm px-4 py-2 rounded-lg border border-zinc-700 shadow-lg animate-in fade-in slide-in-from-bottom-2';
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 300ms'; setTimeout(() => el.remove(), 300); }, 2000);
-}
-
 export default function TasksPage() {
+  const { userEmail } = useProfile();
   const [tasks, setTasks] = React.useState<Task[]>([]);
   const [mounted, setMounted] = React.useState(false);
   const [search, setSearch] = React.useState('');
@@ -115,12 +110,29 @@ export default function TasksPage() {
     setNewDescription('');
     setNewDueDate('');
     setShowAddForm(false);
-    showToast('Task created');
+    toast({ title: 'Task created' });
+    if (userEmail) {
+      fetch('/api/db/activity', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userEmail, text: `Created task "${task.title}"` }),
+      }).catch(() => {
+        toast({ variant: 'destructive', title: 'Failed to log activity' });
+      });
+    }
   }
 
   function deleteTask(id: string) {
+    const t = tasks.find((x) => x.id === id);
     setTasks((prev) => prev.filter((t) => t.id !== id));
-    showToast('Task deleted');
+    toast({ title: 'Task deleted' });
+    if (userEmail && t) {
+      fetch('/api/db/activity', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userEmail, text: `Deleted task "${t.title}"` }),
+      }).catch(() => {
+        toast({ variant: 'destructive', title: 'Failed to log activity' });
+      });
+    }
   }
 
   function toggleStatus(id: string) {
@@ -131,6 +143,16 @@ export default function TasksPage() {
         return { ...t, status: next };
       })
     );
+    const t = tasks.find((x) => x.id === id);
+    if (userEmail && t) {
+      const label = t.status === 'todo' ? 'started' : t.status === 'in-progress' ? 'completed' : 'reset';
+      fetch('/api/db/activity', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userEmail, text: `${label} task "${t.title}"` }),
+      }).catch(() => {
+        toast({ variant: 'destructive', title: 'Failed to log activity' });
+      });
+    }
   }
 
   function startEdit(task: Task) {
@@ -147,7 +169,7 @@ export default function TasksPage() {
       )
     );
     setEditingId(null);
-    showToast('Task updated');
+    toast({ title: 'Task updated' });
   }
 
   const filtered = tasks.filter((t) => {

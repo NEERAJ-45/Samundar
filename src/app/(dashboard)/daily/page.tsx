@@ -33,6 +33,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { useProfile } from '@/components/providers/ProfileProvider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const STORAGE_KEY = 'daily-completions';
@@ -173,6 +174,7 @@ function getCurrentBlockIndex(): number {
 }
 
 export default function DailyPage() {
+  const { userEmail } = useProfile();
   const [completed, setCompleted] = React.useState<Set<string>>(new Set());
   const [mounted, setMounted] = React.useState(false);
   const [note, setNote] = React.useState('');
@@ -233,12 +235,19 @@ export default function DailyPage() {
   }, []);
 
   function toggleTask(id: string) {
+    const wasCompleted = completed.has(id);
     setCompleted((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
+    if (userEmail) {
+      fetch('/api/db/activity', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userEmail, text: wasCompleted ? 'Uncompleted a daily task' : 'Completed a daily task' }),
+      }).catch(() => {});
+    }
   }
 
   function addCustomTask() {
@@ -253,6 +262,12 @@ export default function DailyPage() {
     };
     setCustomTasks((p) => [...p, task]);
     setNewTaskTitle('');
+    if (userEmail) {
+      fetch('/api/db/activity', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userEmail, text: `Added custom daily task "${title}"` }),
+      }).catch(() => {});
+    }
   }
 
   function startTimer() {

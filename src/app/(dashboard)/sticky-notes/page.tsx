@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { LazyAppear } from "@/components/shared/LazyAppear";
 import { useProfile } from "@/components/providers/ProfileProvider";
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from "@/components/ui/toast";
 import {
   StickyNote,
   Plus,
@@ -93,6 +94,7 @@ export default function StickyNotesPage() {
         }
       } catch (err) {
         console.error('Failed to load sticky notes:', err);
+        toast({ variant: 'destructive', title: 'Failed to load sticky notes' });
       }
     }
     loadStickyNotes();
@@ -116,7 +118,7 @@ export default function StickyNotesPage() {
         note: JSON.stringify({ text, color }),
         userEmail,
       }),
-    }).catch(() => {});
+    }).catch(() => { toast({ variant: 'destructive', title: 'Failed to save sticky note' }); });
   }, [userEmail, customDbUrl]);
 
   // Add a new sticky note
@@ -159,7 +161,7 @@ export default function StickyNotesPage() {
         note: '', // triggers deletion
         userEmail,
       }),
-    }).catch(() => {});
+    }).catch(() => { toast({ variant: 'destructive', title: 'Failed to delete sticky note' }); });
   };
 
   return (

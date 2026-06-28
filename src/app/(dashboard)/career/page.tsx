@@ -1,35 +1,38 @@
 'use client';
 
-import { Briefcase, Target, Quote, Heart, MapPin, Award, TrendingUp, ChevronRight, Brain, Zap, BookOpen, Star } from 'lucide-react';
-import { Navbar } from '@/components/layout/navbar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { motion } from 'framer-motion';
+import {
+  Target, Quote, Heart, MapPin, Award, TrendingUp,
+  ChevronRight, Brain, Zap, BookOpen, Star, Sparkles, Rocket,
+  Clock, CircleDot, Briefcase,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const mission = {
-  title: "Become a World-Class Software Engineer",
+  title: 'Become a World-Class Software Engineer',
   description:
-    "Master the fundamentals, build at scale, and contribute to systems that impact millions. Continuously push the boundaries of what I can build and understand, while mentoring the next generation of engineers.",
+    'Master the fundamentals, build at scale, and contribute to systems that impact millions. Continuously push the boundaries of what I can build and understand, while mentoring the next generation of engineers.',
 };
 
 const targetCompanies = [
-  { name: 'Google', level: 'L4 — Senior SWE', icon: 'G', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-  { name: 'Microsoft', level: 'Senior SWE', icon: 'M', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-  { name: 'DE Shaw', level: 'Tech Lead', icon: 'D', color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-  { name: 'Stripe', level: 'Staff SWE', icon: 'S', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+  { name: 'Google', level: 'L4 \u2014 Senior SWE', icon: 'G', accent: 'text-blue-400' },
+  { name: 'Microsoft', level: 'Senior SWE', icon: 'M', accent: 'text-emerald-400' },
+  { name: 'DE Shaw', level: 'Tech Lead', icon: 'D', accent: 'text-purple-400' },
+  { name: 'Stripe', level: 'Staff SWE', icon: 'S', accent: 'text-amber-400' },
 ];
 
 const milestones = [
-  { year: 'Year 1', title: 'Master DSA & System Design Fundamentals', desc: '200+ LeetCode problems, design 10+ systems end-to-end', status: 'in-progress' },
-  { year: 'Year 2', title: 'Deep dive into Distributed Systems', desc: 'Build a distributed key-value store, study Paxos/Raft, MIT 6.824', status: 'upcoming' },
-  { year: 'Year 3', title: 'Build & Ship Production Systems', desc: 'Lead a meaningful project end-to-end, own production infrastructure', status: 'upcoming' },
-  { year: 'Year 5', title: 'Reach Senior Engineer Level', desc: 'Architect systems, mentor juniors, drive technical strategy', status: 'upcoming' },
-  { year: 'Year 10', title: 'Staff / Principal Engineer', desc: 'Org-wide impact, define technical vision, industry recognition', status: 'upcoming' },
+  { year: 'Year 1', title: 'Master DSA & System Design', desc: '200+ LeetCode, design 10+ systems', status: 'in-progress' },
+  { year: 'Year 2', title: 'Deep dive into Distributed Systems', desc: 'Build a distributed KV store, MIT 6.824', status: 'upcoming' },
+  { year: 'Year 3', title: 'Ship Production Systems', desc: 'Lead end-to-end, own infra', status: 'upcoming' },
+  { year: 'Year 5', title: 'Senior Engineer', desc: 'Architect, mentor, drive strategy', status: 'upcoming' },
+  { year: 'Year 10', title: 'Staff / Principal Engineer', desc: 'Org-wide impact, industry recognition', status: 'upcoming' },
 ];
 
 const goals = {
   five: {
-    title: '5-Year Goal: Senior Engineer at a Top Tech Company',
+    title: '5-Year Goal',
+    subtitle: 'Senior Engineer at a Top Tech Company',
     points: [
       'Master distributed systems & large-scale architecture',
       'Ship products used by millions of users',
@@ -39,20 +42,21 @@ const goals = {
     ],
   },
   ten: {
-    title: '10-Year Goal: Staff/Principal Engineer or Distinguished Engineer',
+    title: '10-Year Goal',
+    subtitle: 'Staff/Principal or Distinguished Engineer',
     points: [
-      'Define technical strategy for a major org or product area',
-      'Be a recognized expert in a domain (Distributed Systems / Infra)',
-      'Author influential tech talks, papers, or blog posts',
-      'Build and lead high-performing engineering teams',
-      'Drive industry-level change through systems and tools',
+      'Define technical strategy for a major org',
+      'Recognized expert in Distributed Systems / Infra',
+      'Author influential talks, papers, or blog posts',
+      'Build and lead high-performing teams',
+      'Drive industry-level change through systems',
     ],
   },
 };
 
 const philosophy = {
   quote:
-    "Software engineering is not about knowing all the answers — it's about having the intellectual honesty to ask the right questions, the discipline to build robust systems, and the humility to keep learning every single day.",
+    'Software engineering is not about knowing all the answers \u2014 it\u2019s about having the intellectual honesty to ask the right questions, the discipline to build robust systems, and the humility to keep learning every single day.',
 };
 
 const principles = [
@@ -66,164 +70,253 @@ const principles = [
   { text: 'Think in Systems', icon: Award },
 ];
 
-const statusColors: Record<string, string> = {
-  completed: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
-  'in-progress': 'bg-blue-500/10 border-blue-500/20 text-blue-400',
-  upcoming: 'bg-zinc-800/50 border-zinc-700/20 text-zinc-400',
-};
+const easeOut = [0.25, 0.4, 0.25, 1] as const;
+
+const fadeUp = (i: number) => ({
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { delay: i * 0.05, duration: 0.4, ease: easeOut } },
+});
 
 export default function CareerPage() {
   return (
-    <div className="flex flex-col h-full">
-      <Navbar />
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-6 space-y-8">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Career Mission Control</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Your engineering career north star
-            </p>
-          </div>
+    <div className="space-y-16 p-8 md:p-10 lg:p-12 max-w-4xl">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05, duration: 0.3 }}
+          className="flex items-center gap-2 mb-3"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+          <span className="text-xs font-semibold text-blue-400 uppercase tracking-[0.15em]">Career Path</span>
+          <span className="text-zinc-700 mx-1">/</span>
+          <span className="text-xs text-zinc-500">Vision</span>
+        </motion.div>
+        <motion.h1
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.4, ease: easeOut }}
+          className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-100 leading-tight"
+        >
+          Career Mission Control
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          className="text-base text-zinc-500 mt-3 max-w-xl leading-relaxed"
+        >
+          The compass for your professional journey
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.3 }}
+          className="flex items-center gap-4 mt-6 text-xs text-zinc-600"
+        >
+          <span className="flex items-center gap-1.5">
+            <Sparkles className="h-3 w-3 text-blue-400/70" />
+            Active since 2024
+          </span>
+          <span className="w-1 h-1 rounded-full bg-zinc-700" />
+          <span className="flex items-center gap-1.5">
+            <Clock className="h-3 w-3 text-emerald-400/70" />
+            10 year roadmap
+          </span>
+          <span className="w-1 h-1 rounded-full bg-zinc-700" />
+          <span className="flex items-center gap-1.5">
+            <CircleDot className="h-3 w-3 text-purple-400/70" />
+            5 milestones
+          </span>
+        </motion.div>
+      </motion.div>
 
-          <Card className="relative overflow-hidden bg-zinc-900/40 border-zinc-800/80">
-            <CardContent className="p-8 relative z-10">
-              <div className="flex items-center gap-2 mb-4">
-                <Target className="h-5 w-5 text-blue-400" />
-                <span className="text-xs font-medium text-blue-400 uppercase tracking-wider">Mission</span>
-              </div>
-              <h2 className="text-3xl font-bold tracking-tight mb-3">{mission.title}</h2>
-              <p className="text-muted-foreground text-base leading-relaxed max-w-3xl">{mission.description}</p>
-            </CardContent>
-          </Card>
-
-          <div>
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
-              Target Companies
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {targetCompanies.map((company) => (
-                <Card key={company.name} className={cn('bg-card/50', company.border)}>
-                  <CardContent className="p-5 space-y-3">
-                    <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold', company.bg, company.color)}>
-                      {company.icon}
-                    </div>
-                    <div>
-                      <p className="font-semibold">{company.name}</p>
-                      <p className="text-xs text-muted-foreground">{company.level}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              Career Milestones
-            </h2>
-            <div className="relative">
-              <div className="absolute left-[19px] top-0 bottom-0 w-px bg-zinc-800" />
-              <div className="space-y-6">
-                {milestones.map((m, i) => (
-                  <div key={i} className="relative flex gap-6">
-                    <div className={cn(
-                      'relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2',
-                      m.status === 'in-progress' ? 'border-blue-500 bg-blue-500/10' : 'border-zinc-700 bg-zinc-900'
-                    )}>
-                      <div className={cn('h-2.5 w-2.5 rounded-full', m.status === 'in-progress' ? 'bg-blue-400' : 'bg-zinc-600')} />
-                    </div>
-                    <div className="flex-1 pb-2">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="text-sm font-medium">{m.year}</span>
-                        <Badge variant="outline" className={cn('text-[10px]', statusColors[m.status])}>
-                          {m.status === 'in-progress' ? 'In Progress' : m.status === 'completed' ? 'Completed' : 'Upcoming'}
-                        </Badge>
-                      </div>
-                      <p className="text-sm font-medium">{m.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{m.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-card/50 border-zinc-800">
-              <CardHeader className="p-5 pb-3">
-                <div className="flex items-center gap-2 text-emerald-400">
-                  <Star className="h-4 w-4" />
-                  <CardTitle className="text-sm font-medium">5-Year Goal</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="p-5 pt-0 space-y-3">
-                <p className="text-sm font-medium">{goals.five.title}</p>
-                <ul className="space-y-2">
-                  {goals.five.points.map((point, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <ChevronRight className="h-4 w-4 mt-0.5 shrink-0 text-emerald-400" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card/50 border-zinc-800">
-              <CardHeader className="p-5 pb-3">
-                <div className="flex items-center gap-2 text-purple-400">
-                  <Award className="h-4 w-4" />
-                  <CardTitle className="text-sm font-medium">10-Year Goal</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="p-5 pt-0 space-y-3">
-                <p className="text-sm font-medium">{goals.ten.title}</p>
-                <ul className="space-y-2">
-                  {goals.ten.points.map((point, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <ChevronRight className="h-4 w-4 mt-0.5 shrink-0 text-purple-400" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card className="bg-zinc-900/40 border-zinc-800/80">
-            <CardContent className="p-8">
-              <div className="flex items-center gap-2 mb-4">
-                <Quote className="h-5 w-5 text-amber-400" />
-                <span className="text-xs font-medium text-amber-400 uppercase tracking-wider">Engineering Philosophy</span>
-              </div>
-              <p className="text-lg leading-relaxed italic text-foreground/90">&ldquo;{philosophy.quote}&rdquo;</p>
-            </CardContent>
-          </Card>
-
-          <div>
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              Core Principles
-            </h2>
-            <div className="flex flex-wrap gap-3">
-              {principles.map((p) => {
-                const Icon = p.icon;
-                return (
-                  <div
-                    key={p.text}
-                    className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-4 py-2 text-sm hover:border-zinc-700 transition-colors"
-                  >
-                    <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-                    {p.text}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+      <section>
+        <div className="flex items-center gap-2 mb-4">
+          <Target className="h-3.5 w-3.5 text-blue-400" />
+          <h2 className="text-xs font-semibold text-blue-400 uppercase tracking-widest">Mission</h2>
         </div>
+        <p className="text-lg md:text-xl text-zinc-200 leading-relaxed font-medium">
+          {mission.title}
+        </p>
+        <p className="text-sm text-zinc-500 mt-3 leading-relaxed max-w-2xl">
+          {mission.description}
+        </p>
+      </section>
+
+      <section>
+        <div className="flex items-center gap-2 mb-5">
+          <Briefcase className="h-3.5 w-3.5 text-zinc-500" />
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Target Companies</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4">
+          {targetCompanies.map((c, i) => (
+            <motion.div
+              key={c.name}
+              custom={i}
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp(i)}
+              className="flex items-center gap-3"
+            >
+              <span className={cn('text-lg font-bold w-6', c.accent)}>{c.icon}</span>
+              <div>
+                <p className="text-sm font-medium text-zinc-300">{c.name}</p>
+                <p className="text-xs text-zinc-600">{c.level}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <div className="flex items-center gap-2 mb-5">
+          <MapPin className="h-3.5 w-3.5 text-zinc-500" />
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Milestones</h2>
+        </div>
+        <div className="space-y-0">
+          {milestones.map((m, i) => {
+            const isActive = m.status === 'in-progress';
+            const isLast = i === milestones.length - 1;
+            return (
+              <motion.div
+                key={i}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp(i)}
+                className={cn(
+                  'relative flex gap-5 py-4',
+                  !isLast && 'border-b border-zinc-800/40',
+                )}
+              >
+                <div className="flex flex-col items-center">
+                  <div className={cn(
+                    'h-2.5 w-2.5 rounded-full mt-1.5',
+                    isActive ? 'bg-blue-400' : 'bg-zinc-700',
+                  )} />
+                  {!isLast && <div className="w-px flex-1 bg-zinc-800/60 mt-1.5" />}
+                </div>
+                <div className="flex-1 pb-0.5">
+                  <div className="flex items-center gap-2.5 mb-0.5 flex-wrap">
+                    <span className={cn(
+                      'text-xs font-semibold',
+                      isActive ? 'text-blue-400' : 'text-zinc-600',
+                    )}>
+                      {m.year}
+                    </span>
+                    <span className={cn(
+                      'text-[10px] font-medium',
+                      isActive ? 'text-blue-400/80' : 'text-zinc-600',
+                    )}>
+                      {isActive ? '\u2014 In Progress' : '\u2014 Planned'}
+                    </span>
+                  </div>
+                  <p className={cn(
+                    'text-sm',
+                    isActive ? 'text-zinc-200 font-medium' : 'text-zinc-400',
+                  )}>
+                    {m.title}
+                  </p>
+                  <p className="text-xs text-zinc-600 mt-0.5">{m.desc}</p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Star className="h-3.5 w-3.5 text-emerald-400" />
+            <h2 className="text-xs font-semibold text-emerald-400 uppercase tracking-widest">5-Year Goal</h2>
+          </div>
+          <p className="text-sm font-medium text-zinc-300 mb-4">{goals.five.subtitle}</p>
+          <ul className="space-y-2.5">
+            {goals.five.points.map((point, i) => (
+              <motion.li
+                key={i}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp(i)}
+                className="flex items-start gap-2.5 text-sm text-zinc-500"
+              >
+                <ChevronRight className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-400/70" />
+                {point}
+              </motion.li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Award className="h-3.5 w-3.5 text-purple-400" />
+            <h2 className="text-xs font-semibold text-purple-400 uppercase tracking-widest">10-Year Goal</h2>
+          </div>
+          <p className="text-sm font-medium text-zinc-300 mb-4">{goals.ten.subtitle}</p>
+          <ul className="space-y-2.5">
+            {goals.ten.points.map((point, i) => (
+              <motion.li
+                key={i}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp(i)}
+                className="flex items-start gap-2.5 text-sm text-zinc-500"
+              >
+                <ChevronRight className="h-3.5 w-3.5 mt-0.5 shrink-0 text-purple-400/70" />
+                {point}
+              </motion.li>
+            ))}
+          </ul>
+        </section>
       </div>
+
+      <section>
+        <div className="flex items-center gap-2 mb-5">
+          <Quote className="h-3.5 w-3.5 text-amber-400/70" />
+          <h2 className="text-xs font-semibold text-amber-400/70 uppercase tracking-widest">Philosophy</h2>
+        </div>
+        <div className="relative pl-6 border-l-2 border-amber-500/20">
+          <span className="absolute -top-1 -left-1.5 text-3xl leading-none text-amber-500/20 font-serif select-none">&ldquo;</span>
+          <p className="text-sm md:text-base text-zinc-400 leading-relaxed italic">
+            {philosophy.quote}
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <div className="flex items-center gap-2 mb-5">
+          <Heart className="h-3.5 w-3.5 text-zinc-500" />
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Core Principles</h2>
+        </div>
+        <div className="flex flex-wrap gap-x-6 gap-y-3">
+          {principles.map((p, i) => {
+            const Icon = p.icon;
+            return (
+              <motion.div
+                key={p.text}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp(i)}
+                className="flex items-center gap-2 text-sm text-zinc-400"
+              >
+                <Icon className="h-3.5 w-3.5 text-zinc-600" />
+                {p.text}
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
+
+

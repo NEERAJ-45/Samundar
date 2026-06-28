@@ -1,9 +1,11 @@
 import { auth } from '@/auth.middleware';
 import { NextResponse } from 'next/server';
 
-export default auth((req) => {
+export const proxy = auth((req) => {
   const { pathname } = req.nextUrl;
   const isAuthenticated = !!req.auth;
+
+  console.log(`[Proxy] Request path: ${pathname}, Authenticated: ${isAuthenticated}`);
 
   // Public auth routes
   const isAuthRoute =
@@ -27,6 +29,6 @@ export default auth((req) => {
 });
 
 export const config = {
-  // Protect everything except NextAuth internals, static assets, and favicon
-  matcher: ['/((?!api/auth|_next/static|_next/image|favicon.ico).*)'],
+  // Protect everything except API routes, static assets, and favicon
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
