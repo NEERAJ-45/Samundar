@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useProfile } from '@/components/providers/ProfileProvider';
 import { Database, LogOut, User, CheckCircle2, AlertTriangle, X, ChevronRight, CalendarDays } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { GlobalSearch } from '@/components/shared/GlobalSearch';
 
@@ -33,36 +34,44 @@ export function Navbar({ global = false }: { global?: boolean }) {
   return (
     <>
       <header className="sticky top-0 z-30 flex h-14 w-full justify-center border-b border-zinc-800/80 bg-zinc-950/50 backdrop-blur-sm shrink-0">
-        <div className="flex h-full w-full max-w-7xl items-center justify-between px-6">
-          {/* Path Breadcrumbs */}
-          <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
-            <span className="text-zinc-500 hover:text-zinc-300 cursor-pointer">ProdigyOS</span>
+        <div className="flex h-full w-full max-w-7xl items-center justify-between px-4 md:px-6">
+          {/* Path Breadcrumbs - full on desktop, short on mobile */}
+          <div className="hidden md:flex items-center gap-1.5 text-xs font-medium text-zinc-400 min-w-0">
+            <span className="text-zinc-500 hover:text-zinc-300 cursor-pointer shrink-0">ProdigyOS</span>
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={idx}>
-                <span className="text-zinc-650 font-normal">/</span>
-                <span className={idx === breadcrumbs.length - 1 ? "text-zinc-200 font-semibold" : "text-zinc-400"}>
+                <span className="text-zinc-650 font-normal shrink-0">/</span>
+                <span className={cn(
+                  "truncate",
+                  idx === breadcrumbs.length - 1 ? "text-zinc-200 font-semibold" : "text-zinc-400"
+                )}>
                   {crumb}
                 </span>
               </React.Fragment>
             ))}
           </div>
+          {/* Mobile breadcrumb - just current page */}
+          <div className="md:hidden flex items-center text-xs font-medium text-zinc-400 min-w-0">
+            <span className="truncate text-zinc-200 font-semibold">
+              {breadcrumbs[breadcrumbs.length - 1] || 'Dashboard'}
+            </span>
+          </div>
 
-          {/* Centered Search */}
-          <div className="flex-1 max-w-xs mx-4 flex justify-center">
+          {/* Centered Search - hidden on mobile */}
+          <div className="hidden md:flex flex-1 max-w-xs mx-4 justify-center">
             <GlobalSearch />
           </div>
 
           {/* Database Status & User Badge */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* Date Display */}
             <div className="hidden sm:flex items-center gap-1.5 text-xs text-zinc-400 border-r border-zinc-800 pr-4">
               <CalendarDays className="h-3.5 w-3.5 text-zinc-500" />
               <span className="font-medium text-zinc-300">{dateStr}</span>
             </div>
 
-            {/* DB Status Badge */}
-            <div 
-              className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-semibold border ${
+            {/* DB Status Badge - hidden on small mobile */}
+            <div className={`hidden sm:flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-semibold border ${
                 dbConnected 
                   ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
                   : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
@@ -87,7 +96,7 @@ export function Navbar({ global = false }: { global?: boolean }) {
             {/* Logout */}
             <button
               onClick={() => logout()}
-              className="flex items-center gap-1.5 rounded-lg border border-zinc-800 hover:border-red-500/30 hover:bg-red-500/5 px-2.5 py-1 text-xs text-zinc-500 hover:text-red-400 transition-colors cursor-pointer"
+              className="flex items-center justify-center rounded-lg border border-zinc-800 hover:border-red-500/30 hover:bg-red-500/5 p-1.5 text-zinc-500 hover:text-red-400 transition-colors cursor-pointer"
               title="Sign out"
             >
               <LogOut className="h-3.5 w-3.5" />

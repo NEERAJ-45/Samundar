@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, LayoutDashboard, GitBranch, Map, Target, RefreshCw, FolderKanban, Briefcase, BookOpen, CalendarCheck, BarChart3, StickyNote, Rocket } from 'lucide-react';
@@ -25,19 +25,29 @@ export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 left-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-500 active:bg-blue-700 transition-colors md:hidden"
+        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl hover:bg-blue-500 active:bg-blue-700 active:scale-95 transition-all md:hidden"
         aria-label="Open menu"
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="h-6 w-6" />
       </button>
       {open && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-64 bg-zinc-950 border-r border-zinc-800 shadow-2xl flex flex-col">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={() => setOpen(false)}
+          />
+          <div className={cn(
+            "absolute left-0 top-0 bottom-0 bg-zinc-950 border-r border-zinc-800 shadow-2xl flex flex-col",
+            "w-72 max-w-[85vw] animate-in slide-in-from-left duration-300"
+          )}>
             <div className="flex items-center justify-between h-14 border-b border-zinc-800 px-4 shrink-0">
               <div className="flex items-center gap-2">
                 <div className="flex h-7 w-7 items-center justify-center rounded-md bg-zinc-100">
@@ -45,8 +55,8 @@ export function MobileNav() {
                 </div>
                 <span className="text-sm font-semibold tracking-wide text-zinc-100">ProdigyOS</span>
               </div>
-              <button onClick={() => setOpen(false)} className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors">
-                <X className="h-4 w-4" />
+              <button onClick={() => setOpen(false)} className="p-2 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors active:scale-95">
+                <X className="h-5 w-5" />
               </button>
             </div>
             <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
@@ -59,11 +69,11 @@ export function MobileNav() {
                     href={item.href}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
+                      'flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors active:scale-[0.98]',
                       isActive ? 'bg-zinc-800 text-zinc-100' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50',
                     )}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
+                    <Icon className="h-5 w-5 shrink-0" />
                     {item.label}
                   </Link>
                 );

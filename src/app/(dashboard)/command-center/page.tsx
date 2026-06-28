@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Navbar } from "@/components/layout/navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -227,7 +226,6 @@ export default function CommandCenterPage() {
   if (!mounted || loading) {
     return (
       <div className="flex flex-col h-full bg-zinc-950 min-h-screen">
-        <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3 text-zinc-500">
             <Loader2 className="h-8 w-8 animate-spin" />
@@ -242,8 +240,7 @@ export default function CommandCenterPage() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <Navbar />
-      <div className="flex-1 space-y-8 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+      <div className="flex-1 space-y-6 md:space-y-8 p-4 md:p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Command Center</h1>

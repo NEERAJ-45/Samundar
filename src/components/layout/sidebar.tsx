@@ -57,7 +57,7 @@ export function Sidebar() {
     <TooltipProvider delayDuration={200}>
       <aside
         className={cn(
-          "flex flex-col border-r bg-background transition-[width] duration-300 ease-in-out",
+          "hidden md:flex flex-col border-r bg-background transition-[width] duration-300 ease-in-out",
           sidebarCollapsed ? "w-16" : "w-60",
         )}
       >

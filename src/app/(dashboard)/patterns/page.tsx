@@ -161,7 +161,7 @@ function PatternsContent() {
   }
 
   return (
-    <div className="flex h-full mt10 flex-col p-6">
+    <div className="flex h-full mt10 flex-col p-4 md:p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           DSA Patterns

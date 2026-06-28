@@ -5,7 +5,6 @@ import {
   FolderOpen, CheckCircle2, Sparkles, Layers,
   Plus, Pencil, Trash2, X, ExternalLink, Search,
 } from 'lucide-react';
-import { Navbar } from '@/components/layout/navbar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -140,10 +139,10 @@ function ProjectCard({ project, onSelect, onEdit, onDelete }: {
             <CardDescription className="text-xs text-zinc-500 mt-1 line-clamp-1">{project.description}</CardDescription>
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={onEdit} className="p-1.5 rounded-md hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors opacity-0 group-hover:opacity-100">
+            <button onClick={onEdit} className="p-1.5 rounded-md hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100">
               <Pencil className="h-3.5 w-3.5" />
             </button>
-            <button onClick={onDelete} className="p-1.5 rounded-md hover:bg-zinc-800 text-zinc-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
+            <button onClick={onDelete} className="p-1.5 rounded-md hover:bg-zinc-800 text-zinc-500 hover:text-red-400 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100">
               <Trash2 className="h-3.5 w-3.5" />
             </button>
             <StatusBadge status={project.status} />
@@ -427,7 +426,6 @@ export default function ProjectsPage() {
   if (!mounted) {
     return (
       <div className="flex flex-col h-full">
-        <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-400" />
         </div>
@@ -437,8 +435,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar />
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">Project Hub</h1>
@@ -476,7 +473,7 @@ export default function ProjectsPage() {
               placeholder="Search projects..." className="bg-zinc-800 border-zinc-700 text-zinc-200 pl-8 h-9 text-sm"
             />
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto -mx-1 px-1 flex-nowrap">
             {(['ALL', 'IDEA', 'IN_PROGRESS', 'COMPLETED', 'MAINTAINING', 'ARCHIVED'] as const).map((s) => (
               <button key={s} onClick={() => setStatusFilter(s)}
                 className={cn('px-2.5 py-1 rounded text-[11px] font-medium border transition-colors',

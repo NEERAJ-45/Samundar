@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import { Navbar } from "@/components/layout/navbar";
 import { cn } from "@/lib/utils";
 import { LazyAppear } from "@/components/shared/LazyAppear";
 import { useProfile } from "@/components/providers/ProfileProvider";
@@ -166,7 +165,6 @@ export default function StickyNotesPage() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <Navbar />
       <div className="flex-1 space-y-8 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         {/* Digital Sticky Note Wall Header */}
         <LazyAppear>

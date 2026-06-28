@@ -6,7 +6,6 @@ import { Clock, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Navbar } from '@/components/layout/navbar';
 import { LazyAppear } from '@/components/shared/LazyAppear';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 
@@ -190,8 +189,7 @@ export default function RoadmapsPage() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <Navbar />
-      <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
+      <div className="flex-1 p-4 md:p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Learning Roadmaps

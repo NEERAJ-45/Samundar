@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Navbar } from '@/components/layout/navbar';
+
 
 const pillars = [
   {
@@ -237,7 +237,6 @@ export default function DevOpsCloudRoadmapPage() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <Navbar />
       <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div className="mb-6">
           <Link

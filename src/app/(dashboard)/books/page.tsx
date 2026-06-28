@@ -10,7 +10,6 @@ import {
   ExternalLink,
   Library,
 } from 'lucide-react';
-import { Navbar } from '@/components/layout/navbar';
 import {
   Card,
   CardContent,
@@ -210,15 +209,14 @@ export default function BooksPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar />
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">Books & Research</h1>
           <p className="text-sm text-zinc-500 mt-1">Read, track, and organize your knowledge</p>
         </div>
 
         <Tabs defaultValue="library" className="space-y-6">
-          <TabsList className="bg-zinc-900 border border-zinc-800">
+          <TabsList className="bg-zinc-900 border border-zinc-800 overflow-x-auto flex-nowrap w-full justify-start">
             <TabsTrigger value="library" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100 text-zinc-500 text-xs gap-2">
               <Library className="h-3.5 w-3.5" />
               Library

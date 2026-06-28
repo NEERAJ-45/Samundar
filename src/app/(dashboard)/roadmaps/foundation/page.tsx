@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Navbar } from '@/components/layout/navbar';
+
 
 const pillars = [
   {
@@ -199,7 +199,6 @@ export default function FoundationRoadmapPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar />
       <div className="flex-1 p-6 overflow-y-auto">
         <div className="mb-6">
           <Link

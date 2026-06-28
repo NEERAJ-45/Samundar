@@ -5,7 +5,6 @@ import {
   Search, Brain, Target, Code2, Server, BarChart3,
   Plus, Pencil, Trash2, CheckCircle, X, GripVertical,
 } from 'lucide-react';
-import { Navbar } from '@/components/layout/navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -169,7 +168,6 @@ export default function InterviewPage() {
   if (!mounted) {
     return (
       <div className="flex flex-col h-full">
-        <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-400" />
         </div>
@@ -179,8 +177,7 @@ export default function InterviewPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar />
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">Interview Hub</h1>
@@ -268,7 +265,7 @@ export default function InterviewPage() {
                           </div>
                         </div>
                         <TypeBadge type={q.type} />
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                           <button onClick={() => openEdit(q)} className="p-1.5 rounded-md hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 transition-colors">
                             <Pencil className="h-3.5 w-3.5" />
                           </button>

@@ -3,7 +3,6 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
 import { ChevronLeft, ChevronRight, Loader2, ZoomIn, ZoomOut, RotateCw, BookOpen } from 'lucide-react';
-import { Navbar } from '@/components/layout/navbar';
 import { Button } from '@/components/ui/button';
 import { useProfile } from '@/components/providers/ProfileProvider';
 import type { BookEntry } from '@/data/books';
@@ -68,7 +67,6 @@ export function BookReaderClient({ book }: { book: BookEntry }) {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-4 py-2 border-b border-zinc-800 bg-zinc-900/50">
         <div className="flex items-center gap-3 min-w-0">
           <BookOpen className="h-4 w-4 text-zinc-500 shrink-0" />

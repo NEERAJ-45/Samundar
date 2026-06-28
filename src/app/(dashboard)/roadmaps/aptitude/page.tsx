@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { Navbar } from '@/components/layout/navbar';
 import dynamic from 'next/dynamic';
 
 const QuestionsTable = dynamic(() => import('@/components/roadmaps/QuestionsTable'), {
@@ -79,7 +78,6 @@ const aptitudeQuestions: QuestionItem[] = [
 export default function AptitudeQuestionsPage() {
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <Navbar />
       <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div className="mb-6">
           <Link

@@ -29,7 +29,6 @@ import {
   Trash2,
   Edit,
 } from 'lucide-react';
-import { Navbar } from '@/components/layout/navbar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -527,7 +526,6 @@ export default function DailyPage() {
   if (!mounted) {
     return (
       <div className="flex flex-col h-full">
-        <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-400" />
         </div>
@@ -537,9 +535,8 @@ export default function DailyPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar />
       <div className="flex-1 overflow-y-auto">
-        <div className="p-6 space-y-8 max-w-7xl mx-auto w-full">
+        <div className="p-4 md:p-6 space-y-6 md:space-y-8 max-w-7xl mx-auto w-full">
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>
@@ -675,7 +672,7 @@ export default function DailyPage() {
                         : 'border-zinc-800 bg-zinc-900/20',
                   )}
                 >
-                  <div className="absolute top-1 right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-1 right-1 flex gap-0.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     <button onClick={() => startEditBlock(block)} className="p-0.5 rounded hover:bg-zinc-700 text-zinc-500 hover:text-zinc-300">
                       <Edit className="h-3 w-3" />
                     </button>
@@ -765,16 +762,16 @@ export default function DailyPage() {
                                   <span className={cn('flex-1 text-sm', isDone && 'line-through text-zinc-600')}>
                                     {task.title}
                                   </span>
-                                  <div className="flex items-center gap-2 shrink-0">
+                                  <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
                                     <Badge variant="outline" className={cn('text-[10px] px-1.5 py-0', priorityConfig[task.priority].className)}>
                                       {priorityConfig[task.priority].label}
                                     </Badge>
-                                    <Badge variant="outline" className={cn('text-[10px] px-1.5 py-0', difficultyColor(task.difficulty))}>
+                                    <Badge variant="outline" className={cn('hidden sm:inline-flex text-[10px] px-1.5 py-0', difficultyColor(task.difficulty))}>
                                       {task.difficulty}
                                     </Badge>
-                                    <span className="text-xs text-zinc-600 w-12 text-right">{task.time}</span>
-                                    <button onClick={(e) => { e.preventDefault(); handleStartEditTask(task); }} className="p-1 rounded hover:bg-zinc-800 text-zinc-600 hover:text-zinc-300 transition-colors">
-                                      <Pencil className="h-3.5 w-3.5" />
+                                    <span className="text-[11px] md:text-xs text-zinc-600 w-10 md:w-12 text-right shrink-0">{task.time}</span>
+                                    <button onClick={(e) => { e.preventDefault(); handleStartEditTask(task); }} className="p-1 rounded hover:bg-zinc-800 text-zinc-600 hover:text-zinc-300 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                                      <Pencil className="h-3 w-3 md:h-3.5 md:w-3.5" />
                                     </button>
                                   </div>
                                 </div>
@@ -797,16 +794,16 @@ export default function DailyPage() {
                                 <span className={cn('flex-1 text-sm', isDone && 'line-through text-zinc-600')}>
                                   {task.title}
                                 </span>
-                                <div className="flex items-center gap-2 shrink-0">
+                                <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
                                   <Badge variant="outline" className={cn('text-[10px] px-1.5 py-0', priorityConfig[task.priority].className)}>
                                     {priorityConfig[task.priority].label}
                                   </Badge>
-                                  <Badge variant="outline" className={cn('text-[10px] px-1.5 py-0', difficultyColor(task.difficulty))}>
+                                  <Badge variant="outline" className={cn('hidden sm:inline-flex text-[10px] px-1.5 py-0', difficultyColor(task.difficulty))}>
                                     {task.difficulty}
                                   </Badge>
-                                  <span className="text-xs text-zinc-600 w-12 text-right">{task.time}</span>
-                                  <button onClick={() => handleStartEditTask(task)} className="p-1 rounded hover:bg-zinc-800 text-zinc-600 hover:text-zinc-300 transition-colors">
-                                    <Pencil className="h-3.5 w-3.5" />
+                                  <span className="text-[11px] md:text-xs text-zinc-600 w-10 md:w-12 text-right shrink-0">{task.time}</span>
+                                  <button onClick={() => handleStartEditTask(task)} className="p-1 rounded hover:bg-zinc-800 text-zinc-600 hover:text-zinc-300 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                                    <Pencil className="h-3 w-3 md:h-3.5 md:w-3.5" />
                                   </button>
                                 </div>
                               </div>

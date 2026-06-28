@@ -15,7 +15,6 @@ import {
   Search,
   Filter,
 } from 'lucide-react';
-import { Navbar } from '@/components/layout/navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -188,7 +187,6 @@ export default function TasksPage() {
   if (!mounted) {
     return (
       <div className="flex flex-col h-full">
-        <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-400" />
         </div>
@@ -198,7 +196,6 @@ export default function TasksPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar />
       <div className="flex-1 overflow-y-auto">
         <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
           <div className="flex items-center justify-between">

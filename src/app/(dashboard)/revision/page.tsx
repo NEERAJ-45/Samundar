@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Navbar } from '@/components/layout/navbar';
 import { Plus, Pencil, Trash2, CheckCircle, Circle, RefreshCw, Calendar, BookOpen, RotateCcw } from 'lucide-react';
 import {
   Dialog,
@@ -222,7 +221,6 @@ export default function RevisionPage() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
-      <Navbar />
       <div className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full">
         <div className="flex justify-between items-start mb-8">
           <div>
