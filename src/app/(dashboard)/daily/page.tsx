@@ -717,46 +717,46 @@ export default function DailyPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-0 flex flex-col items-center gap-4">
-                  <div className="relative w-32 h-32">
-                    <svg className="w-32 h-32 -rotate-90" viewBox="0 0 128 128">
-                      <circle cx="64" cy="64" r="56" fill="none" stroke="#27272a" strokeWidth="6" />
+                  <div className="relative w-40 h-40">
+                    <svg className="w-40 h-40 -rotate-90" viewBox="0 0 160 160">
+                      <circle cx="80" cy="80" r="70" fill="none" stroke="#27272a" strokeWidth="8" />
                       <circle
-                        cx="64" cy="64" r="56" fill="none"
+                        cx="80" cy="80" r="70" fill="none"
                         stroke={timerMode === 'work' ? '#fb7185' : '#34d399'}
-                        strokeWidth="6"
+                        strokeWidth="8"
                         strokeLinecap="round"
-                        strokeDasharray={`${2 * Math.PI * 56}`}
-                        strokeDashoffset={`${2 * Math.PI * 56 * (1 - timerProgress / 100)}`}
+                        strokeDasharray={`${2 * Math.PI * 70}`}
+                        strokeDashoffset={`${2 * Math.PI * 70 * (1 - timerProgress / 100)}`}
                         className="transition-all duration-1000"
                       />
                     </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="flex items-center gap-0.5">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center -mt-1">
+                      <div className="flex items-baseline gap-0">
                         {editingTimerPart === 'h' ? (
-                          <input autoFocus value={editTimerValue} onChange={(e) => handleEditTimerChange(e.target.value)} onBlur={handleEditTimerBlur} onKeyDown={handleEditTimerKeyDown} className="w-7 bg-zinc-800 text-center rounded outline-none ring-1 ring-zinc-600 text-zinc-100 text-2xl font-bold" />
+                          <input autoFocus value={editTimerValue} onChange={(e) => handleEditTimerChange(e.target.value)} onBlur={handleEditTimerBlur} onKeyDown={handleEditTimerKeyDown} className="w-10 bg-zinc-800/80 text-center rounded-md outline-none ring-2 ring-zinc-600 text-zinc-100 text-3xl font-bold tabular-nums -ml-1" />
                         ) : (
-                          <button onClick={() => !timerRunning && handleStartEditTimer('h')} className="hover:bg-zinc-800 rounded px-0.5 transition-colors text-2xl font-bold text-zinc-100 tabular-nums" title="Edit hours">
+                          <button onClick={() => !timerRunning && handleStartEditTimer('h')} className="hover:bg-zinc-800/60 rounded-md px-1 -mx-1 transition-all text-3xl font-bold text-zinc-100 tabular-nums tracking-wide" title="Edit hours">
                             {String(Math.floor(timerSeconds / 3600)).padStart(2, '0')}
                           </button>
                         )}
-                        <span className="text-2xl font-bold text-zinc-500 tabular-nums">:</span>
+                        <span className="text-3xl font-bold text-zinc-600 tabular-nums -mx-0.5">:</span>
                         {editingTimerPart === 'm' ? (
-                          <input autoFocus value={editTimerValue} onChange={(e) => handleEditTimerChange(e.target.value)} onBlur={handleEditTimerBlur} onKeyDown={handleEditTimerKeyDown} className="w-7 bg-zinc-800 text-center rounded outline-none ring-1 ring-zinc-600 text-zinc-100 text-2xl font-bold" />
+                          <input autoFocus value={editTimerValue} onChange={(e) => handleEditTimerChange(e.target.value)} onBlur={handleEditTimerBlur} onKeyDown={handleEditTimerKeyDown} className="w-10 bg-zinc-800/80 text-center rounded-md outline-none ring-2 ring-zinc-600 text-zinc-100 text-3xl font-bold tabular-nums" />
                         ) : (
-                          <button onClick={() => !timerRunning && handleStartEditTimer('m')} className="hover:bg-zinc-800 rounded px-0.5 transition-colors text-2xl font-bold text-zinc-100 tabular-nums" title="Edit minutes">
+                          <button onClick={() => !timerRunning && handleStartEditTimer('m')} className="hover:bg-zinc-800/60 rounded-md px-1 -mx-1 transition-all text-3xl font-bold text-zinc-100 tabular-nums tracking-wide" title="Edit minutes">
                             {String(timerMinutes).padStart(2, '0')}
                           </button>
                         )}
-                        <span className="text-2xl font-bold text-zinc-500 tabular-nums">:</span>
+                        <span className="text-3xl font-bold text-zinc-600 tabular-nums -mx-0.5">:</span>
                         {editingTimerPart === 's' ? (
-                          <input autoFocus value={editTimerValue} onChange={(e) => handleEditTimerChange(e.target.value)} onBlur={handleEditTimerBlur} onKeyDown={handleEditTimerKeyDown} className="w-7 bg-zinc-800 text-center rounded outline-none ring-1 ring-zinc-600 text-zinc-100 text-2xl font-bold" />
+                          <input autoFocus value={editTimerValue} onChange={(e) => handleEditTimerChange(e.target.value)} onBlur={handleEditTimerBlur} onKeyDown={handleEditTimerKeyDown} className="w-10 bg-zinc-800/80 text-center rounded-md outline-none ring-2 ring-zinc-600 text-zinc-100 text-3xl font-bold tabular-nums" />
                         ) : (
-                          <button onClick={() => !timerRunning && handleStartEditTimer('s')} className="hover:bg-zinc-800 rounded px-0.5 transition-colors text-2xl font-bold text-zinc-100 tabular-nums" title="Edit seconds">
+                          <button onClick={() => !timerRunning && handleStartEditTimer('s')} className="hover:bg-zinc-800/60 rounded-md px-1 -mx-1 transition-all text-3xl font-bold text-zinc-100 tabular-nums tracking-wide" title="Edit seconds">
                             {String(timerSecs).padStart(2, '0')}
                           </button>
                         )}
                       </div>
-                      <span className="text-[10px] text-zinc-600 mt-0.5">
+                      <span className="text-xs text-zinc-500 mt-1.5 font-medium tracking-wide">
                         {timerMode === 'work' ? `${workMinutes} min focus` : `${breakMinutes} min break`}
                       </span>
                     </div>
