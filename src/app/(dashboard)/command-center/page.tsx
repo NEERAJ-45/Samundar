@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 import { Navbar } from "@/components/layout/navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { LazyAppear } from "@/components/shared/LazyAppear";
 import { useProfile } from "@/components/providers/ProfileProvider";
 import {
@@ -18,6 +21,7 @@ import {
   CheckCircle2,
   Loader2,
   Plus,
+  Pencil,
 } from "lucide-react";
 import { cn, formatRelativeTime } from '@/lib/utils';
 
@@ -106,7 +110,58 @@ export default function CommandCenterPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogLabel, setDialogLabel] = useState('');
+  const [dialogValue, setDialogValue] = useState('');
+  const [dialogBadge, setDialogBadge] = useState('');
   const fetched = useRef(false);
+
+  const openFocusDialog = useCallback((label: string, value: string, badge: string) => {
+    setDialogLabel(label);
+    setDialogValue(value);
+    setDialogBadge(badge);
+    setDialogOpen(true);
+  }, []);
+
+  const saveFocusEdit = useCallback(async () => {
+    if (!userEmail || !dialogLabel) {
+      setDialogOpen(false);
+      return;
+    }
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (customDbUrl) headers['x-mongodb-url'] = customDbUrl;
+
+    const body: Record<string, string> = { email: userEmail };
+    if (dialogLabel === 'Active Pillar') {
+      body.activePillar = dialogValue;
+      body.activeCategory = dialogBadge;
+    } else if (dialogLabel === 'Next Learning Unit') {
+      body.nextLearningUnit = dialogValue;
+      body.nextLearningDuration = dialogBadge;
+    }
+
+    try {
+      const res = await fetch('/api/db/profile', {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        setData((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            focusItems: prev.focusItems.map((item) =>
+              item.label === dialogLabel
+                ? { ...item, value: dialogValue, badge: dialogBadge }
+                : item
+            ),
+          };
+        });
+      }
+    } catch {}
+    setDialogOpen(false);
+  }, [userEmail, customDbUrl, dialogLabel, dialogValue, dialogBadge]);
 
   const loadData = useCallback(async () => {
     if (!mounted || fetched.current) return;
@@ -234,17 +289,39 @@ export default function CommandCenterPage() {
                 <CardTitle className="text-sm font-medium">Today&apos;s Focus</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {data.focusItems.map((item) => (
-                  <div key={item.label} className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-zinc-500">{item.label}</p>
-                      <p className="text-sm font-medium mt-0.5">{item.value}</p>
+                {data.focusItems.map((item) => {
+                  const editable = item.label !== 'Due Revisions';
+                  return (
+                    <div
+                      key={item.label}
+                      onClick={() => editable && openFocusDialog(item.label, item.value, item.badge)}
+                      className={cn(
+                        'flex items-center justify-between',
+                        editable && 'cursor-pointer group'
+                      )}
+                    >
+                      <div>
+                        <p className="text-xs text-zinc-500 flex items-center gap-1.5">
+                          {item.label}
+                          {editable && <Pencil className="h-2.5 w-2.5 text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                        </p>
+                        <p className={cn(
+                          'text-sm font-medium mt-0.5',
+                          editable && 'group-hover:text-zinc-100 transition-colors'
+                        )}>{item.value}</p>
+                      </div>
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          'text-xs bg-zinc-800 text-zinc-300',
+                          editable && 'group-hover:bg-zinc-700 transition-colors'
+                        )}
+                      >
+                        {item.badge}
+                      </Badge>
                     </div>
-                    <Badge variant="secondary" className="text-xs bg-zinc-800 text-zinc-300">
-                      {item.badge}
-                    </Badge>
-                  </div>
-                ))}
+                  );
+                })}
               </CardContent>
             </Card>
 
@@ -307,6 +384,36 @@ export default function CommandCenterPage() {
           </Card>
         </LazyAppear>
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-zinc-100">Edit {dialogLabel}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <label className="text-xs text-zinc-500">Value</label>
+              <Input
+                value={dialogValue}
+                onChange={(e) => setDialogValue(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-100"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs text-zinc-500">Badge</label>
+              <Input
+                value={dialogBadge}
+                onChange={(e) => setDialogBadge(e.target.value)}
+                className="bg-zinc-800 border-zinc-700 text-zinc-100"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button size="sm" onClick={saveFocusEdit}>OK</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Navbar } from '@/components/layout/navbar';
-import { Plus, Pencil, Trash2, CheckCircle, Circle, RefreshCw, Calendar, BookOpen } from 'lucide-react';
+import { Plus, Pencil, Trash2, CheckCircle, Circle, RefreshCw, Calendar, BookOpen, RotateCcw } from 'lucide-react';
 import {
   Dialog,
   DialogTrigger,
@@ -21,20 +21,19 @@ import {
 interface RevisionItem {
   id: string;
   concept: string;
-  stage: number; // 0: Day 1, 1: Day 7, 2: Day 30, 3: Day 90, 4: Day 180, 5: Day 365
+  stage: number;
   dueDate: string; // YYYY-MM-DD
   completed: boolean;
 }
 
-const stages = ['Day 1', 'Day 7', 'Day 30', 'Day 90', 'Day 180', 'Day 365'] as const;
-const stageIntervals = [1, 7, 30, 90, 180, 365];
+
 
 const defaultSeeds: RevisionItem[] = [
   { id: 'seed-os', concept: 'OS Fundamentals & CPU Scheduling', stage: 0, dueDate: new Date().toISOString().split('T')[0], completed: false },
   { id: 'seed-jvm', concept: 'JVM Memory & Garbage Collection Basics', stage: 0, dueDate: new Date().toISOString().split('T')[0], completed: false },
-  { id: 'seed-sql', concept: 'SQL Indexing & Joins', stage: 1, dueDate: new Date().toISOString().split('T')[0], completed: false },
-  { id: 'seed-cap', concept: 'CAP & PACELC Distributed Theorems', stage: 2, dueDate: new Date().toISOString().split('T')[0], completed: false },
-  { id: 'seed-react', concept: 'React Fiber Render Pipeline', stage: 0, dueDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], completed: false }
+  { id: 'seed-sql', concept: 'SQL Indexing & Joins', stage: 0, dueDate: new Date().toISOString().split('T')[0], completed: false },
+  { id: 'seed-cap', concept: 'CAP & PACELC Distributed Theorems', stage: 0, dueDate: new Date().toISOString().split('T')[0], completed: false },
+  { id: 'seed-react', concept: 'React Fiber Render Pipeline', stage: 0, dueDate: new Date().toISOString().split('T')[0], completed: false }
 ];
 
 function getDaysDiff(dateStr: string): number {
@@ -50,7 +49,8 @@ export default function RevisionPage() {
   const [items, setItems] = useState<RevisionItem[]>([]);
   const [dbConnected, setDbConnected] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [selectedTab, setSelectedTab] = React.useState('due-now');
+  const [selectedTab, setSelectedTab] = React.useState('due');
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
 
   // Dialog State
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -59,7 +59,6 @@ export default function RevisionPage() {
 
   // Form State
   const [formConcept, setFormConcept] = useState('');
-  const [formStage, setFormStage] = useState(0);
   const [formDueDate, setFormDueDate] = useState('');
 
   // Load items on mount
@@ -146,17 +145,14 @@ export default function RevisionPage() {
     const newItem: RevisionItem = {
       id: `rev-${Date.now()}`,
       concept: formConcept.trim(),
-      stage: formStage,
+      stage: 0,
       dueDate: formDueDate || new Date().toISOString().split('T')[0],
       completed: false,
     };
 
     saveItem(newItem);
     setIsAddOpen(false);
-
-    // Reset Form
     setFormConcept('');
-    setFormStage(0);
     setFormDueDate('');
   };
 
@@ -167,69 +163,61 @@ export default function RevisionPage() {
     const updated: RevisionItem = {
       ...activeItem,
       concept: formConcept.trim(),
-      stage: formStage,
       dueDate: formDueDate || new Date().toISOString().split('T')[0],
     };
 
     saveItem(updated);
     setIsEditOpen(false);
     setActiveItem(null);
-
-    // Reset Form
     setFormConcept('');
-    setFormStage(0);
     setFormDueDate('');
   };
 
   const openEditDialog = (item: RevisionItem) => {
     setActiveItem(item);
     setFormConcept(item.concept);
-    setFormStage(item.stage);
     setFormDueDate(item.dueDate);
     setIsEditOpen(true);
   };
 
-  // Progression logic
-  const handleProgress = useCallback((item: RevisionItem) => {
-    const nextStage = Math.min(item.stage + 1, 5);
-    const offsetDays = stageIntervals[nextStage];
-    
-    const nextDate = new Date();
-    nextDate.setDate(nextDate.getDate() + offsetDays);
-    const nextDateStr = nextDate.toISOString().split('T')[0];
+  const handleCheck = useCallback((item: RevisionItem) => {
+    setCheckedIds((prev) => {
+      const next = new Set(prev);
+      next.add(item.id);
+      return next;
+    });
+    setTimeout(() => setCheckedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(item.id);
+      return next;
+    }), 600);
+    if (!item.completed) saveItem({ ...item, completed: true });
+  }, [saveItem]);
 
-    const updated: RevisionItem = {
-      ...item,
-      stage: nextStage,
-      dueDate: nextDateStr,
-      completed: false,
-    };
-
+  const handleUncomplete = useCallback((item: RevisionItem) => {
+    const updated: RevisionItem = { ...item, completed: false, dueDate: new Date().toISOString().split('T')[0] };
     saveItem(updated);
   }, [saveItem]);
 
   // Calculations
   const stats = useMemo(() => {
-    if (!mounted) return { dueToday: 0, overdue: 0, upcoming: 0, total: 0 };
-    let dueToday = 0;
-    let overdue = 0;
-    let upcoming = 0;
+    if (!mounted) return { due: 0, completed: 0, total: 0 };
+    let due = 0;
+    let completed = 0;
 
     items.forEach((item) => {
-      const days = getDaysDiff(item.dueDate);
-      if (days === 0) dueToday++;
-      else if (days < 0) overdue++;
-      else if (days > 0 && days <= 7) upcoming++;
+      if (item.completed) { completed++; return; }
+      if (getDaysDiff(item.dueDate) <= 0) due++;
     });
 
-    return { dueToday, overdue, upcoming, total: items.length };
+    return { due, completed, total: items.length };
   }, [items, mounted]);
 
   const filteredItems = useMemo(() => {
-    if (selectedTab === 'due-now') {
-      return items.filter((item) => getDaysDiff(item.dueDate) <= 0);
+    if (selectedTab === 'due') {
+      return items.filter((item) => !item.completed && getDaysDiff(item.dueDate) <= 0);
     }
-    return items;
+    return items.filter((item) => item.completed);
   }, [items, selectedTab]);
 
   return (
@@ -250,7 +238,6 @@ export default function RevisionPage() {
               <button 
                 onClick={() => {
                   setFormConcept('');
-                  setFormStage(0);
                   setFormDueDate(new Date().toISOString().split('T')[0]);
                 }}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shrink-0"
@@ -279,20 +266,6 @@ export default function RevisionPage() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Repetition Stage</label>
-                  <select
-                    value={formStage}
-                    onChange={(e) => setFormStage(Number(e.target.value))}
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 outline-none focus:border-primary/50 transition-colors"
-                  >
-                    {stages.map((stage, idx) => (
-                      <option key={stage} value={idx}>
-                        {stage} (Interval: {stageIntervals[idx]} {stageIntervals[idx] === 1 ? 'day' : 'days'})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-1.5">
                   <label className="text-xs font-medium text-zinc-400">Next Due Date</label>
                   <input
                     type="date"
@@ -318,12 +291,11 @@ export default function RevisionPage() {
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-4 mb-8">
           {[
-            { label: 'Due Today', value: stats.dueToday, color: 'text-red-400' },
-            { label: 'Overdue', value: stats.overdue, color: 'text-orange-400' },
-            { label: 'Upcoming (7d)', value: stats.upcoming, color: 'text-blue-400' },
-            { label: 'Total Tracked', value: stats.total, color: 'text-emerald-400' },
+            { label: 'Due', value: stats.due, color: 'text-red-400' },
+            { label: 'Completed', value: stats.completed, color: 'text-emerald-400' },
+            { label: 'Total Tracked', value: stats.total, color: 'text-zinc-400' },
           ].map((stat) => (
             <Card key={stat.label} className="border-zinc-800/80 bg-zinc-900/40">
               <CardContent className="p-5">
@@ -338,20 +310,20 @@ export default function RevisionPage() {
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-6">
           <TabsList className="bg-zinc-900 border border-zinc-800">
             <TabsTrigger
-              value="due-now"
+              value="due"
               className="text-xs data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100"
             >
-              Due Now
+              Due
             </TabsTrigger>
             <TabsTrigger
-              value="all"
+              value="completed"
               className="text-xs data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100"
             >
-              All Schedules
+              Completed
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="due-now" className="mt-4">
+          <TabsContent value="due" className="mt-4">
             <div className="space-y-3">
               {filteredItems.length === 0 ? (
                 <Card className="border-zinc-800/80 bg-zinc-900/40">
@@ -364,7 +336,8 @@ export default function RevisionPage() {
                   <RevisionCard
                     key={item.id}
                     item={item}
-                    onComplete={() => handleProgress(item)}
+                    checked={checkedIds.has(item.id)}
+                    onComplete={() => handleCheck(item)}
                     onEdit={() => openEditDialog(item)}
                     onDelete={() => deleteItem(item.id)}
                   />
@@ -373,30 +346,26 @@ export default function RevisionPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="all" className="mt-4">
-            <div className="space-y-8">
-              {stages.map((stageLabel, stageIdx) => {
-                const stageItems = items.filter((item) => item.stage === stageIdx);
-                if (stageItems.length === 0) return null;
-                return (
-                  <div key={stageLabel}>
-                    <h3 className="text-sm font-semibold text-zinc-400 mb-3">{stageLabel} (revalidate in {stageIntervals[stageIdx]} days)</h3>
-                    <div className="space-y-3">
-                      {stageItems.map((item) => (
-                        <RevisionCard
-                          key={item.id}
-                          item={item}
-                          showStage
-                          onComplete={() => handleProgress(item)}
-                          onEdit={() => openEditDialog(item)}
-                          onDelete={() => deleteItem(item.id)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          <TabsContent value="completed" className="mt-4">
+            {filteredItems.length === 0 ? (
+              <Card className="border-zinc-800/80 bg-zinc-900/40">
+                <CardContent className="p-6 text-center">
+                  <p className="text-sm text-zinc-500">No completed revisions yet.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {filteredItems.map((item) => (
+                  <RevisionCard
+                    key={item.id}
+                    item={item}
+                    completed
+                    onUncomplete={() => handleUncomplete(item)}
+                    onDelete={() => deleteItem(item.id)}
+                  />
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 
@@ -419,20 +388,6 @@ export default function RevisionPage() {
                   onChange={(e) => setFormConcept(e.target.value)}
                   className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 outline-none focus:border-primary/50 transition-colors"
                 />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-400">Repetition Stage</label>
-                <select
-                  value={formStage}
-                  onChange={(e) => setFormStage(Number(e.target.value))}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300 outline-none focus:border-primary/50 transition-colors"
-                >
-                  {stages.map((stage, idx) => (
-                    <option key={stage} value={idx}>
-                      {stage} (Interval: {stageIntervals[idx]} {stageIntervals[idx] === 1 ? 'day' : 'days'})
-                    </option>
-                  ))}
-                </select>
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-zinc-400">Next Due Date</label>
@@ -464,29 +419,73 @@ export default function RevisionPage() {
 
 function RevisionCard({
   item,
-  showStage,
+  completed,
+  checked,
   onComplete,
   onEdit,
   onDelete,
+  onUncomplete,
 }: {
   item: RevisionItem;
-  showStage?: boolean;
-  onComplete: () => void;
-  onEdit: () => void;
+  completed?: boolean;
+  checked?: boolean;
+  onComplete?: () => void;
+  onEdit?: () => void;
   onDelete: () => void;
+  onUncomplete?: () => void;
 }) {
   const days = getDaysDiff(item.dueDate);
+
+  if (completed) {
+    return (
+      <Card className="border-emerald-900/40 bg-zinc-900/40">
+        <CardContent className="p-4 flex items-center gap-4">
+          <CheckCircle size={18} className="text-emerald-500 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-zinc-400 line-through truncate">
+              {item.concept}
+            </p>
+            <p className="text-[10px] text-emerald-600 mt-0.5">Completed</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onUncomplete}
+              className="text-zinc-600 hover:text-zinc-300 p-1.5 rounded hover:bg-zinc-800 transition-colors cursor-pointer"
+              title="Move Back to Active"
+            >
+              <RotateCcw size={13} />
+            </button>
+            <button
+              onClick={onDelete}
+              className="text-zinc-600 hover:text-red-400 p-1.5 rounded hover:bg-zinc-800 transition-colors cursor-pointer"
+              title="Delete Topic"
+            >
+              <Trash2 size={13} />
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border-zinc-800/80 bg-zinc-900/40 transition-all hover:border-zinc-700">
       <CardContent className="p-4 flex items-center gap-4">
-        {/* Complete Checkbox (triggers SRS progress) */}
         <button
           onClick={onComplete}
-          className="h-5 w-5 shrink-0 rounded border-2 border-zinc-700 hover:border-emerald-500/50 flex items-center justify-center cursor-pointer transition-colors group"
-          title="Review Completed (Advance Stage)"
+          className={cn(
+            'h-5 w-5 shrink-0 rounded border-2 flex items-center justify-center cursor-pointer transition-all',
+            checked
+              ? 'border-emerald-500 bg-emerald-500/20'
+              : 'border-zinc-700 hover:border-emerald-500/50 group'
+          )}
+          title="Mark as Completed"
         >
-          <Circle size={12} className="text-transparent group-hover:text-emerald-500/30 transition-colors shrink-0" />
+          {checked ? (
+            <CheckCircle size={12} className="text-emerald-400 shrink-0" />
+          ) : (
+            <Circle size={12} className="text-transparent group-hover:text-emerald-500/30 transition-colors shrink-0" />
+          )}
         </button>
 
         <div className="flex-1 min-w-0">
@@ -509,16 +508,6 @@ function RevisionCard({
         </div>
 
         <div className="flex items-center gap-2">
-          {showStage && (
-            <Badge
-              variant="secondary"
-              className="text-[10px] font-medium bg-zinc-800 text-zinc-400 border-zinc-700 hidden sm:inline-flex"
-            >
-              {stages[item.stage]}
-            </Badge>
-          )}
-
-          {/* Edit Button */}
           <button
             onClick={onEdit}
             className="text-zinc-650 hover:text-zinc-300 p-1.5 rounded hover:bg-zinc-800 transition-colors cursor-pointer"
@@ -527,7 +516,6 @@ function RevisionCard({
             <Pencil size={13} />
           </button>
 
-          {/* Delete Button */}
           <button
             onClick={onDelete}
             className="text-zinc-650 hover:text-red-400 p-1.5 rounded hover:bg-zinc-800 transition-colors cursor-pointer"

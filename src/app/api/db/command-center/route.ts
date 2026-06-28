@@ -106,7 +106,7 @@ export async function GET(request: Request) {
       ],
       focusItems: [
         { label: 'Active Pillar', value: profile?.activePillar || 'Data Structures & Algorithms', badge: profile?.activeCategory || 'Trees' },
-        { label: 'Next Learning Unit', value: 'AVL Tree Rotations', badge: '45 min' },
+        { label: 'Next Learning Unit', value: profile?.nextLearningUnit || 'AVL Tree Rotations', badge: profile?.nextLearningDuration || '45 min' },
         { label: 'Due Revisions', value: `${stats.dueCount} concept${stats.dueCount === 1 ? '' : 's'} need review`, badge: stats.dueCount > 0 ? 'Overdue' : 'Up to date' },
       ],
       projects: projects.map((p: any) => ({

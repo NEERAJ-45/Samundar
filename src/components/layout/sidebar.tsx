@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useModeStore } from "@/lib/stores/mode-store";
 import { ModeToggle } from "@/components/layout/mode-toggle";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import {
   LayoutDashboard,
   GitBranch,
@@ -53,87 +54,112 @@ export function Sidebar() {
   const { sidebarCollapsed, toggleSidebar } = useModeStore();
 
   return (
-    <aside
-      className={cn(
-        "flex flex-col border-r bg-background transition-all duration-300",
-        sidebarCollapsed ? "w-16" : "w-60",
-      )}
-    >
-      <div className="flex h-14 items-center border-b px-4">
-        {sidebarCollapsed ? (
-          <span className="text-sm font-bold tracking-wider text-foreground mx-auto">
-            N
-          </span>
-        ) : (
-          <div className="flex items-center justify-between w-full">
-            <Link href="/command-center" className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
-                <span className="text-xs font-bold text-primary-foreground">
-                  N
-                </span>
-              </div>
-              <span className="text-sm font-semibold tracking-wide text-foreground">
-                ProdigyOS
-              </span>
-            </Link>
-            <button
-              onClick={toggleSidebar}
-              className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            >
-              <PanelLeftClose className="h-4 w-4" />
-            </button>
-          </div>
+    <TooltipProvider delayDuration={200}>
+      <aside
+        className={cn(
+          "flex flex-col border-r bg-background transition-[width] duration-300 ease-in-out",
+          sidebarCollapsed ? "w-16" : "w-60",
         )}
-        {sidebarCollapsed && (
-          <button
-            onClick={toggleSidebar}
-            className="absolute -right-3 top-4 rounded-full border bg-background p-0.5 text-muted-foreground hover:text-foreground shadow-sm"
-          >
-            <PanelLeft className="h-3 w-3" />
-          </button>
-        )}
-      </div>
-
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-        {navItems.map((item) => {
-          const isActive =
-            pathname === item.href || pathname.startsWith(item.href + "/");
-          const Icon = item.icon;
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
+      >
+        <div className="flex h-14 items-center border-b px-4 overflow-hidden">
+          <Link href="/command-center" className="flex items-center gap-2 min-w-0">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary">
+              <span className="text-xs font-bold text-primary-foreground">N</span>
+            </div>
+            <span
               className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
-                sidebarCollapsed && "justify-center px-2",
+                "text-sm font-semibold tracking-wide text-foreground transition-opacity duration-200",
+                sidebarCollapsed && "opacity-0 w-0 overflow-hidden",
               )}
-              title={sidebarCollapsed ? item.label : undefined}
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              {!sidebarCollapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
-      </nav>
-
-      <div className="border-t p-4">
-        {sidebarCollapsed ? (
-          <div className="flex justify-center">
-            <button
-              onClick={toggleSidebar}
-              className="rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            >
-              <PanelLeft className="h-4 w-4" />
-            </button>
+              ProdigyOS
+            </span>
+          </Link>
+          <div className="ml-auto shrink-0">
+            {sidebarCollapsed ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={toggleSidebar}
+                    className="absolute -right-3 top-4 rounded-full border bg-background p-0.5 text-muted-foreground hover:text-foreground shadow-sm"
+                  >
+                    <PanelLeft className="h-3 w-3" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">Expand sidebar</TooltipContent>
+              </Tooltip>
+            ) : (
+              <button
+                onClick={toggleSidebar}
+                className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+              >
+                <PanelLeftClose className="h-4 w-4" />
+              </button>
+            )}
           </div>
-        ) : (
-          <ModeToggle />
-        )}
-      </div>
-    </aside>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+          {navItems.map((item) => {
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
+            const Icon = item.icon;
+
+            const link = (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200",
+                  isActive
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
+                  sidebarCollapsed && "justify-center px-2",
+                )}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                <span
+                  className={cn(
+                    "text-nowrap transition-opacity duration-200",
+                    sidebarCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100",
+                  )}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            );
+
+            return sidebarCollapsed ? (
+              <Tooltip key={item.href}>
+                <TooltipTrigger asChild>{link}</TooltipTrigger>
+                <TooltipContent side="right">{item.label}</TooltipContent>
+              </Tooltip>
+            ) : (
+              link
+            );
+          })}
+        </nav>
+
+        <div className="border-t p-4">
+          {sidebarCollapsed ? (
+            <div className="flex justify-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={toggleSidebar}
+                    className="rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  >
+                    <PanelLeft className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">Expand sidebar</TooltipContent>
+              </Tooltip>
+            </div>
+          ) : (
+            <ModeToggle />
+          )}
+        </div>
+      </aside>
+    </TooltipProvider>
   );
 }

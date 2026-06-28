@@ -38,6 +38,46 @@ export async function GET(request: Request) {
   }
 }
 
+export async function PATCH(request: Request) {
+  try {
+    const customUri = request.headers.get('x-mongodb-url') || undefined;
+    const conn = await connectToDatabase(customUri);
+    if (!conn) {
+      return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const { email, activePillar, activeCategory, nextLearningUnit, nextLearningDuration } = body;
+
+    if (!email) {
+      return NextResponse.json({ error: 'email is required' }, { status: 400 });
+    }
+
+    const profile = await Profile.findOne({ email });
+    if (!profile) {
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+    }
+
+    const updates: Record<string, string> = {};
+    if (activePillar !== undefined) updates.activePillar = activePillar;
+    if (activeCategory !== undefined) updates.activeCategory = activeCategory;
+    if (nextLearningUnit !== undefined) updates.nextLearningUnit = nextLearningUnit;
+    if (nextLearningDuration !== undefined) updates.nextLearningDuration = nextLearningDuration;
+
+    await Profile.updateOne({ email }, { $set: updates });
+
+    const updated = await Profile.findOne({ email }).lean();
+    if (updated) {
+      const { password, ...rest } = updated as any;
+      return NextResponse.json({ success: true, dbConnected: true, data: rest });
+    }
+
+    return NextResponse.json({ success: true, dbConnected: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const customUri = request.headers.get('x-mongodb-url') || undefined;

@@ -63,12 +63,20 @@ export function Navbar({ global = false }: { global?: boolean }) {
             {/* User Badge */}
             <button 
               onClick={() => setProfileOpen(true)}
-              className="flex items-center gap-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-850 px-2.5 py-1 text-xs text-zinc-200 transition-colors cursor-pointer"
+              className="flex items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-850 p-1.5 transition-colors cursor-pointer"
             >
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white uppercase">
-                {userName.slice(0, 2)}
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold leading-none text-white uppercase">
+                {userName.slice(0, 1)}
               </div>
-              <span className="font-medium max-w-[80px] truncate">{userName}</span>
+            </button>
+
+            {/* Logout */}
+            <button
+              onClick={() => logout()}
+              className="flex items-center gap-1.5 rounded-lg border border-zinc-800 hover:border-red-500/30 hover:bg-red-500/5 px-2.5 py-1 text-xs text-zinc-500 hover:text-red-400 transition-colors cursor-pointer"
+              title="Sign out"
+            >
+              <LogOut className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
@@ -89,7 +97,7 @@ export function Navbar({ global = false }: { global?: boolean }) {
 
               <div className="flex items-center gap-3.5 mb-6 pb-4 border-b border-zinc-900">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-lg font-bold text-blue-400 border border-blue-500/20 uppercase">
-                  {userName.slice(0, 2)}
+                  {userName.slice(0, 1)}
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-zinc-200">{userName}</h2>
@@ -129,12 +137,6 @@ export function Navbar({ global = false }: { global?: boolean }) {
                 >
                   <LogOut size={13} />
                   Reset Profile / Sign Out
-                </button>
-                <button
-                  onClick={() => setProfileOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all cursor-pointer"
-                >
-                  Close
                 </button>
               </div>
             </SpotlightCard>
