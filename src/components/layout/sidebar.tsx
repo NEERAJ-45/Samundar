@@ -22,6 +22,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   StickyNote,
+  ListChecks,
 } from "lucide-react";
 
 interface NavItem {
@@ -32,7 +33,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Command Center", href: "/command-center", icon: LayoutDashboard },
-  { label: "Sticky Notes", href: "/sticky-notes", icon: StickyNote },
+ 
   { label: "DSA Patterns", href: "/patterns", icon: GitBranch },
   { label: "Learning Roadmaps", href: "/roadmaps", icon: Map },
   { label: "Mastery Tracking", href: "/mastery", icon: Target },
@@ -41,7 +42,9 @@ const navItems: NavItem[] = [
   { label: "Interview Hub", href: "/interview", icon: Briefcase },
   { label: "Books & Research", href: "/books", icon: BookOpen },
   { label: "Daily Execution", href: "/daily", icon: CalendarCheck },
+  { label: "Task Tracker", href: "/tasks", icon: ListChecks },
   { label: "Analytics Center", href: "/analytics", icon: BarChart3 },
+   { label: "Sticky Notes", href: "/sticky-notes", icon: StickyNote },
   { label: "Career Mission Control", href: "/career", icon: Rocket },
 ];
 
