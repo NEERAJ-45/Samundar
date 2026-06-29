@@ -286,9 +286,9 @@ export default function CommandCenterPage() {
             )}
             <button
               onClick={() => setResetDialogOpen(true)}
-              className="text-[11px] text-zinc-600 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-zinc-800/50"
+              className="text-xs text-red-400 hover:text-red-300 border border-red-900/50 hover:border-red-700 transition-colors px-3 py-1.5 rounded-md bg-red-950/30 hover:bg-red-950/50"
             >
-              Reset
+              Reset Dashboard
             </button>
           </div>
         </div>
