@@ -280,8 +280,8 @@ function PatternsContent() {
 
       {/* Pagination */}
       {data && data.total > 0 && (
-        <div className="flex items-center justify-between px-4 py-3 mt-4 border border-border rounded-lg bg-muted/20 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1.5 text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 mt-4 border border-border rounded-lg bg-muted/20 text-sm text-muted-foreground">
+          <div className="hidden sm:flex items-center gap-1.5 text-xs">
             <span>Showing</span>
             <span className="font-semibold text-foreground">
               {pagination.pageIndex * pagination.pageSize + 1}
@@ -298,15 +298,15 @@ function PatternsContent() {
             <span>patterns</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xs">Show</span>
+          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] sm:text-xs">Show</span>
               <select
                 value={pagination.pageSize}
                 onChange={(e) => {
                   table.setPageSize(Number(e.target.value));
                 }}
-                className="bg-background border border-border text-foreground text-xs rounded px-2 py-1 focus:outline-none focus:border-primary/50 transition-colors"
+                className="bg-background border border-border text-foreground text-[10px] sm:text-xs rounded px-1.5 sm:px-2 py-1 focus:outline-none focus:border-primary/50 transition-colors"
               >
                 {[10, 15, 20, 30, 50].map((s) => (
                   <option key={s} value={s}>
@@ -316,14 +316,14 @@ function PatternsContent() {
               </select>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5 sm:gap-1">
               <button
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
-                className="p-1.5 rounded border border-border bg-background hover:bg-muted/50 hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                className="hidden sm:inline-flex p-1.5 rounded border border-border bg-background hover:bg-muted/50 hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors"
                 title="First"
               >
-                <ChevronsLeft className="h-4 w-4" />
+                <ChevronsLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </button>
               <button
                 onClick={() => table.previousPage()}
@@ -331,17 +331,14 @@ function PatternsContent() {
                 className="p-1.5 rounded border border-border bg-background hover:bg-muted/50 hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors"
                 title="Previous"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </button>
-              <span className="text-xs px-2 select-none">
-                Page{" "}
+              <span className="text-[10px] sm:text-xs px-1 sm:px-2 select-none whitespace-nowrap">
                 <strong className="text-foreground font-semibold">
                   {pagination.pageIndex + 1}
-                </strong>{" "}
-                of{" "}
-                <strong className="text-foreground font-semibold">
-                  {data.totalPages}
                 </strong>
+                <span className="hidden sm:inline">{" "}of{" "}</span>
+                <span className="hidden sm:inline font-semibold text-foreground">{data.totalPages}</span>
               </span>
               <button
                 onClick={() => table.nextPage()}
@@ -349,15 +346,15 @@ function PatternsContent() {
                 className="p-1.5 rounded border border-border bg-background hover:bg-muted/50 hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors"
                 title="Next"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </button>
               <button
                 onClick={() => table.setPageIndex(data.totalPages - 1)}
                 disabled={!table.getCanNextPage()}
-                className="p-1.5 rounded border border-border bg-background hover:bg-muted/50 hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                className="hidden sm:inline-flex p-1.5 rounded border border-border bg-background hover:bg-muted/50 hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors"
                 title="Last"
               >
-                <ChevronsRight className="h-4 w-4" />
+                <ChevronsRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </button>
             </div>
           </div>
