@@ -169,6 +169,7 @@ export default function CommandCenterPage() {
   const loadData = useCallback(async () => {
     if (!mounted) return;
     const email = userEmail || '';
+    if (!email) return;
     if (fetched.current === email) return;
     fetched.current = email;
 
@@ -230,18 +231,10 @@ export default function CommandCenterPage() {
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => { loadData(); }, [loadData, resetFlag]);
 
-  // Migrate old global cache to user-specific key
+  // Clean up old global cache key (no longer used)
   useEffect(() => {
-    if (!userEmail) return;
-    const old = localStorage.getItem('samundar-command-center');
-    if (old) {
-      const key = cacheKey(userEmail);
-      if (!localStorage.getItem(key)) {
-        localStorage.setItem(key, old);
-      }
-      localStorage.removeItem('samundar-command-center');
-    }
-  }, [userEmail]);
+    localStorage.removeItem('samundar-command-center');
+  }, []);
 
   const handleReset = useCallback(() => {
     localStorage.removeItem(cacheKey(userEmail));
