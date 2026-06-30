@@ -59,7 +59,11 @@ export default function HistoryPage() {
   }, []);
 
   React.useEffect(() => {
-    if (!mounted || !userEmail) return;
+    if (!mounted) return;
+    if (!userEmail) {
+      setLoading(false);
+      return;
+    }
     (async () => {
       try {
         const res = await fetch('/api/db/daily/history');
