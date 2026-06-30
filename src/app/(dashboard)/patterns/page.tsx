@@ -15,8 +15,9 @@ import { LazyAppear } from "@/components/shared/LazyAppear";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, Search, ChevronLeft, ChevronRight,
-  ChevronsLeft, ChevronsRight, AlertCircle, ListOrdered
+  ChevronsLeft, ChevronsRight, AlertCircle, ListOrdered, Info
 } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/toast";
 
@@ -163,9 +164,60 @@ function PatternsContent() {
   return (
     <div className="flex h-full mt10 flex-col p-4 md:p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          DSA Patterns
-        </h1>
+        <TooltipProvider>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            DSA Patterns
+          </h1>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
+                <Info className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="w-72 p-3 rounded-lg" sideOffset={8}>
+              <p className="text-xs font-medium text-muted-foreground mb-2">Recommended solving order:</p>
+              <ol className="list-decimal list-inside space-y-0.5 text-xs text-foreground/80">
+                <li>Two Pointers</li>
+                <li>Fast &amp; Slow Pointers</li>
+                <li>Merge Intervals</li>
+                <li>Cyclic Sort</li>
+                <li>Linked List Reversal</li>
+                <li>Prefix Sum</li>
+                <li>Kadane&apos;s Algorithm</li>
+                <li>Binary Search</li>
+                <li>Monotonic Stack</li>
+                <li>Heap / Priority Queue – Top K Elements</li>
+                <li>Two Heaps</li>
+                <li>K-way Merge</li>
+                <li>Subsets</li>
+                <li>Permutations</li>
+                <li>Combinations / Combination Sum</li>
+                <li>Backtracking</li>
+                <li>Tree BFS</li>
+                <li>Tree DFS</li>
+                <li>Lowest Common Ancestor</li>
+                <li>Trie</li>
+                <li>Graph BFS</li>
+                <li>Graph DFS</li>
+                <li>Topological Sort</li>
+                <li>Union Find (Disjoint Set)</li>
+                <li>Shortest Path – Dijkstra</li>
+                <li>Minimum Spanning Tree (Kruskal / Prim)</li>
+                <li>Binary Search on Answer</li>
+                <li>Greedy</li>
+                <li>Dynamic Programming – 1D</li>
+                <li>0/1 Knapsack</li>
+                <li>Dynamic Programming – Grid / 2D</li>
+                <li>Longest Increasing Subsequence (LIS)</li>
+                <li>Longest Common Subsequence (LCS)</li>
+                <li>Bit Manipulation (XOR / Bitmasking)</li>
+                <li>String Pattern Matching (KMP / Rabin–Karp)</li>
+              </ol>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        </TooltipProvider>
         <p className="mt-1 text-sm text-muted-foreground">
           {data ? `${data.total} patterns` : "Loading..."}
         </p>

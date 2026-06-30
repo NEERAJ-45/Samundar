@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, LayoutDashboard, GitBranch, Map, Target, RefreshCw, FolderKanban, Briefcase, BookOpen, CalendarCheck, BarChart3, StickyNote, Rocket } from 'lucide-react';
@@ -24,17 +24,55 @@ const navItems = [
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const posRef = useRef({ x: 20, y: 20 });
+  const dragRef = useRef(false);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    btn.setPointerCapture(e.pointerId);
+    const rect = btn.getBoundingClientRect();
+    dragRef.current = false;
+    const startX = e.clientX - posRef.current.x;
+    const startY = e.clientY - posRef.current.y;
+
+    const onMove = (ev: PointerEvent) => {
+      const dt = Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY);
+      if (dt > 5) dragRef.current = true;
+      const maxX = window.innerWidth - rect.width - 8;
+      const maxY = window.innerHeight - rect.height - 8;
+      posRef.current.x = Math.max(8, Math.min(ev.clientX - startX, maxX));
+      posRef.current.y = Math.max(8, Math.min(ev.clientY - startY, maxY));
+      btn.style.left = `${posRef.current.x}px`;
+      btn.style.top = `${posRef.current.y}px`;
+      btn.style.right = 'auto';
+      btn.style.bottom = 'auto';
+    };
+
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      setTimeout(() => { dragRef.current = false; }, 0);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  }, []);
+
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl hover:bg-blue-500 active:bg-blue-700 active:scale-95 transition-all md:hidden"
+        ref={btnRef}
+        onClick={() => { if (!dragRef.current) setOpen(true); }}
+        onPointerDown={handlePointerDown}
+        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl hover:bg-blue-500 active:bg-blue-700 active:scale-95 transition-colors md:hidden touch-none select-none"
         aria-label="Open menu"
+        style={{ touchAction: 'none' }}
       >
         <Menu className="h-6 w-6" />
       </button>
