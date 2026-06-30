@@ -9,12 +9,14 @@ import {
   ChevronRight,
   FileText,
   Target,
+  ArrowRight,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useProfile } from '@/components/providers/ProfileProvider';
+import Link from 'next/link';
 
 interface DailyRecord {
   date: string;
@@ -100,6 +102,12 @@ export default function HistoryPage() {
               <FileText className="h-12 w-12 mb-3 text-zinc-700" />
               <p className="text-sm font-medium text-zinc-500">No records yet</p>
               <p className="text-xs text-zinc-600 mt-1">Complete tasks on the Daily page to build your history.</p>
+              <Link
+                href="/daily"
+                className="mt-4 inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+              >
+                Go to Daily Page <ArrowRight className="h-3 w-3" />
+              </Link>
             </div>
           ) : (
             <>
