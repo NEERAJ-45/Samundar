@@ -55,7 +55,9 @@ interface DashboardData {
   activities: ActivityItem[];
 }
 
-const CACHE_KEY = 'samundar-command-center';
+function cacheKey(email?: string): string {
+  return email ? `samundar-command-center-${email}` : 'samundar-command-center';
+}
 
 const statusStyles: Record<string, { label: string; className: string; bar: string }> = {
   COMPLETED: { label: 'Completed', className: 'bg-emerald-950 text-emerald-300 border-emerald-800', bar: 'bg-emerald-500' },
@@ -113,7 +115,9 @@ export default function CommandCenterPage() {
   const [dialogLabel, setDialogLabel] = useState('');
   const [dialogValue, setDialogValue] = useState('');
   const [dialogBadge, setDialogBadge] = useState('');
-  const fetched = useRef(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [resetFlag, setResetFlag] = useState(0);
+  const fetched = useRef<string | null>(null);
 
   const openFocusDialog = useCallback((label: string, value: string, badge: string) => {
     setDialogLabel(label);
@@ -163,9 +167,13 @@ export default function CommandCenterPage() {
   }, [userEmail, customDbUrl, dialogLabel, dialogValue, dialogBadge]);
 
   const loadData = useCallback(async () => {
-    if (!mounted || fetched.current) return;
-    fetched.current = true;
+    if (!mounted) return;
+    const email = userEmail || '';
+    if (!email) return;
+    if (fetched.current === email) return;
+    fetched.current = email;
 
+    const key = cacheKey(userEmail);
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (userEmail) headers['x-user-email'] = userEmail;
     if (customDbUrl) headers['x-mongodb-url'] = customDbUrl;
@@ -181,7 +189,7 @@ export default function CommandCenterPage() {
           activities: json.activities,
         };
         setData(payload);
-        localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+        localStorage.setItem(key, JSON.stringify(payload));
         setLoading(false);
         return;
       }
@@ -189,7 +197,7 @@ export default function CommandCenterPage() {
       setError(true);
     }
 
-    const cached = localStorage.getItem(CACHE_KEY);
+    const cached = localStorage.getItem(key);
     if (cached) {
       try {
         const parsed = JSON.parse(cached);
@@ -221,7 +229,22 @@ export default function CommandCenterPage() {
   }, [mounted, userEmail, customDbUrl]);
 
   useEffect(() => { setMounted(true); }, []);
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => { loadData(); }, [loadData, resetFlag]);
+
+  // Clean up old global cache key (no longer used)
+  useEffect(() => {
+    localStorage.removeItem('samundar-command-center');
+  }, []);
+
+  const handleReset = useCallback(() => {
+    localStorage.removeItem(cacheKey(userEmail));
+    localStorage.removeItem('samundar-command-center');
+    fetched.current = null;
+    setData(null);
+    setLoading(true);
+    setResetDialogOpen(false);
+    setResetFlag(f => f + 1);
+  }, [userEmail]);
 
   if (!mounted || loading) {
     return (
@@ -248,11 +271,19 @@ export default function CommandCenterPage() {
               Welcome back, {userName}! Let&apos;s build something great today.
             </p>
           </div>
-          {error && (
-            <Badge variant="outline" className="bg-amber-950 text-amber-300 border-amber-800 text-[10px]">
-              Offline — showing cached data
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {error && (
+              <Badge variant="outline" className="bg-amber-950 text-amber-300 border-amber-800 text-[10px]">
+                Offline — showing cached data
+              </Badge>
+            )}
+            <button
+              onClick={() => setResetDialogOpen(true)}
+              className="text-xs text-red-400 hover:text-red-300 border border-red-900/50 hover:border-red-700 transition-colors px-3 py-1.5 rounded-md bg-red-950/30 hover:bg-red-950/50"
+            >
+              Reset Dashboard
+            </button>
+          </div>
         </div>
 
         <LazyAppear>
@@ -408,6 +439,21 @@ export default function CommandCenterPage() {
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
             <Button size="sm" onClick={saveFocusEdit}>OK</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-zinc-100">Reset Dashboard</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-zinc-400 py-2">
+            This will clear your cached dashboard data and reload with fresh stats from the server.
+          </p>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setResetDialogOpen(false)}>Cancel</Button>
+            <Button size="sm" onClick={handleReset}>Reset</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

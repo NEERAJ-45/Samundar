@@ -84,6 +84,13 @@ export default function RegisterPage() {
         return;
       }
 
+      // Clear any stale dashboard cache for a fresh start
+      for (const key in localStorage) {
+        if (key.startsWith('samundar-command-center')) {
+          localStorage.removeItem(key);
+        }
+      }
+
       setDone(true);
       toast({ title: 'Account created', description: 'Welcome to ProdigyOS!' });
       setTimeout(() => router.push('/'), 1200);
