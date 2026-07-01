@@ -45,6 +45,18 @@ const pillars = [
       { name: 'Communication & Isolation', progress: 0, modules: ['postMessage', 'Shadow DOM', 'State Sync'] },
     ],
   },
+  {
+    name: 'Machine Coding',
+    slug: 'machine-coding',
+    progress: 0,
+    hours: 100,
+    difficulty: 'Medium-Hard' as const,
+    color: 'from-rose-500 to-pink-400',
+    domains: [
+      { name: 'Beginner Components', progress: 0, modules: ['Accordion', 'Contact Form', 'Holy Grail', 'Progress Bars'] },
+      { name: 'Intermediate & Advanced', progress: 0, modules: ['Tabs', 'File Explorer', 'Wordle', 'Image Carousel'] },
+    ],
+  },
 ];
 
 const difficultyColors: Record<string, string> = {
@@ -106,7 +118,8 @@ export default function FrontendRoadmapPage() {
   const [progressData, setProgressData] = React.useState({
     react: { overall: 0, core: 0, nextjs: 0 },
     nextjs: { overall: 0, routing: 0, rendering: 0 },
-    mfe: { overall: 0, orchestration: 0, isolation: 0 }
+    mfe: { overall: 0, orchestration: 0, isolation: 0 },
+    machineCoding: { overall: 0, beginner: 0, advanced: 0 }
   });
 
   React.useEffect(() => {
@@ -154,6 +167,13 @@ export default function FrontendRoadmapPage() {
     const mfeOrchestration = getCompletedCountInRange('frontend-mfe', 901, 925);
     const mfeIsolation = getCompletedCountInRange('frontend-mfe', 926, 950);
 
+    // Machine Coding splits (IDs 951 to 1000)
+    // Beginner: 951 to 960 (10 questions)
+    // Advanced: 961 to 1000 (40 questions)
+    const mcOverall = getOverallCount('frontend-machine-coding');
+    const mcBeginner = getCompletedCountInRange('frontend-machine-coding', 951, 960);
+    const mcAdvanced = getCompletedCountInRange('frontend-machine-coding', 961, 1000);
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgressData({
       react: {
@@ -170,6 +190,11 @@ export default function FrontendRoadmapPage() {
         overall: Math.round((mfeOverall / 50) * 100),
         orchestration: Math.round((mfeOrchestration / 25) * 100),
         isolation: Math.round((mfeIsolation / 25) * 100),
+      },
+      machineCoding: {
+        overall: Math.round((mcOverall / 50) * 100),
+        beginner: Math.round((mcBeginner / 10) * 100),
+        advanced: Math.round((mcAdvanced / 40) * 100),
       }
     });
   }, []);
@@ -199,6 +224,14 @@ export default function FrontendRoadmapPage() {
           { ...pillars[2].domains[0], progress: progressData.mfe.orchestration },
           { ...pillars[2].domains[1], progress: progressData.mfe.isolation },
         ]
+      },
+      {
+        ...pillars[3],
+        progress: progressData.machineCoding.overall,
+        domains: [
+          { ...pillars[3].domains[0], progress: progressData.machineCoding.beginner },
+          { ...pillars[3].domains[1], progress: progressData.machineCoding.advanced },
+        ]
       }
     ];
   }, [progressData]);
@@ -216,11 +249,11 @@ export default function FrontendRoadmapPage() {
           </Link>
           <h1 className="text-3xl font-bold tracking-tight text-zinc-100">Frontend Development</h1>
           <p className="text-sm text-zinc-500 mt-1">
-            Build responsive, interactive, and modular user interfaces with React, Next.js, and MicroFrontends.
+            Build responsive, interactive, and modular user interfaces with React, Next.js, MicroFrontends, and Machine Coding practice.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
           {dynamicPillars.map((pillar) => (
             <RoadmapCard
               key={pillar.name}

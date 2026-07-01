@@ -22,6 +22,7 @@ import {
   Plus,
   Loader2,
   ListOrdered,
+  Info,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NotesDialog } from '@/components/shared/NotesDialog';
@@ -32,6 +33,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
@@ -40,6 +42,7 @@ import { useProfile } from '@/components/providers/ProfileProvider';
 export interface QuestionItem {
   id: number;
   title: string;
+  description?: string;
   difficulty: string;
   link: string;
   isCustom?: boolean;
@@ -160,6 +163,7 @@ export default function QuestionsTable({
   const [notesMap, setNotesMap] = useState<NotesMap>({});
   const [customQuestions, setCustomQuestions] = useState<QuestionItem[]>([]);
   const [dbConnected, setDbConnected] = useState(false);
+  const [showDescription, setShowDescription] = useState(true);
 
   const broadcastProgress = useCallback(() => {
     try {
@@ -486,173 +490,247 @@ export default function QuestionsTable({
   const columnHelper = createColumnHelper<QuestionItem>();
 
   const columns = useMemo(
-    () => [
-      columnHelper.display({
-        id: 'srno',
-        header: '#',
-        cell: (info) => (
-          <span className="text-xs text-muted-foreground tabular-nums">
-            {info.row.index + 1 + pagination.pageIndex * pagination.pageSize}
-          </span>
-        ),
-        size: 44,
-        minSize: 36,
-      }),
-      columnHelper.display({
-        id: 'done',
-        header: 'Done',
-        cell: (info) => {
-          const id = info.row.original.id;
-          const done = !!completedMap[id];
-          return (
-            <button
-              onClick={() => toggleCompleted(id)}
-              className="inline-flex items-center justify-center rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {done ? (
-                <CheckCircle size={16} className="text-emerald-500" />
-              ) : (
-                <Circle size={16} strokeWidth={1.5} />
-              )}
-            </button>
-          );
-        },
-        size: 36,
-        minSize: 32,
-      }),
-      columnHelper.accessor('title', {
-        header: 'Question/Topic',
-        cell: (info) => {
-          const id = info.row.original.id;
-          const done = !!completedMap[id];
-          const isCustom = info.row.original.isCustom;
-          return (
-            <div className="flex items-center justify-between gap-4">
+    () => {
+      const cols = [
+        columnHelper.display({
+          id: 'srno',
+          header: '#',
+          cell: (info) => (
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {info.row.index + 1 + pagination.pageIndex * pagination.pageSize}
+            </span>
+          ),
+          size: 44,
+          minSize: 36,
+        }),
+        columnHelper.display({
+          id: 'done',
+          header: 'Done',
+          cell: (info) => {
+            const id = info.row.original.id;
+            const done = !!completedMap[id];
+            return (
+              <button
+                onClick={() => toggleCompleted(id)}
+                className="inline-flex items-center justify-center rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {done ? (
+                  <CheckCircle size={16} className="text-emerald-500" />
+                ) : (
+                  <Circle size={16} strokeWidth={1.5} />
+                )}
+              </button>
+            );
+          },
+          size: 36,
+          minSize: 32,
+        }),
+        columnHelper.accessor('title', {
+          header: 'Question/Topic',
+          cell: (info) => {
+            const id = info.row.original.id;
+            const done = !!completedMap[id];
+            const isCustom = info.row.original.isCustom;
+            const desc = info.row.original.description;
+            return (
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className={cn(
+                      'text-sm transition-all font-medium truncate',
+                      done ? 'text-zinc-500 line-through' : 'text-zinc-200'
+                    )}
+                  >
+                    {info.getValue()}
+                  </span>
+                  {desc && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-zinc-600 hover:text-zinc-300 transition-colors p-0.5 rounded shrink-0"
+                        >
+                          <Info size={13} />
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="border-zinc-800 bg-zinc-950 text-zinc-100 sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-zinc-100 flex items-center gap-2">
+                            <Info size={16} className="text-primary" />
+                            {info.row.original.title}
+                          </DialogTitle>
+                        </DialogHeader>
+                        <DialogDescription className="text-sm text-zinc-400 leading-relaxed pt-2">
+                          {desc}
+                        </DialogDescription>
+                        <div className="flex items-center gap-3 pt-2">
+                          <a
+                            href={info.row.original.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors"
+                          >
+                            Open Question
+                          </a>
+                          <DialogClose asChild>
+                            <button className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 transition-colors">
+                              Close
+                            </button>
+                          </DialogClose>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                </div>
+                {isCustom && (
+                  <button
+                    onClick={() => handleDeleteQuestion(id)}
+                    className="text-zinc-600 hover:text-red-400 transition-colors p-1 rounded hover:bg-zinc-800 shrink-0"
+                    title="Delete Custom Topic"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                )}
+              </div>
+            );
+          },
+          size: 320,
+          minSize: 160,
+        }),
+      ];
+
+      if (showDescription) {
+        cols.push(
+          columnHelper.accessor('description', {
+            header: () => (
+              <button
+                onClick={() => setShowDescription(false)}
+                className="inline-flex items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-colors"
+              >
+                Description
+                <span className="text-[10px] opacity-60">✕</span>
+              </button>
+            ),
+            cell: (info) => {
+              const desc = info.getValue();
+              if (!desc) return null;
+              return (
+                <span className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                  {desc}
+                </span>
+              );
+            },
+            size: 260,
+            minSize: 140,
+          })
+        );
+      }
+
+      cols.push(
+        columnHelper.display({
+          id: 'notes',
+          header: 'My Notes',
+          cell: (info) => {
+            const id = info.row.original.id;
+            const val = notesMap[id] ?? '';
+            return (
+              <NotesDialog
+                id={id}
+                initialValue={val}
+                onSave={updateNote}
+              />
+            );
+          },
+          size: 140,
+          minSize: 100,
+        }),
+        columnHelper.accessor('difficulty', {
+          header: 'Difficulty',
+          sortingFn: (rowA, rowB) => {
+            const a = diffOrder[rowA.original.difficulty] ?? 0;
+            const b = diffOrder[rowB.original.difficulty] ?? 0;
+            return a - b;
+          },
+          cell: (info) => {
+            const val = info.getValue();
+            return (
               <span
                 className={cn(
-                  'text-sm transition-all font-medium',
-                  done ? 'text-zinc-500 line-through' : 'text-zinc-200'
+                  'inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold',
+                  val === 'EASY' && 'bg-emerald-500/15 text-emerald-400',
+                  val === 'MEDIUM' && 'bg-amber-500/15 text-amber-400',
+                  val === 'HARD' && 'bg-red-500/15 text-red-400'
                 )}
               >
-                {info.getValue()}
+                {val.charAt(0) + val.slice(1).toLowerCase()}
               </span>
-              {isCustom && (
-                <button
-                  onClick={() => handleDeleteQuestion(id)}
-                  className="text-zinc-600 hover:text-red-400 transition-colors p-1 rounded hover:bg-zinc-800 shrink-0"
-                  title="Delete Custom Topic"
-                >
-                  <Trash2 size={13} />
-                </button>
-              )}
-            </div>
-          );
-        },
-        size: 400,
-        minSize: 180,
-      }),
-      columnHelper.display({
-        id: 'notes',
-        header: 'My Notes',
-        cell: (info) => {
-          const id = info.row.original.id;
-          const val = notesMap[id] ?? '';
-          return (
-            <NotesDialog
-              id={id}
-              initialValue={val}
-              onSave={updateNote}
-            />
-          );
-        },
-        size: 140,
-        minSize: 100,
-      }),
-      columnHelper.accessor('difficulty', {
-        header: 'Difficulty',
-        sortingFn: (rowA, rowB) => {
-          const a = diffOrder[rowA.original.difficulty] ?? 0;
-          const b = diffOrder[rowB.original.difficulty] ?? 0;
-          return a - b;
-        },
-        cell: (info) => {
-          const val = info.getValue();
-          return (
-            <span
-              className={cn(
-                'inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold',
-                val === 'EASY' && 'bg-emerald-500/15 text-emerald-400',
-                val === 'MEDIUM' && 'bg-amber-500/15 text-amber-400',
-                val === 'HARD' && 'bg-red-500/15 text-red-400'
-              )}
-            >
-              {val.charAt(0) + val.slice(1).toLowerCase()}
-            </span>
-          );
-        },
-        size: 88,
-        minSize: 72,
-      }),
-      columnHelper.display({
-        id: 'completedAt',
-        header: 'Completed On',
-        cell: (info) => {
-          const id = info.row.original.id;
-          const dateStr = completedMap[id];
-          
-          const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            const val = e.target.value;
-            let isoString = '';
-            let hasVal = false;
-            if (val) {
-              isoString = new Date(val).toISOString();
-              hasVal = true;
-              setCompletedMap((prev) => {
-                const key = String(id);
-                const next = { ...prev };
-                next[key] = isoString;
-                saveData('completed', next);
-                return next;
-              });
-            } else {
-              setCompletedMap((prev) => {
-                const key = String(id);
-                const next = { ...prev };
-                delete next[key];
-                saveData('completed', next);
-                return next;
-              });
-            }
+            );
+          },
+          size: 88,
+          minSize: 72,
+        }),
+        columnHelper.display({
+          id: 'completedAt',
+          header: 'Completed On',
+          cell: (info) => {
+            const id = info.row.original.id;
+            const dateStr = completedMap[id];
+            
+            const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+              const val = e.target.value;
+              let isoString = '';
+              let hasVal = false;
+              if (val) {
+                isoString = new Date(val).toISOString();
+                hasVal = true;
+                setCompletedMap((prev) => {
+                  const key = String(id);
+                  const next = { ...prev };
+                  next[key] = isoString;
+                  saveData('completed', next);
+                  return next;
+                });
+              } else {
+                setCompletedMap((prev) => {
+                  const key = String(id);
+                  const next = { ...prev };
+                  delete next[key];
+                  saveData('completed', next);
+                  return next;
+                });
+              }
 
-            fetch('/api/db/completions', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                storagePrefix: `${storagePrefix}-completed`,
-                itemId: String(id),
-                completedAt: hasVal ? isoString : undefined,
-              }),
-            }).catch(() => {});
-          };
+              fetch('/api/db/completions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  storagePrefix: `${storagePrefix}-completed`,
+                  itemId: String(id),
+                  completedAt: hasVal ? isoString : undefined,
+                }),
+              }).catch(() => {});
+            };
 
-          const inputValue = dateStr ? new Date(dateStr).toISOString().split('T')[0] : '';
+            const inputValue = dateStr ? new Date(dateStr).toISOString().split('T')[0] : '';
 
-          return (
-            <div className="flex items-center gap-1.5 justify-center">
-              <input
-                type="date"
-                value={inputValue}
-                onChange={handleDateChange}
-                className="bg-zinc-800/40 hover:bg-zinc-800/70 border border-zinc-700/30 rounded px-1.5 py-0.5 text-xs text-zinc-300 outline-none focus:border-primary/50 transition-colors cursor-pointer scheme-dark"
-              />
-            </div>
-          );
-        },
-        size: 135,
-        minSize: 110,
-      }),
-    ],
-    [completedMap, toggleCompleted, notesMap, updateNote, handleDeleteQuestion, storagePrefix, saveData, pagination.pageIndex, pagination.pageSize]
+            return (
+              <div className="flex items-center gap-1.5 justify-center">
+                <input
+                  type="date"
+                  value={inputValue}
+                  onChange={handleDateChange}
+                  className="bg-zinc-800/40 hover:bg-zinc-800/70 border border-zinc-700/30 rounded px-1.5 py-0.5 text-xs text-zinc-300 outline-none focus:border-primary/50 transition-colors cursor-pointer scheme-dark"
+                />
+              </div>
+            );
+          },
+          size: 135,
+          minSize: 110,
+        }),
+      );
+      return cols;
+    },
+    [completedMap, toggleCompleted, notesMap, updateNote, handleDeleteQuestion, storagePrefix, saveData, pagination.pageIndex, pagination.pageSize, showDescription]
   );
 
   const table = useReactTable({
@@ -683,18 +761,30 @@ export default function QuestionsTable({
     <div className="space-y-6">
       {/* Progress & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="w-full md:max-w-md flex items-center gap-3">
-          <div className="flex-grow flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 transition-all duration-200 focus-within:border-primary/50 focus-within:bg-zinc-900/80">
-            <Search className="h-4 w-4 shrink-0 text-zinc-500" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="w-full bg-transparent py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none"
-            />
+          <div className="w-full md:max-w-md flex items-center gap-3">
+            <div className="flex-grow flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 transition-all duration-200 focus-within:border-primary/50 focus-within:bg-zinc-900/80">
+              <Search className="h-4 w-4 shrink-0 text-zinc-500" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={searchPlaceholder}
+                className="w-full bg-transparent py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none"
+              />
+            </div>
+            <button
+              onClick={() => setShowDescription((v) => !v)}
+              className={cn(
+                'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors shrink-0',
+                showDescription
+                  ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
+                  : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300 hover:border-zinc-700'
+              )}
+            >
+              <Info size={13} />
+              Desc
+            </button>
+            <AddTopicDialog onAdd={handleAddQuestion} />
           </div>
-          <AddTopicDialog onAdd={handleAddQuestion} />
-        </div>
 
         {mounted && (
           <motion.div

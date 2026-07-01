@@ -25,6 +25,30 @@ export function BookReaderClient({ book }: { book: BookEntry }) {
   const [pageNumber, setPageNumber] = React.useState(1);
   const [scale, setScale] = React.useState(1);
   const [rotation, setRotation] = React.useState(0);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let ticking = false;
+
+    function onWheel(e: WheelEvent) {
+      e.preventDefault();
+      if (ticking) return;
+      ticking = true;
+
+      setPageNumber((p) => {
+        const next = e.deltaY > 0 ? p + 1 : p - 1;
+        return Math.max(1, Math.min(numPages || 1, next));
+      });
+
+      requestAnimationFrame(() => { ticking = false; });
+    }
+
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => container.removeEventListener('wheel', onWheel);
+  }, [numPages]);
 
   React.useEffect(() => {
     if (!userEmail) return;
@@ -116,7 +140,7 @@ export function BookReaderClient({ book }: { book: BookEntry }) {
           )}
         </div>
       </div>
-      <div className="flex-1 overflow-auto bg-zinc-950">
+      <div ref={containerRef} className="flex-1 overflow-auto bg-zinc-950">
         <div className="flex justify-center py-4">
           <PdfViewer
             pdfUrl={pdfUrl}

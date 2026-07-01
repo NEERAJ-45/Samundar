@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
   BookOpen,
   FileText,
@@ -208,13 +209,27 @@ export default function BooksPage() {
   const grouped = React.useMemo(() => groupBooksByCategory(), []);
 
   return (
-    <div className="flex flex-col h-full">
+    <motion.div
+      initial={{ opacity: 0, x: 60 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className="flex flex-col h-full"
+    >
       <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
-        <div>
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1, duration: 0.35, ease: 'easeOut' }}
+        >
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">Books & Research</h1>
           <p className="text-sm text-zinc-500 mt-1">Read, track, and organize your knowledge</p>
-        </div>
+        </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4, ease: 'easeOut' }}
+        >
         <Tabs defaultValue="library" className="space-y-6">
           <TabsList className="bg-zinc-900 border border-zinc-800 overflow-x-auto flex-nowrap w-full justify-start">
             <TabsTrigger value="library" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100 text-zinc-500 text-xs gap-2">
@@ -280,7 +295,8 @@ export default function BooksPage() {
             </Card>
           </TabsContent>
         </Tabs>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
