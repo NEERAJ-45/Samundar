@@ -87,6 +87,17 @@ const categories = [
     topics: ['SQL Relational (50)', 'NoSQL Non-Relational (50)', 'LeetCode SQL (50)'],
     glow: 'rgba(244, 63, 94, 0.12)'
   },
+  {
+    title: 'ORMs & Hibernate',
+    description: 'Master object-relational mapping across three paradigms: Java Hibernate (JPA), TypeScript Prisma (schema-first), and Drizzle (SQL-first).',
+    href: '/roadmaps/orms',
+    progress: 0,
+    hours: 300,
+    difficulty: 'Medium-Hard',
+    color: 'from-emerald-500 via-teal-500 to-cyan-400',
+    topics: ['Hibernate (JPA)', 'Prisma', 'Drizzle'],
+    glow: 'rgba(20, 184, 166, 0.12)'
+  },
 ];
 
 const difficultyColors: Record<string, string> = {
@@ -105,6 +116,7 @@ export default function RoadmapsPage() {
   const [devopsProgress, setDevopsProgress] = React.useState(0);
   const [aptitudeProgress, setAptitudeProgress] = React.useState(0);
   const [dbProgress, setDbProgress] = React.useState(0);
+  const [ormsProgress, setOrmsProgress] = React.useState(0);
 
   React.useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -151,6 +163,12 @@ export default function RoadmapsPage() {
     const sqlLeetcodeCompleted = getCompletedCount('databases-leetcode');
     const totalDbCompleted = sqlTheoryCompleted + nosqlTheoryCompleted + sqlLeetcodeCompleted;
     setDbProgress(Math.round((totalDbCompleted / 150) * 100));
+
+    const hibernateCompleted = getCompletedCount('orms-hibernate');
+    const prismaCompleted = getCompletedCount('orms-prisma');
+    const drizzleCompleted = getCompletedCount('orms-drizzle');
+    const totalOrmsCompleted = hibernateCompleted + prismaCompleted + drizzleCompleted;
+    setOrmsProgress(Math.round((totalOrmsCompleted / 150) * 100));
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
@@ -184,8 +202,12 @@ export default function RoadmapsPage() {
         ...categories[6],
         progress: dbProgress,
       },
+      {
+        ...categories[7],
+        progress: ormsProgress,
+      },
     ];
-  }, [csFoundationProgress, systemDesignProgress, backendProgress, frontendProgress, devopsProgress, aptitudeProgress, dbProgress]);
+  }, [csFoundationProgress, systemDesignProgress, backendProgress, frontendProgress, devopsProgress, aptitudeProgress, dbProgress, ormsProgress]);
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">

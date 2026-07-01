@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { Suspense, useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -11,14 +11,12 @@ import {
   PaginationState,
 } from "@tanstack/react-table";
 import { ProblemsTable } from "@/components/patterns/ProblemsTable";
-import { LazyAppear } from "@/components/shared/LazyAppear";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, Search, ChevronLeft, ChevronRight,
   ChevronsLeft, ChevronsRight, AlertCircle, ListOrdered, Info
 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/toast";
 
 interface PatternRow {
