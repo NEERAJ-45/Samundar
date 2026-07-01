@@ -95,6 +95,23 @@ function RoadmapCard({
               style={{ width: `${pillar.progress}%` }}
             />
           </div>
+          {pillar.domains && pillar.domains.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-zinc-800/50 space-y-2">
+              <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Domains</span>
+              {pillar.domains.map((domain) => (
+                <div key={domain.name} className="flex items-center gap-2">
+                  <span className="text-xs text-zinc-400 truncate flex-1">{domain.name}</span>
+                  <div className="h-1 w-20 rounded-full bg-zinc-800 overflow-hidden shrink-0">
+                    <div
+                      className="h-full rounded-full bg-indigo-650"
+                      style={{ width: `${domain.progress}%` }}
+                    />
+                  </div>
+                  <span className="text-[11px] text-zinc-500 w-7 text-right tabular-nums">{domain.progress}%</span>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </Link>
@@ -108,7 +125,7 @@ export default function FoundationRoadmapPage() {
     dbms: { overall: 0, sql: 0, nosql: 0 }
   });
 
-  React.useEffect(() => {
+  const calculateProgress = React.useCallback(() => {
     const getCompletedCount = (prefix: string, rangeStart: number, rangeEnd: number, exactIds?: number[]) => {
       try {
         const raw = localStorage.getItem(`${prefix}-completed`);
@@ -148,7 +165,6 @@ export default function FoundationRoadmapPage() {
     const dbmsSql = getCompletedCount('foundation-dbms', 0, 0, sqlIds);
     const dbmsNosql = Math.max(0, dbmsOverall - dbmsSql);
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgressData({
       os: {
         overall: Math.round((osOverall / 50) * 100),
@@ -167,6 +183,18 @@ export default function FoundationRoadmapPage() {
       }
     });
   }, []);
+
+  React.useEffect(() => {
+    calculateProgress();
+
+    try {
+      const bc = new BroadcastChannel('roadmap-progress');
+      bc.onmessage = calculateProgress;
+      return () => bc.close();
+    } catch {
+      return;
+    }
+  }, [calculateProgress]);
 
   const dynamicPillars = React.useMemo(() => {
     return [

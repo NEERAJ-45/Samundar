@@ -96,6 +96,23 @@ function RoadmapCard({
               style={{ width: `${pillar.progress}%` }}
             />
           </div>
+          {pillar.domains && pillar.domains.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-zinc-800/50 space-y-2">
+              <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Domains</span>
+              {pillar.domains.map((domain) => (
+                <div key={domain.name} className="flex items-center gap-2">
+                  <span className="text-xs text-zinc-400 truncate flex-1">{domain.name}</span>
+                  <div className="h-1 w-20 rounded-full bg-zinc-800 overflow-hidden shrink-0">
+                    <div
+                      className="h-full rounded-full bg-indigo-650"
+                      style={{ width: `${domain.progress}%` }}
+                    />
+                  </div>
+                  <span className="text-[11px] text-zinc-500 w-7 text-right tabular-nums">{domain.progress}%</span>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </Link>
@@ -109,7 +126,7 @@ export default function FrontendRoadmapPage() {
     mfe: { overall: 0, orchestration: 0, isolation: 0 }
   });
 
-  React.useEffect(() => {
+  const calculateProgress = React.useCallback(() => {
     const getCompletedCountInRange = (prefix: string, rangeStart: number, rangeEnd: number) => {
       try {
         const raw = localStorage.getItem(`${prefix}-completed`);
@@ -133,28 +150,18 @@ export default function FrontendRoadmapPage() {
       }
     };
 
-    // React splits (IDs 801 to 850)
-    // Core React: 801 to 830 (30 questions)
-    // Ecosystem & Next.js: 831 to 850 (20 questions)
     const reactOverall = getOverallCount('frontend-react');
     const reactCore = getCompletedCountInRange('frontend-react', 801, 830);
     const reactNextjs = getCompletedCountInRange('frontend-react', 831, 850);
 
-    // Next.js splits (IDs 851 to 900)
-    // Routing: 851 to 875 (25 questions)
-    // Rendering: 876 to 900 (25 questions)
     const nextjsOverall = getOverallCount('frontend-nextjs');
     const nextjsRouting = getCompletedCountInRange('frontend-nextjs', 851, 875);
     const nextjsRendering = getCompletedCountInRange('frontend-nextjs', 876, 900);
 
-    // MicroFrontends splits (IDs 901 to 950)
-    // Orchestration: 901 to 925 (25 questions)
-    // Isolation: 926 to 950 (25 questions)
     const mfeOverall = getOverallCount('frontend-mfe');
     const mfeOrchestration = getCompletedCountInRange('frontend-mfe', 901, 925);
     const mfeIsolation = getCompletedCountInRange('frontend-mfe', 926, 950);
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgressData({
       react: {
         overall: Math.round((reactOverall / 50) * 100),
@@ -173,6 +180,18 @@ export default function FrontendRoadmapPage() {
       }
     });
   }, []);
+
+  React.useEffect(() => {
+    calculateProgress();
+
+    try {
+      const bc = new BroadcastChannel('roadmap-progress');
+      bc.onmessage = calculateProgress;
+      return () => bc.close();
+    } catch {
+      return;
+    }
+  }, [calculateProgress]);
 
   const dynamicPillars = React.useMemo(() => {
     return [

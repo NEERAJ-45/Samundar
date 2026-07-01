@@ -25,6 +25,30 @@ export function BookReaderClient({ book }: { book: BookEntry }) {
   const [pageNumber, setPageNumber] = React.useState(1);
   const [scale, setScale] = React.useState(1);
   const [rotation, setRotation] = React.useState(0);
+  const sliderRef = React.useRef<HTMLDivElement>(null);
+  const pageAreaRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const el = sliderRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      setPageNumber((p) => (e.deltaY > 0 ? Math.min(numPages, p + 1) : Math.max(1, p - 1)));
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  }, [numPages]);
+
+  React.useEffect(() => {
+    const el = pageAreaRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      setPageNumber((p) => (e.deltaY > 0 ? Math.min(numPages, p + 1) : Math.max(1, p - 1)));
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  }, [numPages]);
 
   React.useEffect(() => {
     if (!userEmail) return;
@@ -103,7 +127,11 @@ export function BookReaderClient({ book }: { book: BookEntry }) {
             <ChevronRight className="h-4 w-4" />
           </Button>
           {numPages > 1 && (
-            <div className="hidden sm:flex items-center w-24">
+            <div
+              ref={sliderRef}
+              className="hidden sm:flex items-center w-32"
+              title="Scroll to change page"
+            >
               <input
                 type="range"
                 min={1}
@@ -116,7 +144,7 @@ export function BookReaderClient({ book }: { book: BookEntry }) {
           )}
         </div>
       </div>
-      <div className="flex-1 overflow-auto bg-zinc-950">
+      <div ref={pageAreaRef} className="flex-1 overflow-hidden bg-zinc-950">
         <div className="flex justify-center py-4">
           <PdfViewer
             pdfUrl={pdfUrl}

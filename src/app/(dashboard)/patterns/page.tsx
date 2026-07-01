@@ -11,9 +11,6 @@ import {
   PaginationState,
 } from "@tanstack/react-table";
 import { ProblemsTable } from "@/components/patterns/ProblemsTable";
-<<<<<<< HEAD
-import { Loader2, Search } from "lucide-react";
-=======
 import { LazyAppear } from "@/components/shared/LazyAppear";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -22,7 +19,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/toast";
->>>>>>> 20e0f19a2013ac938bd69dd10b1e14eaffd6a452
 
 interface PatternRow {
   key: string;
@@ -55,26 +51,6 @@ function PatternsContent() {
   const searchParams = useSearchParams();
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
-  const [completedVersion, setCompletedVersion] = useState(0);
-  const [completions, setCompletions] = useState<Record<string, number>>({});
-
-  useEffect(() => {
-    fetch("/api/db/completions")
-      .then((res) => res.json())
-      .then((d) => {
-        if (d?.data) {
-          const counts: Record<string, number> = {};
-          for (const c of d.data) {
-            const prefix = c.storagePrefix?.replace("completed-", "");
-            if (prefix) counts[prefix] = (counts[prefix] || 0) + 1;
-          }
-          setCompletions(counts);
-        }
-      })
-      .catch(() => {});
-  }, [completedVersion]);
-=======
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 15 });
 
   const debouncedSearch = useDebounce(search, 300);
@@ -100,7 +76,6 @@ function PatternsContent() {
   useEffect(() => {
     if (error) toast({ variant: 'destructive', title: 'Failed to load patterns' });
   }, [error]);
->>>>>>> 20e0f19a2013ac938bd69dd10b1e14eaffd6a452
 
   const urlPattern = searchParams.get("pattern");
   useEffect(() => {
@@ -116,32 +91,7 @@ function PatternsContent() {
     setPagination((p) => ({ ...p, pageIndex: 0 }));
   }, [debouncedSearch]);
 
-<<<<<<< HEAD
-  const patternEntries = useMemo(() => {
-    if (!data) return [];
-    return Object.entries(data.patterns)
-      .filter(([key]) => {
-        if (!search) return true;
-        const lower = search.toLowerCase();
-        return (
-          key.replace(/-/g, " ").includes(lower) ||
-          data.patterns[key].name.toLowerCase().includes(lower)
-        );
-      })
-      .map(([key, p]) => ({
-        key,
-        name: p.name,
-        easy: p.easy.length,
-        medium: p.medium.length,
-        hard: p.hard.length,
-        total: p.easy.length + p.medium.length + p.hard.length,
-        completed: completions[p.name] || 0,
-        description: p.description,
-      }));
-  }, [data, search, completions]);
-=======
   const patternRows = useMemo(() => data?.patterns ?? [], [data]);
->>>>>>> 20e0f19a2013ac938bd69dd10b1e14eaffd6a452
 
   const columnHelper = createColumnHelper<PatternRow>();
 
@@ -211,16 +161,6 @@ function PatternsContent() {
   }
 
   return (
-<<<<<<< HEAD
-    <div className="flex h-full flex-col p-6">
-      {selectedPattern ? (
-        <ProblemsTable
-          patternName={selectedPattern.name}
-          easy={selectedPattern.easy}
-          medium={selectedPattern.medium}
-          hard={selectedPattern.hard}
-          onBack={() => { setCompletedVersion(v => v + 1); setSelectedKey(null); }}
-=======
     <div className="flex h-full mt10 flex-col p-4 md:p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -238,51 +178,12 @@ function PatternsContent() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search patterns..."
           className="w-full bg-transparent py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
->>>>>>> 20e0f19a2013ac938bd69dd10b1e14eaffd6a452
         />
         {isFetching && (
           <Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" />
         )}
       </div>
 
-<<<<<<< HEAD
-          <div className="mb-6 flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 transition-colors focus-within:border-primary/50 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/20">
-            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search patterns..."
-              className="w-full bg-transparent py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-            />
-          </div>
-
-          <div className="overflow-hidden rounded-lg border border-border">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border bg-muted/30">
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground w-12">#</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground w-60 max-w-60">Pattern</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground w-28">Progress</th>
-                  <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground w-20">Total</th>
-                  <th className="px-4 py-2.5 w-12"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {patternEntries.map((entry, index) => (
-                  <PatternCard
-                    key={entry.key}
-                    index={index + 1}
-                    name={entry.name}
-                    total={entry.total}
-                    completed={entry.completed}
-                    description={entry.description}
-                    selected={false}
-                    onSelect={() => setSelectedKey(entry.key)}
-                  />
-                ))}
-              </tbody>
-            </table>
-=======
       <div className="overflow-x-auto rounded-lg border border-border relative">
         <table className="w-full text-sm">
           <thead>
@@ -395,7 +296,6 @@ function PatternsContent() {
             <span>of</span>
             <span className="font-semibold text-foreground">{data.total}</span>
             <span>patterns</span>
->>>>>>> 20e0f19a2013ac938bd69dd10b1e14eaffd6a452
           </div>
 
           <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4">

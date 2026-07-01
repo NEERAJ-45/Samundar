@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, Database, Layers, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { LazyAppear } from '@/components/shared/LazyAppear';
@@ -12,11 +12,11 @@ import { cn } from '@/lib/utils';
 export default function DatabasesHubPage() {
   const [mounted, setMounted] = useState(false);
   const [sqlProgress, setSqlProgress] = useState(0);
+  const [sqlTheoryPct, setSqlTheoryPct] = useState(0);
+  const [sqlLeetcodePct, setSqlLeetcodePct] = useState(0);
   const [nosqlProgress, setNosqlProgress] = useState(0);
 
-  useEffect(() => {
-    setMounted(true);
-    
+  const calculateProgress = useCallback(() => {
     const getCompletedCount = (prefix: string) => {
       try {
         const raw = localStorage.getItem(`${prefix}-completed`);
@@ -32,11 +32,22 @@ export default function DatabasesHubPage() {
     const sqlLeetcode = getCompletedCount('databases-leetcode');
     const nosqlTheory = getCompletedCount('databases-nosql');
 
-    // SQL total questions = 50 theory + 50 LeetCode = 100
+    setSqlTheoryPct(Math.round((sqlTheory / 50) * 100));
+    setSqlLeetcodePct(Math.round((sqlLeetcode / 50) * 100));
     setSqlProgress(Math.round(((sqlTheory + sqlLeetcode) / 100) * 100));
-    // NoSQL total questions = 50 theory
     setNosqlProgress(Math.round((nosqlTheory / 50) * 100));
   }, []);
+
+  useEffect(() => {
+    setMounted(true);
+    calculateProgress();
+
+    try {
+      const bc = new BroadcastChannel('roadmap-progress');
+      bc.onmessage = calculateProgress;
+      return () => bc.close();
+    } catch {}
+  }, [calculateProgress]);
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">
@@ -91,6 +102,24 @@ export default function DatabasesHubPage() {
                         style={{ width: `${mounted ? sqlProgress : 0}%` }}
                       />
                     </div>
+                    {mounted && (
+                      <div className="mt-2 pt-2 border-t border-zinc-800/50 space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] text-zinc-500 w-20 truncate shrink-0">SQL Theory</span>
+                          <div className="flex-1 h-1 rounded-full bg-zinc-800 overflow-hidden">
+                            <div className="h-full rounded-full bg-indigo-500/70" style={{ width: `${sqlTheoryPct}%` }} />
+                          </div>
+                          <span className="text-[10px] text-zinc-500 w-7 text-right tabular-nums">{sqlTheoryPct}%</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] text-zinc-500 w-20 truncate shrink-0">SQL LeetCode</span>
+                          <div className="flex-1 h-1 rounded-full bg-zinc-800 overflow-hidden">
+                            <div className="h-full rounded-full bg-emerald-500/70" style={{ width: `${sqlLeetcodePct}%` }} />
+                          </div>
+                          <span className="text-[10px] text-zinc-500 w-7 text-right tabular-nums">{sqlLeetcodePct}%</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-end text-xs font-bold text-zinc-200 group-hover:text-indigo-400 pt-2 transition-colors">

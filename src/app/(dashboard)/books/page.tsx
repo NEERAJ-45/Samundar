@@ -9,6 +9,8 @@ import {
   Star,
   ExternalLink,
   Library,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import {
   Card,
@@ -21,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import books, { type BookEntry, categoryLabels } from '@/data/books';
+import BookSlider from '@/components/books/BookSlider';
 
 type BookStatus = 'TO_READ' | 'READING' | 'COMPLETED' | 'REFERENCE';
 
@@ -79,7 +82,7 @@ const categoryOrder = [
   '03-Architecture',
   '04-Performance',
   '05-Deep-Mastery',
-  '06-Meta-Learning',
+  '06-Meta- ',
   '07-Others',
 ];
 
@@ -244,11 +247,13 @@ export default function BooksPage() {
                   <h2 className="text-sm font-semibold text-zinc-300 tracking-wide uppercase">
                     {categoryLabels[cat] || cat}
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  <BookSlider>
                     {catBooks.map((book) => (
-                      <LibraryBookCard key={book.slug} book={book} />
+                      <div key={book.slug} className="min-w-[240px] max-w-[240px] shrink-0">
+                        <LibraryBookCard book={book} />
+                      </div>
                     ))}
-                  </div>
+                  </BookSlider>
                 </div>
               );
             })}

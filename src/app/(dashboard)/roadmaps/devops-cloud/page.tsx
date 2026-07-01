@@ -107,6 +107,23 @@ function RoadmapCard({
               style={{ width: `${pillar.progress}%` }}
             />
           </div>
+          {pillar.domains && pillar.domains.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-zinc-800/50 space-y-2">
+              <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Domains</span>
+              {pillar.domains.map((domain) => (
+                <div key={domain.name} className="flex items-center gap-2">
+                  <span className="text-xs text-zinc-400 truncate flex-1">{domain.name}</span>
+                  <div className="h-1 w-20 rounded-full bg-zinc-800 overflow-hidden shrink-0">
+                    <div
+                      className="h-full rounded-full bg-indigo-650"
+                      style={{ width: `${domain.progress}%` }}
+                    />
+                  </div>
+                  <span className="text-[11px] text-zinc-500 w-7 text-right tabular-nums">{domain.progress}%</span>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </Link>
@@ -121,7 +138,7 @@ export default function DevOpsCloudRoadmapPage() {
     devops: { overall: 0, cicd: 0, mon: 0 }
   });
 
-  React.useEffect(() => {
+  const calculateProgress = React.useCallback(() => {
     const getCompletedCountInRange = (prefix: string, rangeStart: number, rangeEnd: number) => {
       try {
         const raw = localStorage.getItem(`${prefix}-completed`);
@@ -145,35 +162,22 @@ export default function DevOpsCloudRoadmapPage() {
       }
     };
 
-    // Docker (IDs 901 to 950)
-    // Container Basics: 901 to 930 (30 questions)
-    // Orchestration & Compose: 931 to 950 (20 questions)
     const dockerOverall = getOverallCount('devops-cloud-docker');
     const dockerBasic = getCompletedCountInRange('devops-cloud-docker', 901, 930);
     const dockerCompose = getCompletedCountInRange('devops-cloud-docker', 931, 950);
 
-    // Kubernetes (IDs 1001 to 1050)
-    // Pods & Workloads: 1001 to 1030 (30 questions)
-    // Networking & Services: 1031 to 1050 (20 questions)
     const k8sOverall = getOverallCount('devops-cloud-kubernetes');
     const k8sPods = getCompletedCountInRange('devops-cloud-kubernetes', 1001, 1030);
     const k8sNet = getCompletedCountInRange('devops-cloud-kubernetes', 1031, 1050);
 
-    // AWS (IDs 1101 to 1150)
-    // Compute & Storage: 1101 to 1135 (35 questions)
-    // Networking & Security: 1136 to 1150 (15 questions)
     const awsOverall = getOverallCount('devops-cloud-aws');
     const awsCompute = getCompletedCountInRange('devops-cloud-aws', 1101, 1135);
     const awsNet = getCompletedCountInRange('devops-cloud-aws', 1136, 1150);
 
-    // DevOps Essentials (IDs 1201 to 1250)
-    // CI/CD Pipelines: 1201 to 1230 (30 questions)
-    // Monitoring & Logs: 1231 to 1250 (20 questions)
     const devopsOverall = getOverallCount('devops-cloud-devops');
     const devopsCicd = getCompletedCountInRange('devops-cloud-devops', 1201, 1230);
     const devopsMon = getCompletedCountInRange('devops-cloud-devops', 1231, 1250);
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgressData({
       docker: {
         overall: Math.round((dockerOverall / 50) * 100),
@@ -197,6 +201,18 @@ export default function DevOpsCloudRoadmapPage() {
       }
     });
   }, []);
+
+  React.useEffect(() => {
+    calculateProgress();
+
+    try {
+      const bc = new BroadcastChannel('roadmap-progress');
+      bc.onmessage = calculateProgress;
+      return () => bc.close();
+    } catch {
+      return;
+    }
+  }, [calculateProgress]);
 
   const dynamicPillars = React.useMemo(() => {
     return [
