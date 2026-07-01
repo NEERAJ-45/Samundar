@@ -179,40 +179,40 @@ function PatternsContent() {
               <p className="text-xs font-medium text-muted-foreground mb-2">Recommended solving order:</p>
               <ol className="list-decimal list-inside space-y-0.5 text-xs text-foreground/80">
                 <li>Two Pointers</li>
-                <li>Fast &amp; Slow Pointers</li>
-                <li>Merge Intervals</li>
-                <li>Cyclic Sort</li>
-                <li>Linked List Reversal</li>
+                <li>Binary Search</li>
                 <li>Prefix Sum</li>
                 <li>Kadane&apos;s Algorithm</li>
-                <li>Binary Search</li>
+                <li>Fast &amp; Slow Pointers</li>
+                <li>Linked List Reversal</li>
+                <li>Cyclic Sort</li>
+                <li>Merge Intervals</li>
                 <li>Monotonic Stack</li>
-                <li>Heap / Priority Queue – Top K Elements</li>
+                <li>Binary Search on Answer</li>
+                <li>Heap / Priority Queue – Top K</li>
                 <li>Two Heaps</li>
                 <li>K-way Merge</li>
                 <li>Subsets</li>
                 <li>Permutations</li>
                 <li>Combinations / Combination Sum</li>
                 <li>Backtracking</li>
-                <li>Tree BFS</li>
                 <li>Tree DFS</li>
+                <li>Tree BFS</li>
                 <li>Lowest Common Ancestor</li>
                 <li>Trie</li>
-                <li>Graph BFS</li>
                 <li>Graph DFS</li>
+                <li>Graph BFS</li>
+                <li>Union Find</li>
                 <li>Topological Sort</li>
-                <li>Union Find (Disjoint Set)</li>
                 <li>Shortest Path – Dijkstra</li>
-                <li>Minimum Spanning Tree (Kruskal / Prim)</li>
-                <li>Binary Search on Answer</li>
+                <li>Minimum Spanning Tree</li>
                 <li>Greedy</li>
                 <li>Dynamic Programming – 1D</li>
                 <li>0/1 Knapsack</li>
-                <li>Dynamic Programming – Grid / 2D</li>
-                <li>Longest Increasing Subsequence (LIS)</li>
-                <li>Longest Common Subsequence (LCS)</li>
-                <li>Bit Manipulation (XOR / Bitmasking)</li>
-                <li>String Pattern Matching (KMP / Rabin–Karp)</li>
+                <li>DP – Grid / 2D</li>
+                <li>Longest Increasing Subsequence</li>
+                <li>Longest Common Subsequence</li>
+                <li>Bit Manipulation</li>
+                <li>String Pattern Matching (KMP / Rabin-Karp)</li>
               </ol>
             </TooltipContent>
           </Tooltip>
