@@ -88,7 +88,7 @@ const categories = [
     glow: 'rgba(244, 63, 94, 0.12)'
   },
   {
-    title: 'ORMs & Hibernate',
+    title: 'ORMs',
     description: 'Master object-relational mapping across three paradigms: Java Hibernate (JPA), TypeScript Prisma (schema-first), and Drizzle (SQL-first).',
     href: '/roadmaps/orms',
     progress: 0,

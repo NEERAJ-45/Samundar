@@ -254,7 +254,7 @@ export default function OrmsRoadmapPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Roadmaps
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-100">ORMs & Hibernate</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-100">ORMs</h1>
           <p className="text-sm text-zinc-500 mt-1">
             Master object-relational mapping across three paradigms: Java Hibernate (JPA), TypeScript Prisma (schema-first), and Drizzle (SQL-first).
           </p>
