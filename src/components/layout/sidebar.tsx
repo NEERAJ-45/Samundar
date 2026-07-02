@@ -25,6 +25,7 @@ import {
   PanelLeft,
   StickyNote,
   ListChecks,
+  Calendar,
 } from "lucide-react";
 
 interface NavItem {
@@ -44,6 +45,7 @@ const navItems: NavItem[] = [
   { label: "Interview Hub", href: "/interview", icon: Briefcase },
   { label: "Books & Research", href: "/books", icon: BookOpen },
   { label: "Daily Execution", href: "/daily", icon: CalendarCheck },
+  { label: "Weekly Schedule", href: "/weekly", icon: Calendar },
   { label: "Daily History", href: "/history", icon: CalendarDays },
   { label: "Task Tracker", href: "/tasks", icon: ListChecks },
   { label: "Analytics Center", href: "/analytics", icon: BarChart3 },
