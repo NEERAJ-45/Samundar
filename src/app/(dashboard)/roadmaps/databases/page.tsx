@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useState, useEffect, useCallback } from 'react';
+import { useMounted } from '@/hooks/useMounted';
 import { ArrowLeft, Database, Layers, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { LazyAppear } from '@/components/shared/LazyAppear';
@@ -10,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 export default function DatabasesHubPage() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [sqlProgress, setSqlProgress] = useState(0);
   const [sqlTheoryPct, setSqlTheoryPct] = useState(0);
   const [sqlLeetcodePct, setSqlLeetcodePct] = useState(0);
@@ -39,7 +40,6 @@ export default function DatabasesHubPage() {
   }, []);
 
   useEffect(() => {
-    setMounted(true);
     calculateProgress();
 
     try {

@@ -8,95 +8,114 @@ import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LazyAppear } from '@/components/shared/LazyAppear';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
+import { ROADMAPS } from '@/data/roadmaps';
 
-const categories = [
+interface CategoryDisplay {
+  slug: string;
+  title: string;
+  description: string;
+  href: string;
+  progress: number;
+  hours: number;
+  difficulty: string;
+  gradient: string;
+  topics: string[];
+  glow: string;
+  storageKeys: string[];
+  total: number;
+}
+
+const CATEGORY_DISPLAY: Omit<CategoryDisplay, 'progress'>[] = [
   {
+    slug: 'foundation',
     title: 'Computer Science Foundation',
     description: 'Operating Systems, Computer Networks, and Database Management Systems. Critical core knowledge for every engineer.',
     href: '/roadmaps/foundation',
-    progress: 63,
     hours: 255,
     difficulty: 'Medium-Hard',
-    color: 'from-zinc-500 via-cyan-600 to-cyan-500',
+    gradient: 'from-zinc-500 via-cyan-600 to-cyan-500',
     topics: ['Operating Systems', 'Computer Networks', 'DBMS'],
-    glow: 'rgba(6, 182, 212, 0.12)'
+    glow: 'rgba(6, 182, 212, 0.12)',
+    storageKeys: ['foundation-os-completed', 'foundation-dbms-completed', 'foundation-cn-completed'],
+    total: 150,
   },
   {
+    slug: 'system-design',
     title: 'System Design & Architecture',
-    description: 'Learn to architect highly scalable, reliable distributed systems. Covers CAP theorem, sharding, caching, and consensus protocols.',
+    description: 'Learn to architect highly scalable, reliable distributed systems.',
     href: '/roadmaps/system-design',
-    progress: 37,
     hours: 250,
     difficulty: 'Hard',
-    color: 'from-violet-600 via-purple-600 to-purple-500',
+    gradient: 'from-violet-600 via-purple-600 to-purple-500',
     topics: ['System Design', 'Distributed Systems'],
-    glow: 'rgba(139, 92, 246, 0.12)'
+    glow: 'rgba(139, 92, 246, 0.12)',
+    storageKeys: ['system-design-concepts-completed', 'system-design-problems-completed'],
+    total: 100,
   },
   {
+    slug: 'backend',
     title: 'Backend Development',
-    description: 'Master enterprise application building using Java and the Spring Boot ecosystem. Covers OOP, memory tuning, REST APIs, and microservices.',
+    description: 'Master enterprise application building using Java and the Spring Boot ecosystem.',
     href: '/roadmaps/backend',
-    progress: 76,
     hours: 220,
     difficulty: 'Medium',
-    color: 'from-orange-500 via-amber-600 to-green-500',
+    gradient: 'from-orange-500 via-amber-600 to-green-500',
     topics: ['Java Core & JVM', 'Spring Boot & Microservices'],
-    glow: 'rgba(249, 115, 22, 0.12)'
+    glow: 'rgba(249, 115, 22, 0.12)',
+    storageKeys: ['backend-java-completed', 'backend-springboot-completed'],
+    total: 100,
   },
   {
+    slug: 'frontend',
     title: 'Frontend Development',
-    description: 'Deep dive into modern web user interfaces. Master React components, hooks, Next.js framework, and federated MicroFrontends architectures.',
+    description: 'Deep dive into modern web user interfaces.',
     href: '/roadmaps/frontend',
-    progress: 82,
     hours: 260,
     difficulty: 'Medium-Hard',
-    color: 'from-sky-500 via-indigo-500 to-cyan-400',
+    gradient: 'from-sky-500 via-indigo-500 to-cyan-400',
     topics: ['React Core', 'Next.js Framework', 'MicroFrontends'],
-    glow: 'rgba(14, 165, 233, 0.12)'
+    glow: 'rgba(14, 165, 233, 0.12)',
+    storageKeys: ['frontend-react-completed', 'frontend-nextjs-completed', 'frontend-mfe-completed'],
+    total: 150,
   },
   {
+    slug: 'devops-cloud',
     title: 'DevOps & Cloud Engineering',
-    description: 'Virtualization, container orchestration, and cloud infrastructure deployment. Master Docker, Kubernetes, AWS services, and CI/CD pipelines.',
+    description: 'Virtualization, container orchestration, and cloud infrastructure deployment.',
     href: '/roadmaps/devops-cloud',
-    progress: 37,
     hours: 390,
     difficulty: 'Medium-Hard',
-    color: 'from-blue-500 via-violet-500 to-red-500',
+    gradient: 'from-blue-500 via-violet-500 to-red-500',
     topics: ['Docker & K8s', 'AWS Cloud Services', 'CI/CD Pipelines'],
-    glow: 'rgba(59, 130, 246, 0.12)'
+    glow: 'rgba(59, 130, 246, 0.12)',
+    storageKeys: ['devops-cloud-docker-completed', 'devops-cloud-kubernetes-completed', 'devops-cloud-aws-completed', 'devops-cloud-devops-completed'],
+    total: 200,
   },
   {
+    slug: 'aptitude',
     title: 'Aptitude & Logical Reasoning',
-    description: 'Master quantitative aptitude, logical reasoning, and data interpretation. Crucial for technical assessments, problem solving, and cognitive evaluations.',
+    description: 'Master quantitative aptitude, logical reasoning, and data interpretation.',
     href: '/roadmaps/aptitude',
-    progress: 0,
     hours: 120,
     difficulty: 'Easy-Medium',
-    color: 'from-teal-500 via-emerald-600 to-green-400',
+    gradient: 'from-teal-500 via-emerald-600 to-green-400',
     topics: ['Quantitative Aptitude', 'Logical Reasoning', 'Data Interpretation'],
-    glow: 'rgba(20, 184, 166, 0.12)'
+    glow: 'rgba(20, 184, 166, 0.12)',
+    storageKeys: ['aptitude-completed'],
+    total: 50,
   },
   {
+    slug: 'databases',
     title: 'Database',
     description: 'Syllabus on relational SQL database design, 50 LeetCode query problems, and distributed NoSQL storage architectures.',
     href: '/roadmaps/databases',
-    progress: 0,
     hours: 180,
     difficulty: 'Medium-Hard',
-    color: 'from-rose-500 via-purple-600 to-indigo-500',
+    gradient: 'from-rose-500 via-purple-600 to-indigo-500',
     topics: ['SQL Relational (50)', 'NoSQL Non-Relational (50)', 'LeetCode SQL (50)'],
-    glow: 'rgba(244, 63, 94, 0.12)'
-  },
-  {
-    title: 'ORMs',
-    description: 'Master object-relational mapping across three paradigms: Java Hibernate (JPA), TypeScript Prisma (schema-first), and Drizzle (SQL-first).',
-    href: '/roadmaps/orms',
-    progress: 0,
-    hours: 300,
-    difficulty: 'Medium-Hard',
-    color: 'from-emerald-500 via-teal-500 to-cyan-400',
-    topics: ['Hibernate (JPA)', 'Prisma', 'Drizzle'],
-    glow: 'rgba(20, 184, 166, 0.12)'
+    glow: 'rgba(244, 63, 94, 0.12)',
+    storageKeys: ['databases-sql-completed', 'databases-nosql-completed', 'completed-databases-leetcode'],
+    total: 150,
   },
 ];
 
@@ -109,20 +128,12 @@ const difficultyColors: Record<string, string> = {
 };
 
 export default function RoadmapsPage() {
-  const [csFoundationProgress, setCsFoundationProgress] = React.useState(0);
-  const [systemDesignProgress, setSystemDesignProgress] = React.useState(36);
-  const [backendProgress, setBackendProgress] = React.useState(0);
-  const [frontendProgress, setFrontendProgress] = React.useState(0);
-  const [devopsProgress, setDevopsProgress] = React.useState(0);
-  const [aptitudeProgress, setAptitudeProgress] = React.useState(0);
-  const [dbProgress, setDbProgress] = React.useState(0);
-  const [ormsProgress, setOrmsProgress] = React.useState(0);
+  const [progressMap, setProgressMap] = React.useState<Record<string, number>>({});
 
   React.useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
-    const getCompletedCount = (prefix: string, defaultVal: number = 0) => {
+    const getCompletedCount = (storageKey: string, defaultVal: number = 0) => {
       try {
-        const raw = localStorage.getItem(`${prefix}-completed`);
+        const raw = localStorage.getItem(storageKey);
         if (!raw) return defaultVal;
         const data = JSON.parse(raw);
         return Object.keys(data).length;
@@ -131,83 +142,20 @@ export default function RoadmapsPage() {
       }
     };
 
-    const osCompleted = getCompletedCount('foundation-os');
-    const cnCompleted = getCompletedCount('foundation-cn');
-    const dbmsCompleted = getCompletedCount('foundation-dbms');
-    setCsFoundationProgress(Math.round(((osCompleted + cnCompleted + dbmsCompleted) / 150) * 100));
-
-    const sdConceptsCompleted = getCompletedCount('system-design-concepts', 37);
-    const sdProblemsCompleted = getCompletedCount('system-design-problems', 0);
-    setSystemDesignProgress(Math.round(((sdConceptsCompleted + sdProblemsCompleted) / 104) * 100));
-
-    const javaCompleted = getCompletedCount('backend-java');
-    const springCompleted = getCompletedCount('backend-springboot');
-    setBackendProgress(Math.round(((javaCompleted + springCompleted) / 100) * 100));
-
-    const reactCompleted = getCompletedCount('frontend-react');
-    const nextjsCompleted = getCompletedCount('frontend-nextjs');
-    const mfeCompleted = getCompletedCount('frontend-mfe');
-    setFrontendProgress(Math.round(((reactCompleted + nextjsCompleted + mfeCompleted) / 150) * 100));
-
-    const dockerCompleted = getCompletedCount('devops-cloud-docker');
-    const k8sCompleted = getCompletedCount('devops-cloud-kubernetes');
-    const awsCompleted = getCompletedCount('devops-cloud-aws');
-    const devopsCompleted = getCompletedCount('devops-cloud-devops');
-    setDevopsProgress(Math.round(((dockerCompleted + k8sCompleted + awsCompleted + devopsCompleted) / 200) * 100));
-
-    const aptitudeCompleted = getCompletedCount('aptitude');
-    setAptitudeProgress(Math.round((aptitudeCompleted / 50) * 100));
-
-    const sqlTheoryCompleted = getCompletedCount('databases-sql');
-    const nosqlTheoryCompleted = getCompletedCount('databases-nosql');
-    const sqlLeetcodeCompleted = getCompletedCount('databases-leetcode');
-    const totalDbCompleted = sqlTheoryCompleted + nosqlTheoryCompleted + sqlLeetcodeCompleted;
-    setDbProgress(Math.round((totalDbCompleted / 150) * 100));
-
-    const hibernateCompleted = getCompletedCount('orms-hibernate');
-    const prismaCompleted = getCompletedCount('orms-prisma');
-    const drizzleCompleted = getCompletedCount('orms-drizzle');
-    const totalOrmsCompleted = hibernateCompleted + prismaCompleted + drizzleCompleted;
-    setOrmsProgress(Math.round((totalOrmsCompleted / 150) * 100));
-    /* eslint-enable react-hooks/set-state-in-effect */
+    const newProgress: Record<string, number> = {};
+    CATEGORY_DISPLAY.forEach((cat) => {
+      const totalCompleted = cat.storageKeys.reduce((sum, key) => sum + getCompletedCount(key), 0);
+      newProgress[cat.slug] = Math.round((totalCompleted / cat.total) * 100);
+    });
+    setProgressMap(newProgress);
   }, []);
 
-  const dynamicCategories = React.useMemo(() => {
-    return [
-      {
-        ...categories[0],
-        progress: csFoundationProgress,
-      },
-      {
-        ...categories[1],
-        progress: systemDesignProgress,
-      },
-      {
-        ...categories[2],
-        progress: backendProgress,
-      },
-      {
-        ...categories[3],
-        progress: frontendProgress,
-      },
-      {
-        ...categories[4],
-        progress: devopsProgress,
-      },
-      {
-        ...categories[5],
-        progress: aptitudeProgress,
-      },
-      {
-        ...categories[6],
-        progress: dbProgress,
-      },
-      {
-        ...categories[7],
-        progress: ormsProgress,
-      },
-    ];
-  }, [csFoundationProgress, systemDesignProgress, backendProgress, frontendProgress, devopsProgress, aptitudeProgress, dbProgress, ormsProgress]);
+  const dynamicCategories: CategoryDisplay[] = React.useMemo(() => {
+    return CATEGORY_DISPLAY.map((cat) => ({
+      ...cat,
+      progress: progressMap[cat.slug] ?? 0,
+    }));
+  }, [progressMap]);
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 min-h-screen">

@@ -1,5 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import type { JWT } from 'next-auth/jwt';
+import type { Session, User } from 'next-auth';
 
 export const authConfig = {
   providers: [
@@ -9,8 +11,6 @@ export const authConfig = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize() {
-        // Must be empty or simple stub in this shared config to avoid Node.js module imports (Mongoose/bcrypt) in Edge Middleware.
-        // The actual verification takes place in auth.ts.
         return null;
       },
     }),
@@ -21,17 +21,17 @@ export const authConfig = {
     newUser: '/register',
   },
   callbacks: {
-    jwt({ token, user }: any) {
+    jwt({ token, user }: { token: JWT; user?: User & { role?: string } }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as any).role ?? 'User';
+        token.role = user.role ?? 'User';
       }
       return token;
     },
-    session({ session, token }: any) {
+    session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        (session.user as { role?: string }).role = token.role as string;
       }
       return session;
     },

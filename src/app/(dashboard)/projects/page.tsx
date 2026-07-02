@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useMounted } from '@/hooks/useMounted';
 import {
   FolderOpen, CheckCircle2, Sparkles, Layers,
   Plus, Pencil, Trash2, X, ExternalLink, Search,
@@ -248,7 +249,7 @@ const emptyFeature = (): ProjectFeature => ({ name: '', done: false });
 
 export default function ProjectsPage() {
   const [projects, setProjects] = React.useState<Project[]>([]);
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = useMounted();
   const [dialogProject, setDialogProject] = React.useState<Project | null>(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
@@ -272,7 +273,6 @@ export default function ProjectsPage() {
   const [deleteConfirm, setDeleteConfirm] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    setMounted(true);
     initProjects();
   }, [userEmail]);
 

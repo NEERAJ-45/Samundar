@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { useMounted } from '@/hooks/useMounted';
 import {
   CheckCircle2,
   Circle,
@@ -177,24 +178,26 @@ function difficultyColor(difficulty: string) {
   }
 }
 
+const TIME_SLOTS = [
+  { start: 360, end: 540 },   // 6:00-9:00
+  { start: 540, end: 720 },   // 9:00-12:00
+  { start: 720, end: 780 },   // 12:00-13:00
+  { start: 780, end: 960 },   // 13:00-16:00
+  { start: 960, end: 1080 },  // 16:00-18:00
+  { start: 1080, end: 1140 }, // 18:00-19:00
+];
+
 function getCurrentBlockIndex(timeBlocks: TimeBlock[]): number {
   const h = today.getHours();
   const m = today.getMinutes();
   const totalMinutes = h * 60 + m;
-  if (totalMinutes < 360) return -1; // before 6:00
-  if (totalMinutes < 540) return 0;  // 6:00-9:00
-  if (totalMinutes < 720) return 1;  // 9:00-12:00
-  if (totalMinutes < 780) return 2;  // 12:00-13:00
-  if (totalMinutes < 960) return 3;  // 13:00-16:00
-  if (totalMinutes < 1080) return 4; // 16:00-18:00
-  if (totalMinutes < 1140) return 5; // 18:00-19:00
-  return -1; // after 19:00
+  return TIME_SLOTS.findIndex((slot) => totalMinutes >= slot.start && totalMinutes < slot.end);
 }
 
 export default function DailyPage() {
   const { userEmail } = useProfile();
   const [completed, setCompleted] = React.useState<Set<string>>(new Set());
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = useMounted();
   const [note, setNote] = React.useState('');
   const [customTasks, setCustomTasks] = React.useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = React.useState('');
@@ -223,7 +226,6 @@ export default function DailyPage() {
   const BREAK_TIME = breakMinutes * 60;
 
   React.useEffect(() => {
-    setMounted(true);
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {

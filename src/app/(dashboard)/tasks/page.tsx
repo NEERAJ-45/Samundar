@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useMounted } from '@/hooks/useMounted';
 import {
   Plus,
   Trash2,
@@ -69,7 +70,7 @@ function saveTasks(tasks: Task[]) {
 export default function TasksPage() {
   const { userEmail } = useProfile();
   const [tasks, setTasks] = React.useState<Task[]>([]);
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = useMounted();
   const [search, setSearch] = React.useState('');
   const [filterStatus, setFilterStatus] = React.useState<Status | 'all'>('all');
   const [filterPriority, setFilterPriority] = React.useState<Priority | 'all'>('all');
@@ -84,7 +85,6 @@ export default function TasksPage() {
   const [editDescription, setEditDescription] = React.useState('');
 
   React.useEffect(() => {
-    setMounted(true);
     setTasks(loadTasks());
   }, []);
 

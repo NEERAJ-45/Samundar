@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -408,6 +409,12 @@ export default function CommandCenterPage() {
                   </div>
                 ))}
               </div>
+              <Link
+                href="/history"
+                className="mt-4 inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                Show more <ArrowRight className="h-3 w-3" />
+              </Link>
             </CardContent>
           </Card>
         </LazyAppear>

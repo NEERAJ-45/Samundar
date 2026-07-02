@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useMounted } from '@/hooks/useMounted';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProfile } from '@/components/providers/ProfileProvider';
@@ -10,10 +11,9 @@ export default function MasteryPage() {
   const { userEmail, userName, customDbUrl } = useProfile();
   const [completions, setCompletions] = useState<Record<string, { date: string; key: string }>>({});
   const [filter, setFilter] = useState('ALL');
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window === 'undefined') return;
 
     const allCompletions: Record<string, { date: string; key: string }> = {};

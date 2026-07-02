@@ -5,8 +5,6 @@ export const proxy = auth((req) => {
   const { pathname } = req.nextUrl;
   const isAuthenticated = !!req.auth;
 
-  console.log(`[Proxy] Request path: ${pathname}, Authenticated: ${isAuthenticated}`);
-
   // Public auth routes
   const isAuthRoute =
     pathname.startsWith('/login') ||

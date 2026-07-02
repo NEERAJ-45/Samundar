@@ -36,7 +36,7 @@ async function deriveStats(conn: mongoose.Connection, userEmail: string) {
   const attempts = await LoginAttempt.find({
     userEmail, success: true, timestamp: { $gte: ninetyDaysAgo },
   }).sort({ timestamp: 1 }).lean();
-  const dates = attempts.map((a: any) => new Date(a.timestamp).toISOString());
+  const dates = attempts.map((a: { timestamp: Date }) => new Date(a.timestamp).toISOString());
   const streak = computeStreak(dates);
 
   const Completion = conn.model<ICompletion>('Completion');
@@ -47,8 +47,8 @@ async function deriveStats(conn: mongoose.Connection, userEmail: string) {
   weekStart.setHours(0, 0, 0, 0);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const weekCount = allCompletions.filter((c: any) => new Date(c.completedAt) >= weekStart).length;
-  const monthCount = allCompletions.filter((c: any) => new Date(c.completedAt) >= monthStart).length;
+  const weekCount = allCompletions.filter((c) => new Date(c.completedAt as string) >= weekStart).length;
+  const monthCount = allCompletions.filter((c) => new Date(c.completedAt as string) >= monthStart).length;
   const total = allCompletions.length || 1;
 
   const weeklyPct = Math.min(100, Math.round(weekCount / Math.max(1, Math.round(total / 4)) * 100));
@@ -56,7 +56,7 @@ async function deriveStats(conn: mongoose.Connection, userEmail: string) {
 
   const Revision = conn.model<IRevision>('Revision');
   const revisions = await Revision.find({ userEmail }).lean();
-  const avgStage = revisions.reduce((s: number, r: any) => s + (r.stage || 0), 0) / (revisions.length || 1);
+  const avgStage = revisions.reduce((s: number, r: { stage?: number }) => s + (r.stage || 0), 0) / (revisions.length || 1);
   const readiness = Math.min(100, Math.round(avgStage / 5 * 100));
 
   const dueCount = await Revision.countDocuments({
@@ -109,12 +109,12 @@ export async function GET(request: Request) {
         { label: 'Next Learning Unit', value: profile?.nextLearningUnit || 'AVL Tree Rotations', badge: profile?.nextLearningDuration || '45 min' },
         { label: 'Due Revisions', value: `${stats.dueCount} concept${stats.dueCount === 1 ? '' : 's'} need review`, badge: stats.dueCount > 0 ? 'Overdue' : 'Up to date' },
       ],
-      projects: projects.map((p: any) => ({
+      projects: projects.map((p: { name: string; status: string; features?: { done?: boolean }[] }) => ({
         name: p.name,
         status: p.status,
         progress: `${computeProgress(p.features)}%`,
       })),
-      activities: activities.map((a: any) => ({ text: a.text, createdAt: a.createdAt })),
+      activities: activities.map((a: { text: string; createdAt: Date }) => ({ text: a.text, createdAt: a.createdAt })),
     });
   } catch (error: any) {
     return NextResponse.json({ dbConnected: false, error: error.message }, { status: 500 });

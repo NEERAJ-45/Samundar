@@ -323,8 +323,7 @@ export default function BooksPage() {
             </Card>
           </TabsContent>
         </Tabs>
-        </motion.div>
-      </div>
-    </motion.div>
+        </div>
+      </motion.div>
   );
 }

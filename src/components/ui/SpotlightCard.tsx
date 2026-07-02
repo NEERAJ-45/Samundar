@@ -52,6 +52,13 @@ export function SpotlightCard({
       {...props}
     >
       <div className="relative z-10">{children}</div>
+      <div
+        className="pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
+          opacity,
+        }}
+      />
     </div>
   );
 }

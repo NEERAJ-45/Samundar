@@ -10,29 +10,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { ROADMAPS } from '@/data/roadmaps';
+import { useMounted } from '@/hooks/useMounted';
 import { useProfile } from '@/components/providers/ProfileProvider';
-
-// ─── Roadmap Definitions ──────────────────────────────────────────────────────
-const ROADMAPS = [
-  { label: 'OS', storageKey: 'foundation-os-completed', total: 50, category: 'Foundation', color: '#06b6d4' },
-  { label: 'DBMS', storageKey: 'foundation-dbms-completed', total: 50, category: 'Foundation', color: '#0ea5e9' },
-  { label: 'CN', storageKey: 'foundation-cn-completed', total: 50, category: 'Foundation', color: '#22d3ee' },
-  { label: 'SD Concepts', storageKey: 'system-design-concepts-completed', total: 50, category: 'System Design', color: '#8b5cf6' },
-  { label: 'SD Problems', storageKey: 'system-design-problems-completed', total: 50, category: 'System Design', color: '#a855f7' },
-  { label: 'Java', storageKey: 'backend-java-completed', total: 50, category: 'Backend', color: '#f97316' },
-  { label: 'Spring Boot', storageKey: 'backend-springboot-completed', total: 50, category: 'Backend', color: '#22c55e' },
-  { label: 'React', storageKey: 'frontend-react-completed', total: 50, category: 'Frontend', color: '#38bdf8' },
-  { label: 'Next.js', storageKey: 'frontend-nextjs-completed', total: 50, category: 'Frontend', color: '#0ea5e9' },
-  { label: 'MFE', storageKey: 'frontend-mfe-completed', total: 50, category: 'Frontend', color: '#6366f1' },
-  { label: 'DevOps', storageKey: 'devops-cloud-devops-completed', total: 50, category: 'DevOps', color: '#3b82f6' },
-  { label: 'Docker', storageKey: 'devops-cloud-docker-completed', total: 50, category: 'DevOps', color: '#60a5fa' },
-  { label: 'K8s', storageKey: 'devops-cloud-kubernetes-completed', total: 50, category: 'DevOps', color: '#818cf8' },
-  { label: 'AWS', storageKey: 'devops-cloud-aws-completed', total: 50, category: 'DevOps', color: '#f59e0b' },
-  { label: 'SQL Theory', storageKey: 'databases-sql-completed', total: 50, category: 'Databases', color: '#10b981' },
-  { label: 'NoSQL', storageKey: 'databases-nosql-completed', total: 50, category: 'Databases', color: '#34d399' },
-  { label: 'SQL LeetCode', storageKey: 'completed-databases-leetcode', total: 50, category: 'Databases', color: '#059669' },
-  { label: 'Aptitude', storageKey: 'aptitude-completed', total: 50, category: 'Aptitude', color: '#14b8a6' },
-] as const;
 
 const TOTAL_TOPICS = ROADMAPS.reduce((s, r) => s + r.total, 0);
 
@@ -107,13 +87,14 @@ function computeStreak(dates: string[]): number {
 
 // ─── Grouped Accordion Table ──────────────────────────────────────────────────
 type RoadmapStat = {
-  label: string;
+  title: string;
   storageKey: string;
   total: number;
   category: string;
   color: string;
   completed: number;
   pct: number;
+  [key: string]: unknown;
 };
 
 function GroupedRoadmapTable({
@@ -202,7 +183,7 @@ function GroupedRoadmapTable({
                 <div className="border-t border-zinc-800/50 bg-zinc-950/30">
                   {items.map((r, ri) => (
                     <div
-                      key={r.label}
+                      key={r.title}
                       className={cn(
                         'grid grid-cols-[1fr_80px_80px_160px_52px] gap-2 items-center pl-10 pr-5 py-2 text-sm',
                         ri < items.length - 1 && 'border-b border-zinc-800/40',
@@ -211,7 +192,7 @@ function GroupedRoadmapTable({
                     >
                       <span className="flex items-center gap-2 text-zinc-400">
                         <div className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
-                        {r.label}
+                        {r.title}
                       </span>
                       <span className="text-right text-zinc-300 tabular-nums">{r.completed}</span>
                       <span className="text-right text-zinc-600 tabular-nums">{r.total}</span>
@@ -257,10 +238,9 @@ export default function AnalyticsPage() {
   const [loginStreak, setLoginStreak] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [dbConnected, setDbConnected] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window === 'undefined') return;
 
     async function fetchLoginStreak() {
@@ -374,7 +354,7 @@ export default function AnalyticsPage() {
     }).reverse();
   }, [completionDates]);
 
-  const roadmapBarData = useMemo(() => roadmapStats.map((r) => ({ label: r.label, value: r.completed, color: r.color })), [roadmapStats]);
+  const roadmapBarData = useMemo(() => roadmapStats.map((r) => ({ label: r.title, value: r.completed, color: r.color })), [roadmapStats]);
   const weakAreas = useMemo(() => [...roadmapStats].sort((a, b) => a.pct - b.pct).slice(0, 5), [roadmapStats]);
   const strongAreas = useMemo(() => [...roadmapStats].filter((r) => r.completed > 0).sort((a, b) => b.pct - a.pct).slice(0, 5), [roadmapStats]);
 
@@ -508,10 +488,10 @@ export default function AnalyticsPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-5 pt-0 space-y-3">
-                {weakAreas.map((area) => (
-                  <div key={area.label} className="space-y-1">
+                  {weakAreas.map((area) => (
+                  <div key={area.title} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-zinc-300">{area.label}</span>
+                      <span className="text-zinc-300">{area.title}</span>
                       <span className="text-zinc-500">{area.completed}/{area.total}</span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
@@ -533,9 +513,9 @@ export default function AnalyticsPage() {
                 {strongAreas.length === 0 ? (
                   <p className="text-xs text-zinc-500 text-center py-4">No completions yet — start a roadmap!</p>
                 ) : strongAreas.map((area) => (
-                  <div key={area.label} className="space-y-1">
+                  <div key={area.title} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-zinc-300">{area.label}</span>
+                      <span className="text-zinc-300">{area.title}</span>
                       <span className="text-zinc-500">{area.completed}/{area.total}</span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
@@ -556,9 +536,9 @@ export default function AnalyticsPage() {
               <CardContent className="p-5 pt-0">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                   {roadmapStats.map((r) => (
-                    <div key={r.label} className="flex items-center gap-2 min-w-0">
+                    <div key={r.title} className="flex items-center gap-2 min-w-0">
                       <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
-                      <span className="text-[11px] text-zinc-400 truncate flex-1">{r.label}</span>
+                      <span className="text-[11px] text-zinc-400 truncate flex-1">{r.title}</span>
                       <span className="text-[11px] font-semibold shrink-0"
                         style={{ color: r.pct >= 80 ? '#10b981' : r.pct >= 40 ? '#f59e0b' : '#71717a' }}>
                         {r.pct}%

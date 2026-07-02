@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useMounted } from '@/hooks/useMounted';
 import {
   Search, Brain, Target, Code2, Server, BarChart3,
   Plus, Pencil, Trash2, CheckCircle, X, GripVertical, BookOpen,
@@ -79,7 +80,7 @@ export default function InterviewPage() {
   const [activeTab, setActiveTab] = React.useState<'questions' | 'theory'>('questions');
   const [questions, setQuestions] = React.useState<InterviewQuestion[]>([]);
   const [search, setSearch] = React.useState('');
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = useMounted();
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -90,7 +91,6 @@ export default function InterviewPage() {
   const [formAttempts, setFormAttempts] = React.useState(1);
 
   React.useEffect(() => {
-    setMounted(true);
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try { setQuestions(JSON.parse(saved)); } catch {}

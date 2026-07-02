@@ -6,7 +6,7 @@ import Profile from '@/lib/models/Profile';
 import LoginAttempt from '@/lib/models/LoginAttempt';
 import { authConfig } from './auth.config';
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   secret: process.env.AUTH_SECRET,
   providers: [
@@ -22,7 +22,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         await connectToDatabase();
 
-        // ─── Brute-force lockout: 5 failures in 15 min ───────────────────
         const windowStart = new Date(Date.now() - 15 * 60 * 1000);
         const recentFails = await LoginAttempt.countDocuments({
           userEmail: email,
@@ -55,3 +54,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
 });
+
+export { handlers, auth, signIn, signOut };
+export const { GET, POST } = handlers;

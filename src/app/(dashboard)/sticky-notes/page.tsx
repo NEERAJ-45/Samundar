@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useState, useEffect, useCallback } from 'react';
+import { useMounted } from '@/hooks/useMounted';
 import { cn } from "@/lib/utils";
 import { LazyAppear } from "@/components/shared/LazyAppear";
 import { useProfile } from "@/components/providers/ProfileProvider";
@@ -52,13 +53,9 @@ const colorStyles = {
 
 export default function StickyNotesPage() {
   const { userEmail, customDbUrl } = useProfile();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [stickyNotes, setStickyNotes] = useState<StickyNoteItem[]>([]);
   const [dbConnected, setDbConnected] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Fetch sticky notes from MongoDB on load
   useEffect(() => {

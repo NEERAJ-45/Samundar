@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useMounted } from '@/hooks/useMounted';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -47,7 +48,7 @@ function getDaysDiff(dateStr: string): number {
 export default function RevisionPage() {
   const [items, setItems] = useState<RevisionItem[]>([]);
   const [dbConnected, setDbConnected] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [selectedTab, setSelectedTab] = React.useState('due');
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
 
@@ -62,7 +63,6 @@ export default function RevisionPage() {
 
   // Load items on mount
   useEffect(() => {
-    setMounted(true);
     async function loadItems() {
       try {
         const res = await fetch('/api/db/revision');
