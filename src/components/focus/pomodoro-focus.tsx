@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Maximize2, Settings, List, CloudRain, Waves, Wind, Flame, X, Check, Minus, Plus, Music, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 
 /* ---------------------------------------------------------
    EMBER — an ambient pomodoro timer
@@ -53,6 +54,51 @@ export default function PomodoroFocus() {
     fire: { on: false, vol: 0.12 },
   });
 
+  // ---- music player ----
+  const [nowPlaying, setNowPlaying] = useState<string | null>(null);
+  const [playerOpen, setPlayerOpen] = useState(false);
+  const [playerProgress, setPlayerProgress] = useState(0);
+  const [playerDuration, setPlayerDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const playlist = ['Lofi', 'Jazz', 'Rain'];
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const idxRef = useRef(0);
+  useEffect(() => { idxRef.current = currentIdx; });
+
+  useEffect(() => {
+    const a = new Audio();
+    a.addEventListener('timeupdate', () => setPlayerProgress(a.currentTime));
+    a.addEventListener('loadedmetadata', () => setPlayerDuration(a.duration));
+    a.addEventListener('ended', () => {
+      const next = (idxRef.current + 1) % playlist.length;
+      setCurrentIdx(next);
+      setNowPlaying(playlist[next]);
+      a.src = `/audio/ambient/${playlist[next].toLowerCase()}.m4a`;
+      a.play().catch(console.error);
+    });
+    audioRef.current = a;
+    return () => { a.pause(); a.src = ''; };
+  }, []);
+
+  function togglePlayer() {
+    const a = audioRef.current; if (!a) return;
+    if (a.paused) { a.play().catch(console.error); setNowPlaying(playlist[currentIdx]); }
+    else { a.pause(); setNowPlaying(null); }
+  }
+  function playTrack(i: number) {
+    const a = audioRef.current; if (!a) return;
+    if (i === currentIdx && !a.paused) { a.pause(); setNowPlaying(null); return; }
+    const url = `/audio/ambient/${playlist[i].toLowerCase()}.m4a`;
+    console.log('playing:', url);
+    setCurrentIdx(i);
+    setNowPlaying(playlist[i]);
+    a.src = url;
+    a.load();
+    a.currentTime = 0;
+    a.play().then(() => console.log('play success')).catch(e => console.error('play failed:', e));
+  }
+  function nextTrack() { playTrack((currentIdx + 1) % playlist.length); }
+
   // ---- refs to dodge stale closures inside the interval / audio callbacks
   const modeRef = useRef(mode);
   const roundRef = useRef(round);
@@ -103,7 +149,7 @@ export default function PomodoroFocus() {
   }
 
   function createAmbientNode(key: string) {
-    const audio = new Audio(`/audio/ambient/${key}.mp3`);
+    const audio = new Audio(`/audio/ambient/${key}.m4a`);
     audio.loop = true;
     audio.volume = 0;
     const node = { audio, key };
@@ -112,14 +158,14 @@ export default function PomodoroFocus() {
   }
 
   async function toggleSound(key: string) {
-    const node = createAmbientNode(key);
     const willBeOn = !soundsRef.current[key].on;
     if (willBeOn) {
+      const node = createAmbientNode(key);
       try { await node.audio.play(); } catch {}
       node.audio.volume = soundsRef.current[key].vol;
     } else {
-      node.audio.volume = 0;
-      node.audio.pause();
+      const node = soundNodesRef.current[key];
+      if (node) { node.audio.volume = 0; node.audio.pause(); }
     }
     setSounds(s => ({ ...s, [key]: { ...s[key], on: willBeOn } }));
   }
@@ -282,11 +328,11 @@ export default function PomodoroFocus() {
   const C = 2 * Math.PI * R;
   const dashOffset = C * (1 - fraction);
 
-  const SOUND_META: Record<string, { label: string; icon: string }> = {
-    rain: { label: 'Rain', icon: '\u2601' },
-    ocean: { label: 'Ocean', icon: '\u3030' },
-    wind: { label: 'Wind', icon: '\u2248' },
-    fire: { label: 'Fire', icon: '\u2668' },
+  const SOUND_META: Record<string, { label: string; icon: React.ReactNode }> = {
+    rain: { label: 'Rain', icon: <CloudRain size={15} /> },
+    ocean: { label: 'Ocean', icon: <Waves size={15} /> },
+    wind: { label: 'Wind', icon: <Wind size={15} /> },
+    fire: { label: 'Fire', icon: <Flame size={15} /> },
   };
 
   return (
@@ -302,8 +348,6 @@ export default function PomodoroFocus() {
       } as React.CSSProperties}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
         .ember-root, .ember-root * { box-sizing: border-box; }
         .ember-root {
           position: relative;
@@ -311,7 +355,7 @@ export default function PomodoroFocus() {
           height: 100%;
           overflow: hidden;
           background: var(--bg-from);
-          font-family: 'Inter', sans-serif;
+          font-family: var(--font-inter);
           color: #EFEAE0;
           transition: background 900ms ease;
           isolation: isolate;
@@ -331,7 +375,7 @@ export default function PomodoroFocus() {
           padding: 18px 22px 0 22px;
         }
         .ember-brand {
-          font-family: 'Fraunces', serif; font-weight: 500; font-size: 15px;
+          font-family: var(--font-fraunces); font-weight: 500; font-size: 15px;
           letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-soft);
           display: flex; align-items: center; gap: 8px; opacity: 0.9;
         }
@@ -367,7 +411,7 @@ export default function PomodoroFocus() {
         .mode-tabs { display: flex; gap: 6px; background: rgba(255,255,255,0.06); padding: 5px; border-radius: 999px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.06); }
         .mode-tab {
           border: none; background: transparent; color: rgba(239,234,224,0.6);
-          font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; letter-spacing: 0.03em;
+          font-family: var(--font-inter); font-size: 12.5px; font-weight: 500; letter-spacing: 0.03em;
           padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: all 200ms ease;
         }
         .mode-tab.active { background: rgba(255,255,255,0.95); color: #1a1208; }
@@ -381,13 +425,13 @@ export default function PomodoroFocus() {
         .ring-progress { fill: none; stroke: var(--ring); stroke-width: 6; stroke-linecap: round; transition: stroke 400ms ease; }
 
         .ring-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
-        .time-display { font-family: 'Fraunces', serif; font-weight: 400; font-size: 62px; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; line-height: 1; color: #FBF7ED; }
+        .time-display { font-family: var(--font-fraunces); font-weight: 400; font-size: 62px; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; line-height: 1; color: #FBF7ED; }
         .mode-caption { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(239,234,224,0.55); }
         .focus-task-caption { font-size: 12.5px; color: var(--accent-soft); max-width: 200px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
 
         .controls-row { display: flex; align-items: center; gap: 14px; margin-top: 30px; }
         .btn-primary {
-          font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
+          font-family: var(--font-inter); font-weight: 600; font-size: 14px;
           background: var(--accent); color: #1a1208; border: none;
           padding: 13px 34px; border-radius: 999px; cursor: pointer;
           box-shadow: 0 8px 24px -8px var(--accent); transition: transform 160ms ease, box-shadow 160ms ease;
@@ -395,7 +439,7 @@ export default function PomodoroFocus() {
         }
         .btn-primary:hover { transform: translateY(-2px); }
         .btn-ghost {
-          font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px;
+          font-family: var(--font-inter); font-weight: 500; font-size: 13px;
           background: transparent; color: rgba(239,234,224,0.65); border: 1px solid rgba(255,255,255,0.15);
           padding: 12px 20px; border-radius: 999px; cursor: pointer; transition: all 160ms ease;
         }
@@ -429,14 +473,14 @@ export default function PomodoroFocus() {
         .side-panel.left.open { transform: translateX(0); }
         .side-panel.right.open { transform: translateX(0); }
 
-        .panel-title { font-family: 'Fraunces', serif; font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+        .panel-title { font-family: var(--font-fraunces); font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
         .panel-close { cursor: pointer; opacity: 0.6; font-size: 13px; }
         .panel-close:hover { opacity: 1; }
 
         .task-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
         .task-input {
           flex: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 8px; padding: 9px 11px; color: #EFEAE0; font-size: 13px; font-family: 'Inter', sans-serif;
+          border-radius: 8px; padding: 9px 11px; color: #EFEAE0; font-size: 13px; font-family: var(--font-inter);
         }
         .task-input::placeholder { color: rgba(239,234,224,0.35); }
         .task-input:focus { outline: none; border-color: var(--accent); }
@@ -456,14 +500,14 @@ export default function PomodoroFocus() {
         .task-check.done { background: var(--accent); border-color: var(--accent); color: #1a1208; }
         .task-text { flex: 1; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .task-text.done { text-decoration: line-through; opacity: 0.4; }
-        .task-est { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: rgba(239,234,224,0.45); white-space: nowrap; }
+        .task-est { font-family: var(--font-ibm-plex-mono); font-size: 10.5px; color: rgba(239,234,224,0.45); white-space: nowrap; }
         .task-del { opacity: 0; font-size: 12px; cursor: pointer; padding: 2px 4px; }
         .task-item:hover .task-del { opacity: 0.5; }
         .task-del:hover { opacity: 1 !important; }
 
         .setting-row { margin-bottom: 18px; }
         .setting-label { font-size: 12px; color: rgba(239,234,224,0.6); margin-bottom: 8px; display: flex; justify-content: space-between; }
-        .setting-value { font-family: 'IBM Plex Mono', monospace; color: var(--accent-soft); }
+        .setting-value { font-family: var(--font-ibm-plex-mono); color: var(--accent-soft); }
         input[type=range] { width: 100%; accent-color: var(--accent); }
         .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; margin-top: 6px; }
         .switch { position: relative; width: 36px; height: 20px; background: rgba(255,255,255,0.15); border-radius: 999px; cursor: pointer; transition: background 200ms ease; }
@@ -488,7 +532,63 @@ export default function PomodoroFocus() {
         }
         .immersive-exit:hover { color: rgba(239,234,224,0.8); }
 
+        /* music player — glassmorphed */
+        .music-player {
+          position: absolute; top: 60px; right: 20px; z-index: 10;
+          width: 220px;
+          background: rgba(15,20,18,0.55); backdrop-filter: blur(18px);
+          border: 1px solid rgba(255,255,255,0.10);
+          border-radius: 14px;
+          box-shadow: 0 12px 40px -8px rgba(0,0,0,0.5);
+          overflow: hidden;
+        }
+        .mp-head {
+          display: flex; align-items: center; gap: 8px;
+          padding: 10px 14px; cursor: pointer;
+          color: rgba(239,234,224,0.7); font-size: 12px;
+          transition: background 160ms ease;
+        }
+        .mp-head:hover { background: rgba(255,255,255,0.05); }
+        .mp-now { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .mp-toggle { font-size: 10px; opacity: 0.5; }
+        .mp-body {
+          padding: 0 14px 14px;
+          animation: mpSlideIn 280ms cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes mpSlideIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .mp-progress-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+        .mp-time { font-family: var(--font-ibm-plex-mono); font-size: 10px; color: rgba(239,234,224,0.4); min-width: 32px; }
+        .mp-progress-row input[type=range] { flex: 1; height: 3px; accent-color: var(--accent); }
+        .mp-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 8px; }
+        .mp-btn { cursor: pointer; opacity: 0.6; transition: opacity 160ms ease, transform 160ms ease; }
+        .mp-btn:hover { opacity: 1; transform: scale(1.1); }
+        .mp-play {
+          width: 32px; height: 32px; border-radius: 50%;
+          background: var(--accent); color: #1a1208;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; transition: transform 200ms ease, box-shadow 200ms ease;
+          box-shadow: 0 0 12px var(--accent);
+        }
+        .mp-play:hover { transform: scale(1.08); }
+        .mp-tracklist { display: flex; flex-direction: column; gap: 3px; }
+        .mp-track {
+          display: flex; align-items: center; gap: 8px;
+          padding: 7px 10px; border-radius: 8px;
+          font-size: 12px; cursor: pointer;
+          transition: background 150ms ease;
+        }
+        .mp-track:hover { background: rgba(255,255,255,0.06); }
+        .mp-track.active { background: rgba(255,255,255,0.08); color: var(--accent-soft); }
+        .mp-track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
         @media (max-width: 560px) {
+          .music-player { top: 56px; right: 10px; width: 180px; }
+          .mp-head { font-size: 11px; padding: 8px 10px; }
+          .mp-body { padding: 0 10px 10px; }
+        }
           .side-panel { width: 84%; }
           .time-display { font-size: 42px; }
           .ring-wrap { width: 200px; height: 200px; }
@@ -535,13 +635,13 @@ export default function PomodoroFocus() {
               );
             })}
             </div>
-            <div className="icon-btn" onClick={enterFullscreen} title="Fullscreen">{'\u2922'}</div>
-            <div className="icon-btn" onClick={() => setSettingsOpen(o => !o)} title="Settings">{'\u9881'}</div>
+            <div className="icon-btn" onClick={enterFullscreen} title="Fullscreen" aria-label="Enter fullscreen"><Maximize2 size={15} /></div>
+            <div className="icon-btn" onClick={() => setSettingsOpen(o => !o)} title="Settings" aria-label="Settings"><Settings size={15} /></div>
           </div>
         </div>
 
       <div className="immersive-exit" onClick={exitFullscreen}>
-        {'\u2715'} exit fullscreen (esc)
+        <X size={11} /> exit fullscreen (esc)
       </div>
 
       <div className="ember-center">
@@ -583,7 +683,7 @@ export default function PomodoroFocus() {
       </div>
 
         <div className="dock">
-          <div className="icon-btn" onClick={() => setTasksOpen(o => !o)} title="Tasks">{'\u9776'}</div>
+            <div className="icon-btn" onClick={() => setTasksOpen(o => !o)} title="Tasks" aria-label="Open tasks"><List size={15} /></div>
           <div className="dock-pill">
             {Object.keys(SOUND_META).map(key => (
               <div key={key} className="sound-btn">
@@ -593,6 +693,7 @@ export default function PomodoroFocus() {
                   title={SOUND_META[key].label}
                 >
                   {SOUND_META[key].icon}
+                  <span className="sr-only">{SOUND_META[key].label}</span>
                 </div>
                 <div className="sound-label">{SOUND_META[key].label}</div>
                 {sounds[key].on && (
@@ -635,15 +736,15 @@ export default function PomodoroFocus() {
                 className={`task-check${t.done ? ' done' : ''}`}
                 onClick={e => { e.stopPropagation(); toggleTaskDone(t.id); }}
               >
-                {t.done ? '\u2713' : ''}
+                {t.done ? <Check size={10} /> : ''}
               </div>
               <div className={`task-text${t.done ? ' done' : ''}`}>{t.text}</div>
               <div className="task-est" onClick={e => e.stopPropagation()}>
-                <span onClick={() => adjustEstimate(t.id, -1)} style={{ cursor: 'pointer', marginRight: 4 }}>{'\u2212'}</span>
+                <span onClick={() => adjustEstimate(t.id, -1)} style={{ cursor: 'pointer', marginRight: 4 }}><Minus size={10} /></span>
                 {t.pomodoros}/{t.estimate}
-                <span onClick={() => adjustEstimate(t.id, 1)} style={{ cursor: 'pointer', marginLeft: 4 }}>{'\u002B'}</span>
+                <span onClick={() => adjustEstimate(t.id, 1)} style={{ cursor: 'pointer', marginLeft: 4 }}><Plus size={10} /></span>
               </div>
-              <div className="task-del" onClick={e => { e.stopPropagation(); deleteTask(t.id); }}>{'\u2715'}</div>
+              <div className="task-del" onClick={e => { e.stopPropagation(); deleteTask(t.id); }}><X size={12} /></div>
             </div>
           ))}
           {tasks.length === 0 && (
@@ -686,6 +787,38 @@ export default function PomodoroFocus() {
         <div style={{ marginTop: 24, fontSize: 11, color: 'rgba(239,234,224,0.35)', lineHeight: 1.5 }}>
           Every 4th focus session is followed by a long break. Ambient sounds are synthesized live — no audio files loaded.
         </div>
+      </div>
+
+      {/* MUSIC PLAYER */}
+      <div className="music-player">
+        <div className="mp-head" onClick={() => setPlayerOpen(o => !o)}>
+          <Music size={13} />
+          <span className="mp-now">{nowPlaying ?? 'Music'}</span>
+          <span className="mp-toggle">{playerOpen ? '▾' : '▸'}</span>
+        </div>
+        {playerOpen && (
+          <div className="mp-body">
+            <div className="mp-progress-row">
+              <span className="mp-time">{formatTime(playerProgress)}</span>
+              <input type="range" min="0" max={playerDuration || 1} step="0.1" value={playerProgress}
+                onChange={e => { if (audioRef.current) audioRef.current.currentTime = parseFloat(e.target.value); setPlayerProgress(parseFloat(e.target.value)); }} />
+              <span className="mp-time">{formatTime(playerDuration)}</span>
+            </div>
+            <div className="mp-controls">
+              <SkipBack size={14} onClick={() => playTrack((currentIdx - 1 + playlist.length) % playlist.length)} className="mp-btn" />
+              <div className="mp-play" onClick={togglePlayer}>{nowPlaying ? <Pause size={16} /> : <Play size={16} />}</div>
+              <SkipForward size={14} onClick={nextTrack} className="mp-btn" />
+            </div>
+            <div className="mp-tracklist">
+              {playlist.map((name, i) => (
+                <div key={name} className={`mp-track${i === currentIdx && nowPlaying ? ' active' : ''}`} onClick={() => playTrack(i)}>
+                  <span className="mp-track-name">{name}</span>
+                  {i === currentIdx && nowPlaying ? <Pause size={12} /> : <Play size={12} />}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

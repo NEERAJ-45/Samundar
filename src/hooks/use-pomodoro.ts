@@ -14,6 +14,7 @@ export function usePomodoro(initialWorkMinutes = 25, initialBreakMinutes = 5) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const editTimerRef = useRef('');
+  const dialPlayedRef = useRef(false);
 
   const WORK_TIME = workMinutes * 60;
   const BREAK_TIME = breakMinutes * 60;
@@ -106,6 +107,7 @@ export function usePomodoro(initialWorkMinutes = 25, initialBreakMinutes = 5) {
     setEditTimerValue(String(timerMinutes));
     editTimerRef.current = String(timerMinutes);
     setEditingTimer(true);
+    dialPlayedRef.current = false;
     playDialSound();
   }, [timerMinutes, playDialSound]);
 
@@ -113,7 +115,10 @@ export function usePomodoro(initialWorkMinutes = 25, initialBreakMinutes = 5) {
     const clean = val.replace(/\D/g, '');
     editTimerRef.current = clean;
     setEditTimerValue(clean);
-    playDialSound();
+    if (!dialPlayedRef.current) {
+      dialPlayedRef.current = true;
+      playDialSound();
+    }
   }, [playDialSound]);
 
   const handleEditTimerBlur = useCallback(() => {
@@ -129,6 +134,7 @@ export function usePomodoro(initialWorkMinutes = 25, initialBreakMinutes = 5) {
     setTimerSeconds(minutes * 60);
     setEditTimerValue('');
     editTimerRef.current = '';
+    dialPlayedRef.current = false;
   }, [timerMode]);
 
   const handleEditTimerKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -137,6 +143,7 @@ export function usePomodoro(initialWorkMinutes = 25, initialBreakMinutes = 5) {
       setEditingTimer(false);
       setEditTimerValue('');
       editTimerRef.current = '';
+      dialPlayedRef.current = false;
     }
   }, []);
 

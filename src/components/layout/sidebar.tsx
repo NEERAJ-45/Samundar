@@ -28,6 +28,7 @@ import {
   Calendar,
   FileText,
   Timer,
+  ChevronDown,
   Code2,
 } from "lucide-react";
 
@@ -216,9 +217,7 @@ export function Sidebar() {
                       "transition-transform duration-200",
                       isGroupCollapsed ? "-rotate-90" : "rotate-0"
                     )}>
-                      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                        <path d="M6 9l6 6 6-6" />
-                      </svg>
+                      <ChevronDown className="h-3 w-3" />
                     </span>
                     {group.label}
                   </button>

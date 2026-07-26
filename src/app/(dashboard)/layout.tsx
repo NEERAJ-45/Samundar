@@ -1,8 +1,12 @@
+'use client';
+
+import dynamic from 'next/dynamic';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Navbar } from '@/components/layout/navbar';
-import { MobileNav } from '@/components/layout/mobile-nav';
-import { QuoteToast } from '@/components/ui/quote-toast';
-import { PageTransition } from '@/components/shared/PageTransition';
+
+const MobileNav = dynamic(() => import('@/components/layout/mobile-nav').then(m => m.MobileNav));
+const QuoteToast = dynamic(() => import('@/components/ui/quote-toast').then(m => m.QuoteToast));
+const PageTransition = dynamic(() => import('@/components/shared/PageTransition').then(m => m.PageTransition));
 
 export default function DashboardLayout({
   children,
