@@ -1,8 +1,7 @@
 'use client';
 
-import { AlertTriangle, X } from 'lucide-react';
 import { Toaster as HotToaster, toast as hotToast } from 'react-hot-toast';
-import { AlertCircle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 
 type ToastVariant = 'default' | 'success' | 'error' | 'info' | 'destructive';
 
