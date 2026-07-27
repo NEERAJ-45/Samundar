@@ -41,10 +41,10 @@ function BootScreen({ onDone }: { onDone: () => void }) {
         setLogs((p) => [...p, BOOT_LOGS[line]]);
         setProgress(((line + 1) / BOOT_LOGS.length) * 100);
         setLine((l) => l + 1);
-      }, 420);
+      }, 180);
       return () => clearTimeout(t);
     } else {
-      const t = setTimeout(onDone, 600);
+      const t = setTimeout(onDone, 200);
       return () => clearTimeout(t);
     }
   }, [line, onDone]);

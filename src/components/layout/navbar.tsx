@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useProfile } from '@/components/providers/ProfileProvider';
 import { signOut } from 'next-auth/react';
-import { LogOut, User, X, CalendarDays, Flame, Wifi, WifiOff } from 'lucide-react';
+import { LogOut, User, X, CalendarDays, Flame, Wifi, WifiOff, Pencil } from 'lucide-react';
 import { toast } from '@/components/ui/toast';
 import { quotes } from '../../../quotes';
 import { GlobalSearch } from '@/components/shared/GlobalSearch';
@@ -191,9 +191,7 @@ export function Navbar({ global = false }: { global?: boolean }) {
                         className="ml-2 shrink-0 rounded p-1 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors cursor-pointer"
                         title="Change email"
                       >
-                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                        </svg>
+                        <Pencil className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   )}

@@ -1,7 +1,7 @@
 'use client';
 
 import { Toaster as HotToaster, toast as hotToast } from 'react-hot-toast';
-import { AlertCircle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 
 type ToastVariant = 'default' | 'success' | 'error' | 'info' | 'destructive';
 
@@ -83,7 +83,7 @@ function toast({ title, description, variant = 'default', duration = 4000 }: Toa
         } ${cfg.border}`}
         style={{ minWidth: 300, maxWidth: 380 }}
       >
-        <span className={`mt-0.5 shrink-0 ${cfg.iconColor}`}>
+<span className={`mt-0.5 shrink-0 ${cfg.iconColor}`}>
           {cfg.icon}
         </span>
         <div className="flex-1 min-w-0">
@@ -94,7 +94,7 @@ function toast({ title, description, variant = 'default', duration = 4000 }: Toa
           onClick={() => hotToast.dismiss(t.id)}
           className="-mr-1.5 -mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/80 transition-colors"
         >
-          <X className="h-3.5 w-3.5" />
+<X className="h-3.5 w-3.5" />
         </button>
       </div>
     ),
