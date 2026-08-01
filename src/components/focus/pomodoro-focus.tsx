@@ -81,8 +81,27 @@ type SceneKey = keyof typeof SCENES;
 
 const PLAYLIST = ["Lofi", "Jazz", "Rain"];
 
-function getTrackSrc(index: number) {
-  return `/audio/ambient/${PLAYLIST[index].toLowerCase()}.m4a`;
+const AUDIO_EXTENSIONS = ["m4a", "mp4"] as const;
+
+function getTrackSrc(index: number, extension = "m4a") {
+  return `/audio/ambient/${PLAYLIST[index].toLowerCase()}.${extension}`;
+}
+
+async function playWithFallback(
+  audio: HTMLAudioElement,
+  srcBase: string,
+  extensions: readonly string[] = AUDIO_EXTENSIONS,
+) {
+  for (const extension of extensions) {
+    audio.src = `${srcBase}.${extension}`;
+    audio.load();
+    try {
+      await audio.play();
+      return;
+    } catch {
+      continue;
+    }
+  }
 }
 
 export default function PomodoroFocus() {
@@ -143,8 +162,10 @@ export default function PomodoroFocus() {
       const next = (idxRef.current + 1) % PLAYLIST.length;
       setCurrentIdx(next);
       setNowPlaying(PLAYLIST[next]);
-      a.src = getTrackSrc(next);
-      a.play().catch(console.error);
+      playWithFallback(
+        a,
+        `/audio/ambient/${PLAYLIST[next].toLowerCase()}`,
+      ).catch(console.error);
     });
     audioRef.current = a;
     return () => {
@@ -157,11 +178,10 @@ export default function PomodoroFocus() {
     const a = audioRef.current;
     if (!a) return;
     if (a.paused) {
-      if (!a.src) {
-        a.src = getTrackSrc(idxRef.current);
-        a.load();
-      }
-      a.play().catch(console.error);
+      playWithFallback(
+        a,
+        `/audio/ambient/${PLAYLIST[idxRef.current].toLowerCase()}`,
+      ).catch(console.error);
       setNowPlaying(PLAYLIST[idxRef.current]);
     } else {
       a.pause();
@@ -176,13 +196,12 @@ export default function PomodoroFocus() {
       setNowPlaying(null);
       return;
     }
-    const url = `/audio/ambient/${PLAYLIST[i].toLowerCase()}.m4a`;
     setCurrentIdx(i);
     setNowPlaying(PLAYLIST[i]);
-    a.src = url;
-    a.load();
     a.currentTime = 0;
-    a.play().catch((e) => console.error("play failed:", e));
+    playWithFallback(a, `/audio/ambient/${PLAYLIST[i].toLowerCase()}`).catch(
+      (e) => console.error("play failed:", e),
+    );
   }
   function nextTrack() {
     playTrack((currentIdx + 1) % PLAYLIST.length);
@@ -245,22 +264,20 @@ export default function PomodoroFocus() {
     } catch {}
   }
 
-  function createAmbientNode(key: AmbientSoundKey) {
+  async function createAmbientNode(key: AmbientSoundKey) {
     const audio = new Audio(`/audio/ambient/${key}.m4a`);
     audio.loop = true;
     audio.volume = 0;
     const node = { audio, key };
     soundNodesRef.current[key] = node;
+    await playWithFallback(audio, `/audio/ambient/${key}`);
     return node;
   }
 
   async function toggleSound(key: AmbientSoundKey) {
     const willBeOn = !soundsRef.current[key].on;
     if (willBeOn) {
-      const node = createAmbientNode(key);
-      try {
-        await node.audio.play();
-      } catch {}
+      const node = await createAmbientNode(key);
       node.audio.volume = soundsRef.current[key].vol;
     } else {
       const node = soundNodesRef.current[key];
