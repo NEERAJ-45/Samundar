@@ -19,6 +19,9 @@ import {
   SkipBack,
   SkipForward,
 } from "lucide-react";
+type AmbientSoundKey = "rain" | "ocean" | "wind" | "fire";
+
+type AmbientSoundState = Record<AmbientSoundKey, { on: boolean; vol: number }>;
 
 /* ---------------------------------------------------------
    EMBER — an ambient pomodoro timer
@@ -78,6 +81,10 @@ type SceneKey = keyof typeof SCENES;
 
 const PLAYLIST = ["Lofi", "Jazz", "Rain"];
 
+function getTrackSrc(index: number) {
+  return `/audio/ambient/${PLAYLIST[index].toLowerCase()}.m4a`;
+}
+
 export default function PomodoroFocus() {
   const [scene, setScene] = useState<SceneKey>("dusk");
   const [mode, setMode] = useState<"focus" | "short" | "long">("focus");
@@ -106,9 +113,7 @@ export default function PomodoroFocus() {
   ]);
   const [activeTaskId, setActiveTaskId] = useState<number | null>(null);
   const [taskInput, setTaskInput] = useState("");
-  const [sounds, setSounds] = useState<
-    Record<string, { on: boolean; vol: number }>
-  >({
+  const [sounds, setSounds] = useState<AmbientSoundState>({
     rain: { on: false, vol: 0.15 },
     ocean: { on: false, vol: 0.15 },
     wind: { on: false, vol: 0.12 },
@@ -123,7 +128,6 @@ export default function PomodoroFocus() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const idxRef = useRef(0);
-  const currentTrackSrc = `/audio/ambient/${PLAYLIST[currentIdx].toLowerCase()}.m4a`;
   useEffect(() => {
     idxRef.current = currentIdx;
   });
@@ -131,7 +135,7 @@ export default function PomodoroFocus() {
   useEffect(() => {
     const a = new Audio();
     a.preload = "auto";
-    a.src = currentTrackSrc;
+    a.src = getTrackSrc(idxRef.current);
     a.load();
     a.addEventListener("timeupdate", () => setPlayerProgress(a.currentTime));
     a.addEventListener("loadedmetadata", () => setPlayerDuration(a.duration));
@@ -139,7 +143,7 @@ export default function PomodoroFocus() {
       const next = (idxRef.current + 1) % PLAYLIST.length;
       setCurrentIdx(next);
       setNowPlaying(PLAYLIST[next]);
-      a.src = `/audio/ambient/${PLAYLIST[next].toLowerCase()}.m4a`;
+      a.src = getTrackSrc(next);
       a.play().catch(console.error);
     });
     audioRef.current = a;
@@ -154,11 +158,11 @@ export default function PomodoroFocus() {
     if (!a) return;
     if (a.paused) {
       if (!a.src) {
-        a.src = currentTrackSrc;
+        a.src = getTrackSrc(idxRef.current);
         a.load();
       }
       a.play().catch(console.error);
-      setNowPlaying(PLAYLIST[currentIdx]);
+      setNowPlaying(PLAYLIST[idxRef.current]);
     } else {
       a.pause();
       setNowPlaying(null);
@@ -204,7 +208,13 @@ export default function PomodoroFocus() {
   });
 
   const soundNodesRef = useRef<
-    Record<string, { audio: HTMLAudioElement; key: string }>
+    | Record<AmbientSoundKey, { audio: HTMLAudioElement; key: AmbientSoundKey }>
+    | Partial<
+        Record<
+          AmbientSoundKey,
+          { audio: HTMLAudioElement; key: AmbientSoundKey }
+        >
+      >
   >({});
   const audioCtxRef = useRef<AudioContext | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -235,7 +245,7 @@ export default function PomodoroFocus() {
     } catch {}
   }
 
-  function createAmbientNode(key: string) {
+  function createAmbientNode(key: AmbientSoundKey) {
     const audio = new Audio(`/audio/ambient/${key}.m4a`);
     audio.loop = true;
     audio.volume = 0;
@@ -244,7 +254,7 @@ export default function PomodoroFocus() {
     return node;
   }
 
-  async function toggleSound(key: string) {
+  async function toggleSound(key: AmbientSoundKey) {
     const willBeOn = !soundsRef.current[key].on;
     if (willBeOn) {
       const node = createAmbientNode(key);
@@ -262,7 +272,7 @@ export default function PomodoroFocus() {
     setSounds((s) => ({ ...s, [key]: { ...s[key], on: willBeOn } }));
   }
 
-  function setVolume(key: string, vol: number) {
+  function setVolume(key: AmbientSoundKey, vol: number) {
     setSounds((s) => ({ ...s, [key]: { ...s[key], vol } }));
     const node = soundNodesRef.current[key];
     if (node && soundsRef.current[key].on) {
@@ -271,8 +281,9 @@ export default function PomodoroFocus() {
   }
 
   useEffect(() => {
+    const nodes = soundNodesRef.current;
     return () => {
-      Object.values(soundNodesRef.current).forEach((n) => {
+      Object.values(nodes).forEach((n) => {
         try {
           n.audio.pause();
           n.audio.src = "";
@@ -287,10 +298,6 @@ export default function PomodoroFocus() {
   const activeTask = tasks.find((t) => t.id === activeTaskId);
   const cycleFilled =
     round > 0 && round % 4 === 0 && mode !== "focus" ? 4 : round % 4;
-
-  useEffect(() => {
-    setTimeLeft(durations[mode] * 60);
-  }, [mode, durations]);
 
   const completeSessionRef = React.useRef<() => void>(() => {});
 
@@ -310,8 +317,10 @@ export default function PomodoroFocus() {
       }
       const nextMode: "short" | "long" = nextRound % 4 === 0 ? "long" : "short";
       setMode(nextMode);
+      setTimeLeft(durationsRef.current[nextMode] * 60);
     } else {
       setMode("focus");
+      setTimeLeft(durationsRef.current.focus * 60);
     }
     setIsRunning(autoStartRef.current);
   }
@@ -459,13 +468,6 @@ export default function PomodoroFocus() {
   const R = 120;
   const C = 2 * Math.PI * R;
   const dashOffset = C * (1 - fraction);
-
-  const SOUND_META: Record<string, { label: string; icon: React.ReactNode }> = {
-    rain: { label: "Rain", icon: <CloudRain size={15} /> },
-    ocean: { label: "Ocean", icon: <Waves size={15} /> },
-    wind: { label: "Wind", icon: <Wind size={15} /> },
-    fire: { label: "Fire", icon: <Flame size={15} /> },
-  };
 
   return (
     <div
@@ -864,17 +866,23 @@ export default function PomodoroFocus() {
           <List size={15} />
         </div>
         <div className="dock-pill">
-          {Object.keys(SOUND_META).map((key) => (
+          {(Object.keys(sounds) as AmbientSoundKey[]).map((key) => (
             <div key={key} className="sound-btn">
-              <div
+              <button
+                type="button"
                 className={`sound-icon${sounds[key].on ? " on" : ""}`}
                 onClick={() => toggleSound(key)}
-                title={SOUND_META[key].label}
+                title={key.charAt(0).toUpperCase() + key.slice(1)}
+                aria-label={key.charAt(0).toUpperCase() + key.slice(1)}
               >
-                {SOUND_META[key].icon}
-                <span className="sr-only">{SOUND_META[key].label}</span>
+                {key === "rain" ? <CloudRain size={15} /> : null}
+                {key === "ocean" ? <Waves size={15} /> : null}
+                {key === "wind" ? <Wind size={15} /> : null}
+                {key === "fire" ? <Flame size={15} /> : null}
+              </button>
+              <div className="sound-label">
+                {key.charAt(0).toUpperCase() + key.slice(1)}
               </div>
-              <div className="sound-label">{SOUND_META[key].label}</div>
               {sounds[key].on && (
                 <input
                   className="sound-slider"
@@ -890,8 +898,6 @@ export default function PomodoroFocus() {
           ))}
         </div>
       </div>
-
-      {/* TASKS PANEL */}
       <div className={`side-panel left${tasksOpen ? " open" : ""}`}>
         <div className="panel-title">
           Tasks
