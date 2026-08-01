@@ -77,7 +77,7 @@ export function useCommandCenterQuery() {
             typeof a === 'string' ? { text: a, createdAt: new Date().toISOString() } : a
           ) ?? [];
           return { ...parsed, activities };
-        } catch {}
+        } catch { }
       }
       return undefined;
     },

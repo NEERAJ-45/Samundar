@@ -9,10 +9,6 @@ function getErrorResponse(error: unknown) {
   return NextResponse.json({ error: message }, { status: 500 });
 }
 
-function getDbUri(request: Request): string | undefined {
-  return request.headers.get('x-mongodb-url') || undefined;
-}
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
