@@ -1,26 +1,20 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import Book from '@/lib/models/Book';
 import BookContent from '@/lib/models/BookContent';
 import { extractTextFromPdfBuffer } from '@/lib/pdf-extractor';
 import { logActivity } from '@/lib/activity-logger';
+import { getDbUri } from '../request';
 function getErrorResponse(error: unknown) {
   const message = error instanceof Error ? error.message : 'Internal server error';
   return NextResponse.json({ error: message }, { status: 500 });
 }
 
-function getEmail(request: Request): string {
-  const { searchParams } = new URL(request.url);
-  return searchParams.get('userEmail') || request.headers.get('x-user-email') || '';
-}
-
-function getDbUri(request: Request): string | undefined {
-  return request.headers.get('x-mongodb-url') || undefined;
-}
-
 export async function GET(request: Request) {
   try {
-    const userEmail = getEmail(request);
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
     if (!userEmail) {
       return NextResponse.json({ books: [] });
     }
@@ -39,14 +33,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const contentType = request.headers.get('content-type') || '';
-    let userEmail: string;
     let bookData: Record<string, unknown>;
     let pdfFile: File | null = null;
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
-      userEmail = formData.get('userEmail') as string || '';
       pdfFile = formData.get('pdf') as File | null;
       bookData = {
         title: formData.get('title') as string || '',
@@ -58,13 +56,7 @@ export async function POST(request: Request) {
       };
     } else {
       const body = await request.json();
-      userEmail = body.userEmail || '';
       bookData = body;
-      delete bookData.userEmail;
-    }
-
-    if (!userEmail) {
-      return NextResponse.json({ error: 'userEmail required' }, { status: 400 });
     }
 
     const conn = await connectToDatabase(getDbUri(request));
@@ -127,6 +119,8 @@ export async function PUT(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const body = await request.json();
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!id) {
       return NextResponse.json({ error: 'id required' }, { status: 400 });
@@ -141,10 +135,15 @@ export async function PUT(request: Request) {
     if (!existing) {
       return NextResponse.json({ error: 'Book not found' }, { status: 404 });
     }
+    if (existing.userEmail !== userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { userEmail: _ignoredUserEmail, ...safeBody } = body as Record<string, unknown>;
 
     const book = await Book.findOneAndUpdate(
       { id },
-      { $set: body },
+      { $set: safeBody },
       { new: true, runValidators: true }
     ).lean();
 
@@ -160,6 +159,8 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!id) {
       return NextResponse.json({ error: 'id required' }, { status: 400 });
@@ -171,6 +172,9 @@ export async function DELETE(request: Request) {
     }
 
     const existing = await Book.findOne({ id });
+    if (existing && existing.userEmail !== userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     if (existing) {
       logActivity(existing.userEmail, `Deleted book "${existing.title}"`);
     }

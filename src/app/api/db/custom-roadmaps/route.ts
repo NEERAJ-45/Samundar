@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import type { ICustomRoadmap } from '@/lib/models/CustomRoadmap';
 import '@/lib/models/CustomRoadmap';
+import { getDbUri } from '../request';
 
 function slugify(text: string): string {
   return text
@@ -12,11 +14,13 @@ function slugify(text: string): string {
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || 'NEERAJ';
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ dbConnected: false, data: [] });
+    }
 
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, data: [] });
     }
@@ -31,14 +35,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
     }
     const body = await request.json();
     const { title, description, questions, color, hours, difficulty } = body;
-    const userEmail = body.userEmail || request.headers.get('x-user-email') || 'NEERAJ';
 
     if (!title || !questions || !Array.isArray(questions) || questions.length === 0) {
       return NextResponse.json({ error: 'Missing required parameters: title and questions array' }, { status: 400 });
@@ -82,14 +90,18 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
     }
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug');
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || 'NEERAJ';
 
     if (!slug) {
       return NextResponse.json({ error: 'Missing slug' }, { status: 400 });

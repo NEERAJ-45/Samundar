@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import type { INote } from '@/lib/models/Note';
 import '@/lib/models/Note';
 import { logActivity } from '@/lib/activity-logger';
+import { getDbUri } from '../request';
 
 function humanizePrefix(storagePrefix: string): string {
   return storagePrefix
@@ -18,11 +20,13 @@ function humanizePrefix(storagePrefix: string): string {
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || 'NEERAJ';
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
+    const session = await auth();
+    const userEmail = session?.user?.email;
+    if (!userEmail) {
+      return NextResponse.json({ dbConnected: false, data: [] });
+    }
 
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, data: [] });
     }
@@ -37,14 +41,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const session = await auth();
+    const userEmail = session?.user?.email;
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
     }
     const body = await request.json();
     const { storagePrefix, itemId, note, resetAll, itemTitle } = body;
-    const userEmail = body.userEmail || request.headers.get('x-user-email') || 'NEERAJ';
 
     if (resetAll) {
       if (!storagePrefix) {

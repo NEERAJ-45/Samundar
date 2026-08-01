@@ -1,15 +1,19 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import Article from '@/lib/models/Article';
 import { logActivity } from '@/lib/activity-logger';
+import { getDbUri } from '../request';
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || 'NEERAJ';
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ articles: [] });
+    }
 
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ articles: [] });
     }
@@ -23,14 +27,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
     }
 
     const body = await request.json();
-    const userEmail = body.userEmail || request.headers.get('x-user-email') || 'NEERAJ';
 
     if (!body.title?.trim()) {
       return NextResponse.json({ error: 'title required' }, { status: 400 });
@@ -64,14 +72,18 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || 'NEERAJ';
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!id) {
       return NextResponse.json({ error: 'id required' }, { status: 400 });
     }
 
-    const conn = await connectToDatabase(customUri);
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
     }

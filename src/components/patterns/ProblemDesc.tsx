@@ -27,6 +27,8 @@ export function ProblemDesc({ slug }: ProblemDescProps) {
     return () => { cancelled = true; };
   }, [open, slug, content]);
 
+  const sanitizedContent = content ? sanitizeHtml(content) : '';
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -77,7 +79,7 @@ export function ProblemDesc({ slug }: ProblemDescProps) {
             ) : (
               <div
                 className="prose prose-sm prose-invert max-w-none text-foreground"
-                dangerouslySetInnerHTML={{ __html: content ?? "" }}
+                dangerouslySetInnerHTML={{ __html: sanitizedContent }}
               />
             )}
           </div>
@@ -85,4 +87,65 @@ export function ProblemDesc({ slug }: ProblemDescProps) {
       )}
     </div>
   );
+}
+
+function sanitizeHtml(html: string): string {
+  if (typeof window === 'undefined' || typeof DOMParser === 'undefined') {
+    return html
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/ on\w+="[^"]*"/gi, '')
+      .replace(/ on\w+='[^']*'/gi, '');
+  }
+
+  const parser = new DOMParser();
+  const parsed = parser.parseFromString(html, 'text/html');
+  const allowedTags = new Set([
+    'a', 'abbr', 'b', 'blockquote', 'br', 'code', 'div', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'hr', 'i', 'li', 'ol', 'p', 'pre', 'span', 'strong', 'table', 'tbody', 'td', 'th', 'thead', 'tr', 'ul',
+  ]);
+
+  const walk = (node: Node): Node | null => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return document.createTextNode(node.textContent || '');
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      return null;
+    }
+
+    const element = node as Element;
+    if (!allowedTags.has(element.tagName.toLowerCase())) {
+      const fragment = document.createDocumentFragment();
+      element.childNodes.forEach((child) => {
+        const safeChild = walk(child);
+        if (safeChild) fragment.appendChild(safeChild);
+      });
+      return fragment;
+    }
+
+    const safeElement = document.createElement(element.tagName.toLowerCase());
+    if (safeElement.tagName.toLowerCase() === 'a') {
+      const href = element.getAttribute('href');
+      if (href && /^https?:\/\//i.test(href)) {
+        safeElement.setAttribute('href', href);
+        safeElement.setAttribute('rel', 'noreferrer noopener');
+        safeElement.setAttribute('target', '_blank');
+      }
+    }
+
+    element.childNodes.forEach((child) => {
+      const safeChild = walk(child);
+      if (safeChild) safeElement.appendChild(safeChild);
+    });
+
+    return safeElement;
+  };
+
+  const container = document.createElement('div');
+  parsed.body.childNodes.forEach((child) => {
+    const safeChild = walk(child);
+    if (safeChild) container.appendChild(safeChild);
+  });
+
+  return container.innerHTML;
 }

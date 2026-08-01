@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import Project from '@/lib/models/Project';
 import { logActivity } from '@/lib/activity-logger';
+import { getDbUri } from '../request';
 
 function computeProgress(features?: { done?: boolean }[]): number {
   if (!features?.length) return 0;
@@ -11,15 +13,14 @@ function computeProgress(features?: { done?: boolean }[]): number {
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || '';
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!userEmail) {
       return NextResponse.json({ projects: [] });
     }
 
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ projects: [] });
     }
@@ -34,14 +35,15 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { userEmail, ...projectData } = body;
+    const { ...projectData } = body;
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!userEmail) {
-      return NextResponse.json({ error: 'userEmail required' }, { status: 400 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
     }
@@ -67,13 +69,16 @@ export async function PUT(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const body = await request.json();
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!id) {
       return NextResponse.json({ error: 'id required' }, { status: 400 });
     }
 
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const { userEmail: _ignoredUserEmail, ...safeBody } = body as Record<string, unknown>;
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
     }
@@ -82,10 +87,13 @@ export async function PUT(request: Request) {
     if (!existing) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
+    if (existing.userEmail !== userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const project = await Project.findOneAndUpdate(
       { id },
-      { $set: { ...body, progress: computeProgress(body.features) } },
+      { $set: { ...safeBody, progress: computeProgress((safeBody.features as { done?: boolean }[] | undefined) ?? body.features) } },
       { new: true, runValidators: true }
     ).lean();
 
@@ -102,18 +110,22 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!id) {
       return NextResponse.json({ error: 'id required' }, { status: 400 });
     }
 
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
     }
 
     const existing = await Project.findOne({ id });
+    if (existing && existing.userEmail !== userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     if (existing) {
       logActivity(existing.userEmail, `Deleted project "${existing.name}"`);
     }

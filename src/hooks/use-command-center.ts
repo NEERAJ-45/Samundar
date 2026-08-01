@@ -93,7 +93,7 @@ export function useUpdateFocusItem() {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (customDbUrl) headers['x-mongodb-url'] = customDbUrl;
 
-      const body: Record<string, string> = { email: userEmail! };
+      const body: Record<string, string> = {};
       if (label === 'Active Pillar') {
         body.activePillar = value;
         body.activeCategory = badge;
