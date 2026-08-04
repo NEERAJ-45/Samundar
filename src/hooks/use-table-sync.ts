@@ -201,6 +201,29 @@ export function useTableSync({
             }
           }
         }
+
+        const bookmarkRes = await fetch(`/api/db/problem-bookmarks?userEmail=${encodeURIComponent(userEmail)}`, { headers });
+        const bookmarkData = await bookmarkRes.json();
+        if (bookmarkData.dbConnected) {
+          const dbBookmarks = bookmarkData.data.filter((x: { storagePrefix: string }) => x.storagePrefix === bookmarkKey);
+          const dbBookmarkMap: BookmarkMap = {};
+          dbBookmarks.forEach((x: { storagePrefix: string; itemId: string }) => {
+            dbBookmarkMap[x.itemId] = true;
+          });
+          const mergedBookmarks = { ...initialBookmarks, ...dbBookmarkMap };
+          setBookmarkMap(mergedBookmarks);
+          persistBookmarks(mergedBookmarks);
+
+          for (const [id] of Object.entries(initialBookmarks)) {
+            if (!dbBookmarkMap[id]) {
+              fetch('/api/db/problem-bookmarks', {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ storagePrefix: bookmarkKey, itemId: id, bookmarked: true, userEmail }),
+              }).catch(() => {});
+            }
+          }
+        }
       } catch (err) {
         console.error('Failed to sync with MongoDB:', err);
       }
@@ -282,7 +305,12 @@ export function useTableSync({
     deleteCustomTopic.mutate({ storagePrefix: custKey, id });
     toggleCompletion.mutate({ storagePrefix: compKey, itemId: String(id) });
     saveNote.mutate({ storagePrefix: noteKey, itemId: String(id), itemTitle: deletedItem?.title });
-  }, [customItems, persistCustom, persistCompleted, persistNotes, custKey, compKey, noteKey, deleteCustomTopic, toggleCompletion, saveNote]);
+    fetch('/api/db/problem-bookmarks', {
+      method: 'POST',
+      headers: getRequestHeaders(),
+      body: JSON.stringify({ storagePrefix: bookmarkKey, itemId: String(id), bookmarked: false, userEmail }),
+    }).catch(() => {});
+  }, [customItems, persistCustom, persistCompleted, persistNotes, custKey, compKey, noteKey, deleteCustomTopic, toggleCompletion, saveNote, bookmarkKey, getRequestHeaders, userEmail]);
 
   const resetAll = useCallback(() => {
     localStorage.removeItem(compKey);
@@ -295,7 +323,12 @@ export function useTableSync({
     setBookmarkMap({});
     broadcastProgress();
     synced.current = false;
-  }, [compKey, noteKey, custKey, bookmarkKey, broadcastProgress]);
+    fetch('/api/db/problem-bookmarks', {
+      method: 'POST',
+      headers: getRequestHeaders(),
+      body: JSON.stringify({ storagePrefix: bookmarkKey, resetAll: true, userEmail }),
+    }).catch(() => {});
+  }, [compKey, noteKey, custKey, bookmarkKey, broadcastProgress, getRequestHeaders, userEmail]);
 
   const updateCompletionDate = useCallback((id: number, dateStr: string | null) => {
     setCompletedMap((prev) => {
@@ -308,15 +341,24 @@ export function useTableSync({
   }, [persistCompleted]);
 
   const toggleBookmark = useCallback((id: number) => {
+    const key = String(id);
+    const wasBookmarked = !!bookmarkMap[key];
+    const nowBookmarked = !wasBookmarked;
+
     setBookmarkMap((prev) => {
-      const key = String(id);
       const next = { ...prev };
       if (next[key]) delete next[key];
       else next[key] = true;
       persistBookmarks(next);
       return next;
     });
-  }, [persistBookmarks]);
+
+    fetch('/api/db/problem-bookmarks', {
+      method: 'POST',
+      headers: getRequestHeaders(),
+      body: JSON.stringify({ storagePrefix: bookmarkKey, itemId: key, bookmarked: nowBookmarked, userEmail }),
+    }).catch(() => {});
+  }, [bookmarkMap, persistBookmarks, bookmarkKey, getRequestHeaders, userEmail]);
 
   const solvedCount = Object.keys(completedMap).length;
 

@@ -26,7 +26,7 @@ import {
   ExternalLink,
   Download,
   Clipboard,
-  Bookmark,
+  Star,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NotesDialog } from '@/components/shared/NotesDialog';
@@ -166,7 +166,7 @@ export default function QuestionsTable({
                 className="inline-flex items-center justify-center rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
                 title={isBookmarked ? 'Remove bookmark' : 'Bookmark this topic'}
               >
-                <Bookmark
+                <Star
                   size={16}
                   strokeWidth={1.5}
                   className={cn(
@@ -409,7 +409,7 @@ export default function QuestionsTable({
             )}
             title="Show only bookmarked topics"
           >
-            <Bookmark size={13} className={cn(bookmarkedOnly && 'fill-amber-400')} />
+            <Star size={13} className={cn(bookmarkedOnly && 'fill-amber-400')} />
             Bookmarked
           </button>
           <button

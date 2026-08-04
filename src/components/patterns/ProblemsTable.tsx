@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import {
-  ArrowLeft, ExternalLink, CheckCircle, Circle, Trash2, Bookmark,
+  ArrowLeft, ExternalLink, CheckCircle, Circle, Trash2, Star,
   ChevronLeft, ChevronRight,
   ChevronsLeft, ChevronsRight, Loader2, AlertCircle
 } from "lucide-react";
@@ -181,7 +181,7 @@ export function ProblemsTable({
               className="inline-flex items-center justify-center rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
               title={isBookmarked ? "Remove bookmark" : "Bookmark this problem"}
             >
-              <Bookmark size={16} strokeWidth={1.5}
+              <Star size={16} strokeWidth={1.5}
                 className={cn("transition-colors", isBookmarked && "fill-amber-400 text-amber-400")} />
             </button>
           );
@@ -339,7 +339,7 @@ export function ProblemsTable({
           )}
           title="Show only bookmarked problems"
         >
-          <Bookmark size={13} className={cn(bookmarkedOnly && "fill-amber-400")} />
+          <Star size={13} className={cn(bookmarkedOnly && "fill-amber-400")} />
           Bookmarked
         </button>
       </div>
