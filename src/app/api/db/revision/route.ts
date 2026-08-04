@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import type { IRevision } from '@/lib/models/Revision';
 import '@/lib/models/Revision';
 import { logActivity } from '@/lib/activity-logger';
+import { getDbUri } from '../request';
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || 'NEERAJ';
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ dbConnected: false, data: [] });
+    }
 
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, data: [] });
     }
@@ -25,14 +29,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
     }
     const body = await request.json();
     const { id, concept, stage, dueDate, completed } = body;
-    const userEmail = body.userEmail || request.headers.get('x-user-email') || 'NEERAJ';
 
     if (!id || !concept || stage === undefined || !dueDate) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
@@ -59,14 +67,18 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
     }
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || 'NEERAJ';
 
     if (!id) {
       return NextResponse.json({ error: 'Missing id' }, { status: 400 });

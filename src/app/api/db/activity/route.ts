@@ -1,16 +1,24 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import '@/lib/models/Activity';
 import { logActivity } from '@/lib/activity-logger';
 import Activity from '@/lib/models/Activity';
+import { getDbUri } from '../request';
 
 export async function POST(request: Request) {
   try {
-    const { userEmail, text } = await request.json();
-    if (!userEmail || !text) {
-      return NextResponse.json({ error: 'userEmail and text required' }, { status: 400 });
+    const session = await auth();
+    const userEmail = session?.user?.email;
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    await connectToDatabase();
+
+    const { text } = await request.json();
+    if (!text) {
+      return NextResponse.json({ error: 'text required' }, { status: 400 });
+    }
+    await connectToDatabase(getDbUri(request));
     await logActivity(userEmail, text);
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
@@ -21,13 +29,13 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email');
+    const session = await auth();
+    const userEmail = session?.user?.email;
     if (!userEmail) {
-      return NextResponse.json({ error: 'userEmail required' }, { status: 400 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
+    await connectToDatabase(getDbUri(request));
     const activities = await Activity.find({ userEmail })
       .sort({ createdAt: -1 })
       .limit(200)
@@ -44,13 +52,13 @@ export async function GET(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email');
+    const session = await auth();
+    const userEmail = session?.user?.email;
     if (!userEmail) {
-      return NextResponse.json({ error: 'userEmail required' }, { status: 400 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
+    await connectToDatabase(getDbUri(request));
     const result = await Activity.deleteMany({ userEmail });
 
     return NextResponse.json({ success: true, deletedCount: result.deletedCount });

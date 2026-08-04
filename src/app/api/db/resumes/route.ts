@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import type { IResume } from '@/lib/models/Resume';
 import '@/lib/models/Resume';
+import { getDbUri } from '../request';
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
@@ -16,14 +18,13 @@ function base64ToBuffer(base64: string): Buffer {
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email');
+    const session = await auth();
+    const userEmail = session?.user?.email;
     if (!userEmail) {
-      return NextResponse.json({ dbConnected: false, error: 'Missing user identifier' }, { status: 400 });
+      return NextResponse.json({ dbConnected: false, error: 'Unauthorized' }, { status: 401 });
     }
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
 
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, data: [] });
     }
@@ -37,19 +38,19 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
+    const session = await auth();
+    const userEmail = session?.user?.email;
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
     }
     const body = await request.json().catch(() => null);
     if (!body) {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
-    }
-
-    const userEmail = body.userEmail || request.headers.get('x-user-email');
-    if (!userEmail) {
-      return NextResponse.json({ error: 'Missing user identifier' }, { status: 400 });
     }
 
     if (!body.latexSource || typeof body.latexSource !== 'string') {
@@ -114,15 +115,15 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Missing resume ID' }, { status: 400 });
     }
 
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
-    const conn = await connectToDatabase(customUri);
-    if (!conn) {
-      return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
+    const session = await auth();
+    const userEmail = session?.user?.email;
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = request.headers.get('x-user-email');
-    if (!userEmail) {
-      return NextResponse.json({ error: 'Missing user identifier' }, { status: 400 });
+    const conn = await connectToDatabase(getDbUri(request));
+    if (!conn) {
+      return NextResponse.json({ dbConnected: false, error: 'Database not configured' }, { status: 400 });
     }
 
     const Resume = conn.model<IResume>('Resume');

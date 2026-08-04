@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/db';
 import LoginAttempt from '@/lib/models/LoginAttempt';
@@ -11,6 +12,7 @@ import type { ICompletion } from '@/lib/models/Completion';
 import '@/lib/models/Completion';
 import type { IRevision } from '@/lib/models/Revision';
 import '@/lib/models/Revision';
+import { getDbUri } from '../request';
 
 function computeProgress(features?: { done?: boolean }[]): number {
   if (!features?.length) return 0;
@@ -73,15 +75,14 @@ async function deriveStats(conn: mongoose.Connection, userEmail: string) {
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || '';
-    const customUri = request.headers.get('x-mongodb-url') || undefined;
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!userEmail) {
-      return NextResponse.json({ error: 'userEmail required' }, { status: 400 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const conn = await connectToDatabase(customUri);
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false }, { status: 503 });
     }

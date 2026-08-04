@@ -1,7 +1,27 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Maximize2, Settings, List, X, Check, Minus, Plus, Music, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Maximize2,
+  Settings,
+  List,
+  CloudRain,
+  Waves,
+  Wind,
+  Flame,
+  X,
+  Check,
+  Minus,
+  Plus,
+  Music,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+} from "lucide-react";
+type AmbientSoundKey = "rain" | "ocean" | "wind" | "fire";
+
+type AmbientSoundState = Record<AmbientSoundKey, { on: boolean; vol: number }>;
 
 /* ---------------------------------------------------------
    EMBER — an ambient pomodoro timer
@@ -11,19 +31,47 @@ import { Maximize2, Settings, List, X, Check, Minus, Plus, Music, Play, Pause, S
 --------------------------------------------------------- */
 
 const SCENES = {
-  dusk: { label: 'Dusk Pine', from: '#16332E', to: '#0B1F1C', accent: '#E8A94C', soft: '#F2C878' },
-  midnight: { label: 'Midnight', from: '#1B2340', to: '#070B18', accent: '#8FA6E8', soft: '#C4D2F5' },
-  ember: { label: 'Ember Hearth', from: '#3A1B17', to: '#150807', accent: '#F2794D', soft: '#FFAE8C' },
-  ocean: { label: 'Deep Ocean', from: '#0E3A4A', to: '#04141C', accent: '#5FD3C4', soft: '#A6E9DE' },
+  dusk: {
+    label: "Dusk Pine",
+    from: "#16332E",
+    to: "#0B1F1C",
+    accent: "#E8A94C",
+    soft: "#F2C878",
+  },
+  midnight: {
+    label: "Midnight",
+    from: "#1B2340",
+    to: "#070B18",
+    accent: "#8FA6E8",
+    soft: "#C4D2F5",
+  },
+  ember: {
+    label: "Ember Hearth",
+    from: "#3A1B17",
+    to: "#150807",
+    accent: "#F2794D",
+    soft: "#FFAE8C",
+  },
+  ocean: {
+    label: "Deep Ocean",
+    from: "#0E3A4A",
+    to: "#04141C",
+    accent: "#5FD3C4",
+    soft: "#A6E9DE",
+  },
 };
 
-const BREAK_ACCENT = '#8FD9C4';
-const MODE_LABEL = { focus: 'Focus', short: 'Short Break', long: 'Long Break' };
+const BREAK_ACCENT = "#8FD9C4";
+const MODE_LABEL = { focus: "Focus", short: "Short Break", long: "Long Break" };
 const DEFAULT_DURATIONS = { focus: 25, short: 5, long: 15 };
 
 function formatTime(sec: number) {
-  const m = Math.floor(sec / 60).toString().padStart(2, '0');
-  const s = Math.floor(sec % 60).toString().padStart(2, '0');
+  const m = Math.floor(sec / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = Math.floor(sec % 60)
+    .toString()
+    .padStart(2, "0");
   return `${m}:${s}`;
 }
 
@@ -31,9 +79,34 @@ let idCounter = 1;
 
 type SceneKey = keyof typeof SCENES;
 
+const PLAYLIST = ["Lofi", "Jazz", "Rain"];
+
+const AUDIO_EXTENSIONS = ["m4a", "mp4"] as const;
+
+function getTrackSrc(index: number, extension = "m4a") {
+  return `/audio/ambient/${PLAYLIST[index].toLowerCase()}.${extension}`;
+}
+
+async function playWithFallback(
+  audio: HTMLAudioElement,
+  srcBase: string,
+  extensions: readonly string[] = AUDIO_EXTENSIONS,
+) {
+  for (const extension of extensions) {
+    audio.src = `${srcBase}.${extension}`;
+    audio.load();
+    try {
+      await audio.play();
+      return;
+    } catch {
+      continue;
+    }
+  }
+}
+
 export default function PomodoroFocus() {
-  const [scene, setScene] = useState<SceneKey>('dusk');
-  const [mode, setMode] = useState<'focus' | 'short' | 'long'>('focus');
+  const [scene, setScene] = useState<SceneKey>("dusk");
+  const [mode, setMode] = useState<"focus" | "short" | "long">("focus");
   const [durations, setDurations] = useState(DEFAULT_DURATIONS);
   const [timeLeft, setTimeLeft] = useState(DEFAULT_DURATIONS.focus * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -42,60 +115,97 @@ export default function PomodoroFocus() {
   const [tasksOpen, setTasksOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [tasks, setTasks] = useState([
-    { id: idCounter++, text: 'Plan the week', done: false, pomodoros: 0, estimate: 2 },
-    { id: idCounter++, text: 'Deep work block', done: false, pomodoros: 0, estimate: 4 },
+    {
+      id: idCounter++,
+      text: "Plan the week",
+      done: false,
+      pomodoros: 0,
+      estimate: 2,
+    },
+    {
+      id: idCounter++,
+      text: "Deep work block",
+      done: false,
+      pomodoros: 0,
+      estimate: 4,
+    },
   ]);
   const [activeTaskId, setActiveTaskId] = useState<number | null>(null);
-  const [taskInput, setTaskInput] = useState('');
+  const [taskInput, setTaskInput] = useState("");
+  const [sounds, setSounds] = useState<AmbientSoundState>({
+    rain: { on: false, vol: 0.15 },
+    ocean: { on: false, vol: 0.15 },
+    wind: { on: false, vol: 0.12 },
+    fire: { on: false, vol: 0.12 },
+  });
+
   // ---- music player ----
   const [nowPlaying, setNowPlaying] = useState<string | null>(null);
   const [playerOpen, setPlayerOpen] = useState(false);
   const [playerProgress, setPlayerProgress] = useState(0);
   const [playerDuration, setPlayerDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const playlist = ['Lofi', 'Jazz', 'Rain'];
   const [currentIdx, setCurrentIdx] = useState(0);
   const idxRef = useRef(0);
-  useEffect(() => { idxRef.current = currentIdx; });
-
-  const audioFile = (name: string) => {
-    const map: Record<string, string> = { jazz: 'rain', rain: 'jazz' };
-    return `/audio/ambient/${map[name.toLowerCase()] || name.toLowerCase()}.m4a`;
-  };
+  useEffect(() => {
+    idxRef.current = currentIdx;
+  });
 
   useEffect(() => {
     const a = new Audio();
-    a.addEventListener('timeupdate', () => setPlayerProgress(a.currentTime));
-    a.addEventListener('loadedmetadata', () => setPlayerDuration(a.duration));
-    a.addEventListener('ended', () => {
-      const next = (idxRef.current + 1) % playlist.length;
+    a.preload = "auto";
+    a.src = getTrackSrc(idxRef.current);
+    a.load();
+    a.addEventListener("timeupdate", () => setPlayerProgress(a.currentTime));
+    a.addEventListener("loadedmetadata", () => setPlayerDuration(a.duration));
+    a.addEventListener("ended", () => {
+      const next = (idxRef.current + 1) % PLAYLIST.length;
       setCurrentIdx(next);
-      setNowPlaying(playlist[next]);
-      a.src = audioFile(playlist[next]);
-      a.play().catch(console.error);
+      setNowPlaying(PLAYLIST[next]);
+      playWithFallback(
+        a,
+        `/audio/ambient/${PLAYLIST[next].toLowerCase()}`,
+      ).catch(console.error);
     });
     audioRef.current = a;
-    return () => { a.pause(); a.src = ''; };
+    return () => {
+      a.pause();
+      a.src = "";
+    };
   }, []);
 
   function togglePlayer() {
-    const a = audioRef.current; if (!a) return;
-    if (a.paused) { a.play().catch(console.error); setNowPlaying(playlist[currentIdx]); }
-    else { a.pause(); setNowPlaying(null); }
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) {
+      playWithFallback(
+        a,
+        `/audio/ambient/${PLAYLIST[idxRef.current].toLowerCase()}`,
+      ).catch(console.error);
+      setNowPlaying(PLAYLIST[idxRef.current]);
+    } else {
+      a.pause();
+      setNowPlaying(null);
+    }
   }
   function playTrack(i: number) {
-    const a = audioRef.current; if (!a) return;
-    if (i === currentIdx && !a.paused) { a.pause(); setNowPlaying(null); return; }
-    const url = audioFile(playlist[i]);
-    console.log('playing:', url);
+    const a = audioRef.current;
+    if (!a) return;
+    if (i === currentIdx && !a.paused) {
+      a.pause();
+      setNowPlaying(null);
+      return;
+    }
     setCurrentIdx(i);
-    setNowPlaying(playlist[i]);
-    a.src = url;
-    a.load();
+    setNowPlaying(PLAYLIST[i]);
     a.currentTime = 0;
-    a.play().then(() => console.log('play success')).catch(e => console.error('play failed:', e));
+    playWithFallback(a, `/audio/ambient/${PLAYLIST[i].toLowerCase()}`).catch(
+      (e) => console.error("play failed:", e),
+    );
   }
-  function nextTrack() { playTrack((currentIdx + 1) % playlist.length); }
+  function nextTrack() {
+    playTrack((currentIdx + 1) % PLAYLIST.length);
+  }
 
   // ---- refs to dodge stale closures inside the interval / audio callbacks
   const modeRef = useRef(mode);
@@ -103,6 +213,7 @@ export default function PomodoroFocus() {
   const durationsRef = useRef(durations);
   const autoStartRef = useRef(autoStart);
   const activeTaskIdRef = useRef(activeTaskId);
+  const soundsRef = useRef(sounds);
   const sceneColorRef = useRef(SCENES[scene].soft);
 
   useEffect(() => {
@@ -111,9 +222,19 @@ export default function PomodoroFocus() {
     durationsRef.current = durations;
     autoStartRef.current = autoStart;
     activeTaskIdRef.current = activeTaskId;
+    soundsRef.current = sounds;
     sceneColorRef.current = SCENES[scene].soft;
   });
 
+  const soundNodesRef = useRef<
+    | Record<AmbientSoundKey, { audio: HTMLAudioElement; key: AmbientSoundKey }>
+    | Partial<
+        Record<
+          AmbientSoundKey,
+          { audio: HTMLAudioElement; key: AmbientSoundKey }
+        >
+      >
+  >({});
   const audioCtxRef = useRef<AudioContext | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const emberRef = useRef<HTMLDivElement>(null);
@@ -132,7 +253,7 @@ export default function PomodoroFocus() {
       [523.25, 659.25, 783.99].forEach((freq, i) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'sine';
+        osc.type = "sine";
         osc.frequency.value = freq;
         gain.gain.setValueAtTime(0.06, now + i * 0.15);
         gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.8);
@@ -143,45 +264,92 @@ export default function PomodoroFocus() {
     } catch {}
   }
 
+  async function createAmbientNode(key: AmbientSoundKey) {
+    const audio = new Audio(`/audio/ambient/${key}.m4a`);
+    audio.loop = true;
+    audio.volume = 0;
+    const node = { audio, key };
+    soundNodesRef.current[key] = node;
+    await playWithFallback(audio, `/audio/ambient/${key}`);
+    return node;
+  }
+
+  async function toggleSound(key: AmbientSoundKey) {
+    const willBeOn = !soundsRef.current[key].on;
+    if (willBeOn) {
+      const node = await createAmbientNode(key);
+      node.audio.volume = soundsRef.current[key].vol;
+    } else {
+      const node = soundNodesRef.current[key];
+      if (node) {
+        node.audio.volume = 0;
+        node.audio.pause();
+      }
+    }
+    setSounds((s) => ({ ...s, [key]: { ...s[key], on: willBeOn } }));
+  }
+
+  function setVolume(key: AmbientSoundKey, vol: number) {
+    setSounds((s) => ({ ...s, [key]: { ...s[key], vol } }));
+    const node = soundNodesRef.current[key];
+    if (node && soundsRef.current[key].on) {
+      node.audio.volume = vol;
+    }
+  }
+
   useEffect(() => {
+    const nodes = soundNodesRef.current;
     return () => {
+      Object.values(nodes).forEach((n) => {
+        try {
+          n.audio.pause();
+          n.audio.src = "";
+        } catch {}
+      });
       if (audioCtxRef.current) audioCtxRef.current.close();
     };
   }, []);
 
   const currentScene = SCENES[scene as keyof typeof SCENES];
-  const ringColor = mode === 'focus' ? currentScene.accent : BREAK_ACCENT;
-  const activeTask = tasks.find(t => t.id === activeTaskId);
-  const cycleFilled = round > 0 && round % 4 === 0 && mode !== 'focus' ? 4 : round % 4;
-
-  useEffect(() => {
-    setTimeLeft(durations[mode] * 60);
-  }, [mode, durations]);
+  const ringColor = mode === "focus" ? currentScene.accent : BREAK_ACCENT;
+  const activeTask = tasks.find((t) => t.id === activeTaskId);
+  const cycleFilled =
+    round > 0 && round % 4 === 0 && mode !== "focus" ? 4 : round % 4;
 
   const completeSessionRef = React.useRef<() => void>(() => {});
 
   function completeSession() {
     playChime();
-    if (modeRef.current === 'focus') {
+    if (modeRef.current === "focus") {
       const nextRound = roundRef.current + 1;
       setRound(nextRound);
       if (activeTaskIdRef.current) {
-        setTasks(ts => ts.map(t => t.id === activeTaskIdRef.current ? { ...t, pomodoros: t.pomodoros + 1 } : t));
+        setTasks((ts) =>
+          ts.map((t) =>
+            t.id === activeTaskIdRef.current
+              ? { ...t, pomodoros: t.pomodoros + 1 }
+              : t,
+          ),
+        );
       }
-      const nextMode: 'short' | 'long' = nextRound % 4 === 0 ? 'long' : 'short';
+      const nextMode: "short" | "long" = nextRound % 4 === 0 ? "long" : "short";
       setMode(nextMode);
+      setTimeLeft(durationsRef.current[nextMode] * 60);
     } else {
-      setMode('focus');
+      setMode("focus");
+      setTimeLeft(durationsRef.current.focus * 60);
     }
     setIsRunning(autoStartRef.current);
   }
 
-  useEffect(() => { completeSessionRef.current = completeSession; });
+  useEffect(() => {
+    completeSessionRef.current = completeSession;
+  });
 
   useEffect(() => {
     if (!isRunning) return;
     const id = setInterval(() => {
-      setTimeLeft(t => {
+      setTimeLeft((t) => {
         if (t <= 1) {
           completeSessionRef.current();
           return 0;
@@ -192,14 +360,16 @@ export default function PomodoroFocus() {
     return () => clearInterval(id);
   }, [isRunning]);
 
-  function switchMode(next: 'focus' | 'short' | 'long') {
+  function switchMode(next: "focus" | "short" | "long") {
     setIsRunning(false);
     setMode(next);
   }
 
   async function handleStartPause() {
-    try { getAudioCtx().resume(); } catch {}
-    setIsRunning(r => !r);
+    try {
+      getAudioCtx().resume();
+    } catch {}
+    setIsRunning((r) => !r);
   }
 
   function handleReset() {
@@ -212,45 +382,61 @@ export default function PomodoroFocus() {
     const text = taskInput.trim();
     if (!text) return;
     const t = { id: idCounter++, text, done: false, pomodoros: 0, estimate: 1 };
-    setTasks(ts => [...ts, t]);
-    setTaskInput('');
+    setTasks((ts) => [...ts, t]);
+    setTaskInput("");
     if (!activeTaskId) setActiveTaskId(t.id);
   }
   function toggleTaskDone(id: number) {
-    setTasks(ts => ts.map(t => t.id === id ? { ...t, done: !t.done } : t));
+    setTasks((ts) =>
+      ts.map((t) => (t.id === id ? { ...t, done: !t.done } : t)),
+    );
   }
   function deleteTask(id: number) {
-    setTasks(ts => ts.filter(t => t.id !== id));
+    setTasks((ts) => ts.filter((t) => t.id !== id));
     if (activeTaskId === id) setActiveTaskId(null);
   }
   function adjustEstimate(id: number, delta: number) {
-    setTasks(ts => ts.map(t => t.id === id ? { ...t, estimate: Math.max(1, Math.min(12, t.estimate + delta)) } : t));
+    setTasks((ts) =>
+      ts.map((t) =>
+        t.id === id
+          ? { ...t, estimate: Math.max(1, Math.min(12, t.estimate + delta)) }
+          : t,
+      ),
+    );
   }
 
   // ---- fullscreen ----
   function enterFullscreen() {
-    try { emberRef.current?.requestFullscreen(); } catch {}
+    try {
+      emberRef.current?.requestFullscreen();
+    } catch {}
   }
 
   function exitFullscreen() {
-    try { if (document.fullscreenElement) document.exitFullscreen(); } catch {}
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+    } catch {}
   }
 
   useEffect(() => {
-    function onKey(e: KeyboardEvent) { if (e.key === 'Escape' && document.fullscreenElement) exitFullscreen(); }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && document.fullscreenElement) exitFullscreen();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   // ---- floating particle canvas ----
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
     let w = (canvas.width = canvas.offsetWidth);
     let h = (canvas.height = canvas.offsetHeight);
-    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const count = reduced ? 0 : 34;
     const particles = Array.from({ length: count }, () => ({
       x: Math.random() * w,
@@ -261,16 +447,23 @@ export default function PomodoroFocus() {
       alpha: 0.12 + Math.random() * 0.35,
     }));
     let raf: number;
-    function resize() { if (!canvas) return; w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight; }
-    window.addEventListener('resize', resize);
+    function resize() {
+      if (!canvas) return;
+      w = canvas.width = canvas.offsetWidth;
+      h = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener("resize", resize);
     function draw() {
       if (!ctx) return;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = sceneColorRef.current;
-      particles.forEach(p => {
+      particles.forEach((p) => {
         p.y -= p.speed;
         p.x += p.drift;
-        if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+        if (p.y < -10) {
+          p.y = h + 10;
+          p.x = Math.random() * w;
+        }
         ctx.globalAlpha = p.alpha;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -280,7 +473,10 @@ export default function PomodoroFocus() {
       raf = requestAnimationFrame(draw);
     }
     draw();
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
   // ---- progress ring geometry ----
@@ -294,13 +490,15 @@ export default function PomodoroFocus() {
     <div
       ref={emberRef}
       className="ember-root"
-      style={{
-        '--bg-from': currentScene.from,
-        '--bg-to': currentScene.to,
-        '--accent': currentScene.accent,
-        '--accent-soft': currentScene.soft,
-        '--ring': ringColor,
-      } as React.CSSProperties}
+      style={
+        {
+          "--bg-from": currentScene.from,
+          "--bg-to": currentScene.to,
+          "--accent": currentScene.accent,
+          "--accent-soft": currentScene.soft,
+          "--ring": ringColor,
+        } as React.CSSProperties
+      }
     >
       <style>{`
         .ember-root, .ember-root * { box-sizing: border-box; }
@@ -406,7 +604,7 @@ export default function PomodoroFocus() {
 
         .dock {
           position: relative; z-index: 3;
-          display: flex; align-items: center; justify-content: center;
+          display: flex; align-items: center; justify-content: center; gap: 10px;
           padding: 16px 20px 22px;
         }
         .dock-pill {
@@ -429,7 +627,7 @@ export default function PomodoroFocus() {
         .side-panel.right.open { transform: translateX(0); }
 
         .panel-title { font-family: var(--font-fraunces); font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
-        .panel-close { cursor: pointer; opacity: 0.6; display: flex; }
+        .panel-close { cursor: pointer; opacity: 0.6; font-size: 13px; }
         .panel-close:hover { opacity: 1; }
 
         .task-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
@@ -470,6 +668,16 @@ export default function PomodoroFocus() {
         .switch-knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 200ms ease; }
         .switch.on .switch-knob { transform: translateX(16px); }
 
+        .sound-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 46px; cursor: pointer; }
+        .sound-icon {
+          width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          font-size: 15px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: rgba(239,234,224,0.7);
+          transition: all 180ms ease;
+        }
+        .sound-icon.on { background: var(--accent); color: #1a1208; border-color: transparent; box-shadow: 0 0 12px var(--accent); }
+        .sound-label { font-size: 9.5px; color: rgba(239,234,224,0.5); letter-spacing: 0.03em; }
+        .sound-slider { width: 46px; margin-top: 2px; }
+
         .immersive-exit {
           position: absolute; top: 18px; left: 18px; z-index: 6;
           font-size: 11px; color: rgba(239,234,224,0.45); cursor: pointer;
@@ -479,7 +687,7 @@ export default function PomodoroFocus() {
 
         /* music player — glassmorphed */
         .music-player {
-          position: absolute; bottom: 80px; right: 20px; z-index: 10;
+          position: absolute; top: 60px; right: 20px; z-index: 10;
           width: 220px;
           background: rgba(15,20,18,0.55); backdrop-filter: blur(18px);
           border: 1px solid rgba(255,255,255,0.10);
@@ -495,7 +703,7 @@ export default function PomodoroFocus() {
         }
         .mp-head:hover { background: rgba(255,255,255,0.05); }
         .mp-now { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .mp-toggle { font-size: 10px; opacity: 0.5; cursor: pointer; }
+        .mp-toggle { font-size: 10px; opacity: 0.5; }
         .mp-body {
           padding: 0 14px 14px;
           animation: mpSlideIn 280ms cubic-bezier(.4,0,.2,1);
@@ -530,11 +738,11 @@ export default function PomodoroFocus() {
         .mp-track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         @media (max-width: 560px) {
-          .music-player { bottom: 72px; right: 10px; width: 180px; }
+          .music-player { top: 56px; right: 10px; width: 180px; }
           .mp-head { font-size: 11px; padding: 8px 10px; }
           .mp-body { padding: 0 10px 10px; }
-          .dock { padding: 12px 12px 16px; }
-          .dock-pill { gap: 6px; padding: 6px 8px; }
+        }
+        @media (max-width: 560px) {
           .side-panel { width: 84%; }
           .time-display { font-size: 42px; }
           .ring-wrap { width: 200px; height: 200px; }
@@ -549,6 +757,12 @@ export default function PomodoroFocus() {
           .btn-primary { padding: 11px 28px; font-size: 13px; }
           .btn-ghost { padding: 10px 16px; font-size: 12px; }
           .ember-center { padding: 16px 12px 8px; min-height: 440px; }
+          .dock { padding: 12px 12px 16px; }
+          .dock-pill { gap: 6px; padding: 6px 8px; overflow-x: auto; }
+          .sound-btn { width: 40px; }
+          .sound-icon { width: 32px; height: 32px; font-size: 13px; }
+          .sound-label { font-size: 8px; }
+          .sound-slider { width: 32px; }
           .round-dots { gap: 6px; margin-top: 16px; }
           .mode-caption { font-size: 10px; }
           .focus-task-caption { font-size: 11px; }
@@ -559,26 +773,40 @@ export default function PomodoroFocus() {
       <div className="ember-vignette" />
 
       <div className="ember-topbar">
-          <div className="ember-brand">Ember</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div className="scene-row">
-              {Object.entries(SCENES).map(([key, s]) => {
-                const sceneKey = key as SceneKey;
-                return (
+        <div className="ember-brand">Ember</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div className="scene-row">
+            {Object.entries(SCENES).map(([key, s]) => {
+              const sceneKey = key as SceneKey;
+              return (
                 <div
                   key={key}
-                  className={`scene-dot${scene === sceneKey ? ' selected' : ''}`}
+                  className={`scene-dot${scene === sceneKey ? " selected" : ""}`}
                   style={{ background: s.from }}
                   onClick={() => setScene(sceneKey)}
                   title={s.label}
                 />
               );
             })}
-            </div>
-            <div className="icon-btn" onClick={enterFullscreen} title="Fullscreen" aria-label="Enter fullscreen"><Maximize2 size={15} /></div>
-            <div className="icon-btn" onClick={() => setSettingsOpen(o => !o)} title="Settings" aria-label="Settings"><Settings size={15} /></div>
+          </div>
+          <div
+            className="icon-btn"
+            onClick={enterFullscreen}
+            title="Fullscreen"
+            aria-label="Enter fullscreen"
+          >
+            <Maximize2 size={15} />
+          </div>
+          <div
+            className="icon-btn"
+            onClick={() => setSettingsOpen((o) => !o)}
+            title="Settings"
+            aria-label="Settings"
+          >
+            <Settings size={15} />
           </div>
         </div>
+      </div>
 
       <div className="immersive-exit" onClick={exitFullscreen}>
         <X size={11} /> exit fullscreen (esc)
@@ -586,88 +814,180 @@ export default function PomodoroFocus() {
 
       <div className="ember-center">
         <div className="mode-tabs">
-            {Object.keys(MODE_LABEL).map(m => (
-              <button key={m} className={`mode-tab${mode === m ? ' active' : ''}`} onClick={() => switchMode(m as 'focus' | 'short' | 'long')}>
-                {MODE_LABEL[m as keyof typeof MODE_LABEL]}
-              </button>
-            ))}
-          </div>
+          {Object.keys(MODE_LABEL).map((m) => (
+            <button
+              key={m}
+              className={`mode-tab${mode === m ? " active" : ""}`}
+              onClick={() => switchMode(m as "focus" | "short" | "long")}
+            >
+              {MODE_LABEL[m as keyof typeof MODE_LABEL]}
+            </button>
+          ))}
+        </div>
 
-        <div className={`ring-wrap${isRunning ? ' breathing' : ''}`}>
-          <svg className="ring-svg" width="280" height="280" viewBox="0 0 280 280">
+        <div className={`ring-wrap${isRunning ? " breathing" : ""}`}>
+          <svg
+            className="ring-svg"
+            width="280"
+            height="280"
+            viewBox="0 0 280 280"
+          >
             <circle className="ring-track" cx="140" cy="140" r={R} />
             <circle
               className="ring-progress"
-              cx="140" cy="140" r={R}
+              cx="140"
+              cy="140"
+              r={R}
               strokeDasharray={C}
               strokeDashoffset={dashOffset}
             />
           </svg>
           <div className="ring-content">
             <div className="time-display">{formatTime(timeLeft)}</div>
-            <div className="mode-caption">{MODE_LABEL[mode]} {'\u00B7'} Round {cycleFilled === 0 ? 1 : cycleFilled} of 4</div>
-            {activeTask && <div className="focus-task-caption">{activeTask.text}</div>}
+            <div className="mode-caption">
+              {MODE_LABEL[mode]} {"\u00B7"} Round{" "}
+              {cycleFilled === 0 ? 1 : cycleFilled} of 4
+            </div>
+            {activeTask && (
+              <div className="focus-task-caption">{activeTask.text}</div>
+            )}
           </div>
         </div>
 
         <div className="controls-row">
-          <button className="btn-ghost" onClick={handleReset}>Reset</button>
-          <button className="btn-primary" onClick={handleStartPause}>{isRunning ? 'Pause' : 'Start'}</button>
+          <button className="btn-ghost" onClick={handleReset}>
+            Reset
+          </button>
+          <button className="btn-primary" onClick={handleStartPause}>
+            {isRunning ? "Pause" : "Start"}
+          </button>
         </div>
 
         <div className="round-dots">
-          {[0, 1, 2, 3].map(i => (
-            <div key={i} className={`round-dot${i < cycleFilled ? ' filled' : ''}`} />
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className={`round-dot${i < cycleFilled ? " filled" : ""}`}
+            />
           ))}
         </div>
       </div>
 
-        <div className="dock">
-          <div className="dock-pill">
-            <div className="icon-btn" onClick={() => setTasksOpen(o => !o)} title="Tasks" aria-label="Open tasks"><List size={15} /></div>
-          </div>
+      <div className="dock">
+        <div
+          className="icon-btn"
+          onClick={() => setTasksOpen((o) => !o)}
+          title="Tasks"
+          aria-label="Open tasks"
+        >
+          <List size={15} />
         </div>
-
-      {/* TASKS PANEL */}
-      <div className={`side-panel left${tasksOpen ? ' open' : ''}`}>
+        <div className="dock-pill">
+          {(Object.keys(sounds) as AmbientSoundKey[]).map((key) => (
+            <div key={key} className="sound-btn">
+              <button
+                type="button"
+                className={`sound-icon${sounds[key].on ? " on" : ""}`}
+                onClick={() => toggleSound(key)}
+                title={key.charAt(0).toUpperCase() + key.slice(1)}
+                aria-label={key.charAt(0).toUpperCase() + key.slice(1)}
+              >
+                {key === "rain" ? <CloudRain size={15} /> : null}
+                {key === "ocean" ? <Waves size={15} /> : null}
+                {key === "wind" ? <Wind size={15} /> : null}
+                {key === "fire" ? <Flame size={15} /> : null}
+              </button>
+              <div className="sound-label">
+                {key.charAt(0).toUpperCase() + key.slice(1)}
+              </div>
+              {sounds[key].on && (
+                <input
+                  className="sound-slider"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={sounds[key].vol}
+                  onChange={(e) => setVolume(key, parseFloat(e.target.value))}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className={`side-panel left${tasksOpen ? " open" : ""}`}>
         <div className="panel-title">
           Tasks
-          <span className="panel-close" onClick={() => setTasksOpen(false)}><X size={14} /></span>
+          <span className="panel-close" onClick={() => setTasksOpen(false)}>
+            close
+          </span>
         </div>
         <div className="task-input-row">
           <input
             className="task-input"
             placeholder="Add a task..."
             value={taskInput}
-            onChange={e => setTaskInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && addTask()}
+            onChange={(e) => setTaskInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addTask()}
           />
-          <button className="task-add-btn" onClick={addTask}>+</button>
+          <button className="task-add-btn" onClick={addTask}>
+            +
+          </button>
         </div>
         <div className="task-list">
-          {tasks.map(t => (
+          {tasks.map((t) => (
             <div
               key={t.id}
-              className={`task-item${activeTaskId === t.id ? ' active' : ''}`}
+              className={`task-item${activeTaskId === t.id ? " active" : ""}`}
               onClick={() => setActiveTaskId(t.id)}
             >
               <div
-                className={`task-check${t.done ? ' done' : ''}`}
-                onClick={e => { e.stopPropagation(); toggleTaskDone(t.id); }}
+                className={`task-check${t.done ? " done" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleTaskDone(t.id);
+                }}
               >
-                {t.done ? <Check size={10} /> : ''}
+                {t.done ? <Check size={10} /> : ""}
               </div>
-              <div className={`task-text${t.done ? ' done' : ''}`}>{t.text}</div>
-              <div className="task-est" onClick={e => e.stopPropagation()}>
-                <span onClick={() => adjustEstimate(t.id, -1)} style={{ cursor: 'pointer', marginRight: 4 }}><Minus size={10} /></span>
+              <div className={`task-text${t.done ? " done" : ""}`}>
+                {t.text}
+              </div>
+              <div className="task-est" onClick={(e) => e.stopPropagation()}>
+                <span
+                  onClick={() => adjustEstimate(t.id, -1)}
+                  style={{ cursor: "pointer", marginRight: 4 }}
+                >
+                  <Minus size={10} />
+                </span>
                 {t.pomodoros}/{t.estimate}
-                <span onClick={() => adjustEstimate(t.id, 1)} style={{ cursor: 'pointer', marginLeft: 4 }}><Plus size={10} /></span>
+                <span
+                  onClick={() => adjustEstimate(t.id, 1)}
+                  style={{ cursor: "pointer", marginLeft: 4 }}
+                >
+                  <Plus size={10} />
+                </span>
               </div>
-              <div className="task-del" onClick={e => { e.stopPropagation(); deleteTask(t.id); }}><X size={12} /></div>
+              <div
+                className="task-del"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteTask(t.id);
+                }}
+              >
+                <X size={12} />
+              </div>
             </div>
           ))}
           {tasks.length === 0 && (
-            <div style={{ fontSize: 12, color: 'rgba(239,234,224,0.4)', textAlign: 'center', marginTop: 20 }}>
+            <div
+              style={{
+                fontSize: 12,
+                color: "rgba(239,234,224,0.4)",
+                textAlign: "center",
+                marginTop: 20,
+              }}
+            >
               No tasks yet — add one above.
             </div>
           )}
@@ -675,23 +995,28 @@ export default function PomodoroFocus() {
       </div>
 
       {/* SETTINGS PANEL */}
-      <div className={`side-panel right${settingsOpen ? ' open' : ''}`}>
+      <div className={`side-panel right${settingsOpen ? " open" : ""}`}>
         <div className="panel-title">
           Settings
-          <span className="panel-close" onClick={() => setSettingsOpen(false)}><X size={14} /></span>
+          <span className="panel-close" onClick={() => setSettingsOpen(false)}>
+            close
+          </span>
         </div>
-        {(['focus', 'short', 'long'] as const).map(m => (
+        {(["focus", "short", "long"] as const).map((m) => (
           <div className="setting-row" key={m}>
             <div className="setting-label">
               <span>{MODE_LABEL[m]}</span>
               <span className="setting-value">{durations[m]} min</span>
             </div>
             <input
-              type="range" min="1" max={m === 'focus' ? 60 : 30} step="1"
+              type="range"
+              min="1"
+              max={m === "focus" ? 60 : 30}
+              step="1"
               value={durations[m]}
-              onChange={e => {
+              onChange={(e) => {
                 const val = parseInt(e.target.value, 10);
-                setDurations(d => ({ ...d, [m]: val }));
+                setDurations((d) => ({ ...d, [m]: val }));
                 if (mode === m && !isRunning) setTimeLeft(val * 60);
               }}
             />
@@ -699,40 +1024,79 @@ export default function PomodoroFocus() {
         ))}
         <div className="toggle-row">
           <span>Auto-start next session</span>
-          <div className={`switch${autoStart ? ' on' : ''}`} onClick={() => setAutoStart(a => !a)}>
+          <div
+            className={`switch${autoStart ? " on" : ""}`}
+            onClick={() => setAutoStart((a) => !a)}
+          >
             <div className="switch-knob" />
           </div>
         </div>
-        <div style={{ marginTop: 24, fontSize: 11, color: 'rgba(239,234,224,0.35)', lineHeight: 1.5 }}>
-          Every 4th focus session is followed by a long break. Ambient sounds are synthesized live — no audio files loaded.
+        <div
+          style={{
+            marginTop: 24,
+            fontSize: 11,
+            color: "rgba(239,234,224,0.35)",
+            lineHeight: 1.5,
+          }}
+        >
+          Every 4th focus session is followed by a long break. Ambient sounds
+          are synthesized live — no audio files loaded.
         </div>
       </div>
 
       {/* MUSIC PLAYER */}
       <div className="music-player">
-        <div className="mp-head" onClick={() => setPlayerOpen(o => !o)}>
+        <div className="mp-head" onClick={() => setPlayerOpen((o) => !o)}>
           <Music size={13} />
-          <span className="mp-now">{nowPlaying ?? 'Music'}</span>
-          <span className="mp-toggle">{playerOpen ? '▾' : '▸'}</span>
+          <span className="mp-now">{nowPlaying ?? "Music"}</span>
+          <span className="mp-toggle">{playerOpen ? "▾" : "▸"}</span>
         </div>
         {playerOpen && (
           <div className="mp-body">
             <div className="mp-progress-row">
               <span className="mp-time">{formatTime(playerProgress)}</span>
-              <input type="range" min="0" max={playerDuration || 1} step="0.1" value={playerProgress}
-                onChange={e => { if (audioRef.current) audioRef.current.currentTime = parseFloat(e.target.value); setPlayerProgress(parseFloat(e.target.value)); }} />
+              <input
+                type="range"
+                min="0"
+                max={playerDuration || 1}
+                step="0.1"
+                value={playerProgress}
+                onChange={(e) => {
+                  if (audioRef.current)
+                    audioRef.current.currentTime = parseFloat(e.target.value);
+                  setPlayerProgress(parseFloat(e.target.value));
+                }}
+              />
               <span className="mp-time">{formatTime(playerDuration)}</span>
             </div>
             <div className="mp-controls">
-              <SkipBack size={14} onClick={() => playTrack((currentIdx - 1 + playlist.length) % playlist.length)} className="mp-btn" />
-              <div className="mp-play" onClick={togglePlayer}>{nowPlaying ? <Pause size={16} /> : <Play size={16} />}</div>
+              <SkipBack
+                size={14}
+                onClick={() =>
+                  playTrack(
+                    (currentIdx - 1 + PLAYLIST.length) % PLAYLIST.length,
+                  )
+                }
+                className="mp-btn"
+              />
+              <div className="mp-play" onClick={togglePlayer}>
+                {nowPlaying ? <Pause size={16} /> : <Play size={16} />}
+              </div>
               <SkipForward size={14} onClick={nextTrack} className="mp-btn" />
             </div>
             <div className="mp-tracklist">
-              {playlist.map((name, i) => (
-                <div key={name} className={`mp-track${i === currentIdx && nowPlaying ? ' active' : ''}`} onClick={() => playTrack(i)}>
+              {PLAYLIST.map((name, i) => (
+                <div
+                  key={name}
+                  className={`mp-track${i === currentIdx && nowPlaying ? " active" : ""}`}
+                  onClick={() => playTrack(i)}
+                >
                   <span className="mp-track-name">{name}</span>
-                  {i === currentIdx && nowPlaying ? <Pause size={12} /> : <Play size={12} />}
+                  {i === currentIdx && nowPlaying ? (
+                    <Pause size={12} />
+                  ) : (
+                    <Play size={12} />
+                  )}
                 </div>
               ))}
             </div>

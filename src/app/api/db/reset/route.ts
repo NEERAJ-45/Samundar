@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { connectToDatabase } from '@/lib/db';
 import Profile from '@/lib/models/Profile';
 import LoginAttempt from '@/lib/models/LoginAttempt';
@@ -8,17 +9,18 @@ import '@/lib/models/Project';
 import '@/lib/models/Revision';
 import '@/lib/models/Note';
 import '@/lib/models/CustomTopic';
+import { getDbUri } from '../request';
 
 export async function POST(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get('userEmail') || request.headers.get('x-user-email') || '';
+    const session = await auth();
+    const userEmail = session?.user?.email || '';
 
     if (!userEmail) {
-      return NextResponse.json({ error: 'userEmail required' }, { status: 400 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const conn = await connectToDatabase();
+    const conn = await connectToDatabase(getDbUri(request));
     if (!conn) {
       return NextResponse.json({ dbConnected: false }, { status: 503 });
     }
