@@ -289,6 +289,11 @@
           "id": 1171,
           "title": "Remove Zero Sum Consecutive Nodes",
           "link": "https://leetcode.com/problems/remove-zero-sum-consecutive-nodes/"
+        },
+        {
+          "id": 457,
+          "title": "Circular Array Loop",
+          "link": "https://leetcode.com/problems/circular-array-loop/"
         }
       ],
       "hard": [
@@ -1409,6 +1414,11 @@
           "id": 1146,
           "title": "Snapshot Array",
           "link": "https://leetcode.com/problems/snapshot-array/"
+        },
+        {
+          "id": 81,
+          "title": "Search in Rotated Sorted Array II",
+          "link": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/"
         }
       ],
       "hard": [
@@ -2772,6 +2782,11 @@
           "id": 513,
           "title": "Find Bottom Left Tree Value",
           "link": "https://leetcode.com/problems/find-bottom-left-tree-value/"
+        },
+        {
+          "id": 993,
+          "title": "Cousins in Binary Tree",
+          "link": "https://leetcode.com/problems/cousins-in-binary-tree/"
         }
       ],
       "medium": [
@@ -3489,6 +3504,11 @@
           "id": 1631,
           "title": "Path With Minimum Effort",
           "link": "https://leetcode.com/problems/path-with-minimum-effort/"
+        },
+        {
+          "id": 752,
+          "title": "Open the Lock",
+          "link": "https://leetcode.com/problems/open-the-lock/"
         }
       ],
       "hard": [
@@ -4609,6 +4629,11 @@
           "id": 650,
           "title": "2 Keys Keyboard",
           "link": "https://leetcode.com/problems/2-keys-keyboard/"
+        },
+        {
+          "id": 91,
+          "title": "Decode Ways",
+          "link": "https://leetcode.com/problems/decode-ways/"
         }
       ],
       "hard": [
