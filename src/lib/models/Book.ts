@@ -12,6 +12,7 @@ export interface IBook {
   pdfData?: Buffer;
   hasPdf?: boolean;
   pdfPath?: string;
+  pdfUrl?: string;
 }
 
 const BookSchema = new Schema<IBook>(
@@ -30,6 +31,7 @@ const BookSchema = new Schema<IBook>(
     userEmail: { type: String, required: true, index: true },
     pdfData: { type: Buffer, default: null, select: false },
     hasPdf: { type: Boolean, default: false },
+    pdfUrl: { type: String, default: '' },
   },
   { timestamps: true }
 );

@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { BOOK_STATUSES, type BookStatus } from '@/hooks/use-books';
 import { BOOK_CATEGORIES } from '@/data/book-categories';
+import { useUploadThing } from '@/lib/uploadthing';
 
 const STATUS_LABELS: Record<BookStatus, string> = {
   TO_READ: 'To Read',
@@ -36,6 +37,7 @@ interface BookFormState {
   progress: number;
   rating: number;
   pdfFile?: File | null;
+  pdfUrl?: string;
 }
 
 interface BookFormDialogProps {
@@ -65,14 +67,30 @@ export function BookFormDialog({
 }: BookFormDialogProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = React.useState<string | null>(null);
+  const [fileError, setFileError] = React.useState<string | null>(null);
 
-  const set = (field: keyof BookFormState, value: string | number | File | null) => {
+  const { startUpload, isUploading } = useUploadThing('pdfUploader', {
+    onClientUploadComplete: (res) => {
+      if (res?.[0]) {
+        set('pdfUrl', res[0].url);
+        setFileName(res[0].name);
+      }
+    },
+    onUploadError: () => {
+      setFileError('Upload failed. Try again or use a smaller PDF.');
+    },
+  });
+
+  const uploading = isUploading;
+
+  const set = (field: keyof BookFormState, value: string | number | File | null | undefined) => {
     onFormChange({ ...form, [field]: value });
   };
 
   React.useEffect(() => {
     if (!open) {
       setFileName(null);
+      setFileError(null);
     }
   }, [open]);
 
@@ -129,8 +147,14 @@ export function BookFormDialog({
                 accept=".pdf,application/pdf"
                 onChange={(e) => {
                   const file = e.target.files?.[0] || null;
-                  set('pdfFile', file);
-                  setFileName(file?.name || null);
+                  setFileError(null);
+                  set('pdfFile', null);
+                  set('pdfUrl', undefined);
+                  setFileName(null);
+                  if (!file) return;
+
+                  // Upload via Uploadthing (bypasses Vercel body limit)
+                  startUpload([file]);
                 }}
                 className="hidden"
               />
@@ -138,10 +162,11 @@ export function BookFormDialog({
                 type="button"
                 variant="outline"
                 size="sm"
+                disabled={uploading}
                 onClick={() => fileInputRef.current?.click()}
                 className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-zinc-100"
               >
-                {fileName ? 'Change PDF' : 'Choose PDF'}
+                {uploading ? 'Uploading...' : fileName ? 'Change PDF' : 'Choose PDF'}
               </Button>
               {fileName && (
                 <span className="text-xs text-zinc-400 truncate max-w-[200px]">
@@ -149,6 +174,9 @@ export function BookFormDialog({
                 </span>
               )}
             </div>
+            {fileError && (
+              <p className="text-xs text-red-400 mt-1">{fileError}</p>
+            )}
           </Field>
           <Field label="Status">
             <Select value={form.status} onValueChange={(v) => set('status', v as BookStatus)}>
@@ -193,8 +221,8 @@ export function BookFormDialog({
           <DialogClose asChild>
             <Button variant="outline" size="sm">Cancel</Button>
           </DialogClose>
-          <Button size="sm" onClick={onSave} disabled={!isValid || isPending}>
-            {isPending ? (mode === 'add' ? 'Adding...' : 'Saving...') : (mode === 'add' ? 'Add Book' : 'Save')}
+          <Button size="sm" onClick={onSave} disabled={!isValid || isPending || uploading}>
+            {uploading ? 'Uploading PDF...' : isPending ? (mode === 'add' ? 'Adding...' : 'Saving...') : (mode === 'add' ? 'Add Book' : 'Save')}
           </Button>
         </DialogFooter>
       </DialogContent>

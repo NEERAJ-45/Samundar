@@ -14,9 +14,18 @@ export async function GET(
       return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
     }
 
-    const book = await Book.findOne({ id }).select('+pdfData title').lean();
-    if (!book || !book.pdfData) {
-      return NextResponse.json({ error: 'Book or PDF not found' }, { status: 404 });
+    const book = await Book.findOne({ id }).select('+pdfData title pdfUrl').lean();
+    if (!book) {
+      return NextResponse.json({ error: 'Book not found' }, { status: 404 });
+    }
+
+    // If uploaded via Uploadthing, redirect to the hosted URL
+    if (book.pdfUrl) {
+      return NextResponse.redirect(book.pdfUrl);
+    }
+
+    if (!book.pdfData) {
+      return NextResponse.json({ error: 'PDF not found' }, { status: 404 });
     }
 
     const pdfBytes = new Uint8Array(book.pdfData.buffer);

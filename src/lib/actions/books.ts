@@ -16,6 +16,7 @@ export async function createBook(formData: FormData) {
     const progress = parseInt(formData.get('progress') as string || '0', 10);
     const rating = parseInt(formData.get('rating') as string || '0', 10);
     const pdfFile = formData.get('pdf') as File | null;
+    const pdfUrl = formData.get('pdfUrl') as string | null;
 
     if (!userEmail || !title?.trim()) {
       return { error: 'userEmail and title required' };
@@ -43,7 +44,8 @@ export async function createBook(formData: FormData) {
       progress,
       rating,
       pdfData: pdfBuffer || undefined,
-      hasPdf: !!pdfBuffer,
+      hasPdf: !!(pdfBuffer || pdfUrl),
+      pdfUrl: pdfUrl || '',
       userEmail,
     });
 

@@ -16,6 +16,7 @@ export interface BookData {
   userEmail?: string;
   hasPdf?: boolean;
   pdfPath?: string;
+  pdfUrl?: string;
 }
 
 export type BookStatus = BookData['status'];

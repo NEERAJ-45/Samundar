@@ -53,6 +53,7 @@ const emptyFormState: BookFormState = {
   progress: 0,
   rating: 0,
   pdfFile: null,
+  pdfUrl: undefined,
 };
 
 export default function ReadingPage() {
@@ -111,7 +112,9 @@ export default function ReadingPage() {
       formData.append('status', form.status);
       formData.append('progress', String(form.progress));
       formData.append('rating', String(form.rating));
-      if (form.pdfFile) {
+      if (form.pdfUrl) {
+        formData.append('pdfUrl', form.pdfUrl);
+      } else if (form.pdfFile) {
         formData.append('pdf', form.pdfFile);
       }
 

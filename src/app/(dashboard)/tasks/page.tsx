@@ -8,6 +8,7 @@ import {
   Pencil,
   Check,
   X,
+  Copy,
   ListChecks,
   Circle,
   CheckCircle2,
@@ -325,6 +326,25 @@ function renameEntry(entries: SubtaskEntry[], id: string, title: string): Subtas
   return updateEntry(entries, id, e => ({ ...e, title }));
 }
 
+function duplicateEntry(entries: SubtaskEntry[], id: string): SubtaskEntry[] {
+  const result: SubtaskEntry[] = [];
+  for (const e of entries) {
+    result.push(e);
+    if (e.id === id) {
+      const copy = JSON.parse(JSON.stringify(e)) as SubtaskEntry;
+      function reassignIds(entry: SubtaskEntry) {
+        entry.id = `se-${Date.now().toString(36)}-${globalIdCounter++}`;
+        entry.entries.forEach(reassignIds);
+      }
+      reassignIds(copy);
+      result.push(copy);
+    } else if (e.entries.length > 0) {
+      result[result.length - 1] = { ...e, entries: duplicateEntry(e.entries, id) };
+    }
+  }
+  return result;
+}
+
 function toggleChecked(entries: SubtaskEntry[], id: string): SubtaskEntry[] {
   return updateEntry(entries, id, e => ({ ...e, checked: !e.checked }));
 }
@@ -382,6 +402,9 @@ function RenderEntries({ entries, taskId, depth, expandedEntry, setExpandedEntry
               {!isLeaf && total > 0 && (
                 <span className="text-[10px] text-zinc-600 shrink-0">{done}/{total}</span>
               )}
+              <button onClick={() => update(es => duplicateEntry(es, e.id))} className="p-0.5 rounded opacity-0 group-hover:opacity-100 hover:bg-zinc-800 text-zinc-600 hover:text-zinc-300 transition-all shrink-0">
+                <Copy className="h-3 w-3" />
+              </button>
               <button onClick={() => update(es => deleteEntry(es, e.id))} className="p-0.5 rounded opacity-0 group-hover:opacity-100 hover:bg-zinc-800 text-zinc-600 hover:text-red-400 transition-all shrink-0">
                 <X className="h-3 w-3" />
               </button>

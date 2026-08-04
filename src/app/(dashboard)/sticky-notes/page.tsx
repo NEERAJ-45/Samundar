@@ -53,6 +53,16 @@ const colorStyles = {
 export default function StickyNotesPage() {
   const mounted = useMounted();
   const [stickyNotes, setStickyNotes] = useState<StickyNoteItem[]>([]);
+  const [expandedNotes, setExpandedNotes] = useState<Set<string>>(new Set());
+
+  const toggleExpand = (id: string) => {
+    setExpandedNotes((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const { data: notesData } = useNotesQuery('command-center-sticky');
   const saveNote = useSaveNote();
@@ -126,8 +136,7 @@ export default function StickyNotesPage() {
                 <span className="truncate">Engineering Sticky Notes Wall</span>
               </h1>
               <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-                Jot down task lists, API routes, SQL tables or reminders.
-              </p>
+Note               </p>
             </div>
             <button
               onClick={addStickyNote}
@@ -175,60 +184,72 @@ export default function StickyNotesPage() {
                       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                       dragElastic={0.06}
                       whileDrag={{ scale: 1.05, rotate: 0, zIndex: 10, boxShadow: "0px 15px 30px rgba(0,0,0,0.5)" }}
+                      onClick={() => toggleExpand(note.id)}
                       className={cn(
-                        "flex flex-col justify-between p-5 min-h-[220px] shadow-lg relative select-none overflow-hidden rounded-none border-t-[10px] transition-all cursor-grab active:cursor-grabbing",
+                        "flex flex-col justify-between p-5 shadow-lg relative select-none overflow-hidden rounded-none border-t-[10px] transition-all cursor-grab active:cursor-grabbing",
                         style.bg,
                         style.border,
-                        tiltClass
+                        tiltClass,
+                        expandedNotes.has(note.id) ? "min-h-[280px]" : "min-h-[180px]"
                       )}
                     >
                       {/* Paper shadow fold accent */}
                       <div className="absolute bottom-0 right-0 w-6 h-6 bg-black/5 rounded-tl-lg shadow-inner border-l border-t border-black/10 pointer-events-none" />
-                      
-                      {/* Content text-area */}
-                      <textarea
-                        value={note.text}
-                        onChange={(e) => handleTextChange(note.id, e.target.value, note.color)}
-                        placeholder="Write something down..."
-                        className={cn(
-                          "w-full min-h-[130px] bg-transparent border-none p-0 text-xl placeholder:text-zinc-500/60 outline-none focus:outline-none resize-none font-handwritten leading-relaxed select-text cursor-text",
-                          style.input
-                        )}
-                      />
 
-                      {/* Sticky Footer controls */}
-                      <div className="flex items-center justify-between border-t border-black/5 pt-3 mt-2">
-                        {/* Interactive Color Switcher Dot Palette */}
-                        <div className="flex items-center gap-1.5">
-                          {(['yellow', 'blue', 'green', 'pink'] as const).map((colorOpt) => (
+                      {expandedNotes.has(note.id) ? (
+                        <>
+                          {/* Expanded: full textarea for editing */}
+                          <textarea
+                            value={note.text}
+                            onChange={(e) => handleTextChange(note.id, e.target.value, note.color)}
+                            onClick={(e) => e.stopPropagation()}
+                            placeholder="Write something down..."
+                            className={cn(
+                              "w-full min-h-[160px] bg-transparent border-none p-0 text-xl placeholder:text-zinc-500/60 outline-none focus:outline-none resize-none font-handwritten leading-relaxed select-text cursor-text",
+                              style.input
+                            )}
+                            autoFocus
+                          />
+                          {/* Sticky Footer controls */}
+                          <div className="flex items-center justify-between border-t border-black/5 pt-3 mt-2">
+                            <div className="flex items-center gap-1.5">
+                              {(['yellow', 'blue', 'green', 'pink'] as const).map((colorOpt) => (
+                                <button
+                                  key={colorOpt}
+                                  onClick={(e) => { e.stopPropagation(); handleColorChange(note.id, note.text, colorOpt); }}
+                                  className={cn(
+                                    "w-3 h-3 rounded-full border border-black/10 transition-transform hover:scale-125 cursor-pointer",
+                                    colorOpt === 'yellow' && 'bg-amber-400',
+                                    colorOpt === 'blue' && 'bg-sky-400',
+                                    colorOpt === 'green' && 'bg-emerald-400',
+                                    colorOpt === 'pink' && 'bg-pink-400',
+                                    note.color === colorOpt && 'scale-125 ring-1 ring-black/40'
+                                  )}
+                                  title={`Switch to ${colorOpt}`}
+                                />
+                              ))}
+                            </div>
                             <button
-                              key={colorOpt}
-                              onClick={() => handleColorChange(note.id, note.text, colorOpt)}
-                              className={cn(
-                                "w-3 h-3 rounded-full border border-black/10 transition-transform hover:scale-125 cursor-pointer",
-                                colorOpt === 'yellow' && 'bg-amber-400',
-                                colorOpt === 'blue' && 'bg-sky-400',
-                                colorOpt === 'green' && 'bg-emerald-400',
-                                colorOpt === 'pink' && 'bg-pink-400',
-                                note.color === colorOpt && 'scale-125 ring-1 ring-black/40'
-                              )}
-                              title={`Switch to ${colorOpt}`}
-                            />
-                          ))}
+                              onClick={(e) => { e.stopPropagation(); deleteStickyNote(note.id); }}
+                              className={cn("p-1 rounded transition-colors cursor-pointer", style.btn)}
+                              title="Remove note"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        /* Collapsed: truncated preview */
+                        <div className="flex flex-col flex-1 pt-1 min-h-0">
+                          <p className={cn(
+                            "text-xl font-handwritten leading-relaxed line-clamp-4",
+                            style.input,
+                            !note.text && "text-zinc-500/60"
+                          )}>
+                            {note.text || "Write something down..."}
+                          </p>
                         </div>
-
-                        {/* Trash Delete Action */}
-                        <button
-                          onClick={() => deleteStickyNote(note.id)}
-                          className={cn(
-                            "p-1 rounded transition-colors cursor-pointer",
-                            style.btn
-                          )}
-                          title="Remove note"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
+                      )}
                     </motion.div>
                   );
                 })}

@@ -30,6 +30,7 @@ import {
   Timer,
   ChevronDown,
   Code2,
+  NotebookPen,
 } from "lucide-react";
 
 interface NavItem {
@@ -71,6 +72,7 @@ const navGroups: NavGroup[] = [
       { label: "Activity Log", href: "/history", icon: CalendarDays },
       { label: "Task Manager", href: "/tasks", icon: ListChecks },
       { label: "Resume", href: "/plan/resume", icon: FileText },
+      { label: "Study Plan", href: "/plan/study-plan", icon: NotebookPen },
     ],
   },
   {

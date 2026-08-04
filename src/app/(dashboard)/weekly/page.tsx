@@ -2,10 +2,12 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { CalendarDays, Moon, Brain, BookOpen, Sparkles, BookMarked } from 'lucide-react';
+import { CalendarDays, Moon, Brain, BookOpen, Sparkles, BookMarked, Pencil, Check, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { SCHEDULES, type ScheduleId } from '@/data/schedules';
+import { SCHEDULES, type ScheduleId, type DaySchedule, type Slot } from '@/data/schedules';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const SCHEDULE_TABS: { id: ScheduleId; label: string; color: string }[] = [
   { id: 'steady', label: 'Steady', color: 'text-blue-400 border-blue-500/30 bg-blue-500/10' },
@@ -27,27 +29,59 @@ const SLOT_COLORS: Record<string, string> = {
   'Night – CS Fundamentals': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
 };
 
+function deepCloneDays(days: DaySchedule[]): DaySchedule[] {
+  return days.map(d => ({ ...d, slots: d.slots.map(s => ({ ...s })) }));
+}
+
 export default function WeeklyPage() {
   const [scheduleId, setScheduleId] = React.useState<ScheduleId>('steady');
-  const [customSchedule] = React.useState<typeof SCHEDULES.custom | null>(() => {
+  const [editing, setEditing] = React.useState(false);
+  const [editDays, setEditDays] = React.useState<DaySchedule[] | null>(null);
+
+  const [customSchedule, setCustomSchedule] = React.useState<typeof SCHEDULES.custom | null>(() => {
     try {
       const saved = localStorage.getItem('weekly-custom-schedule');
       if (saved) return JSON.parse(saved);
     } catch {}
     return null;
   });
+
   const today = new Date();
   const dateStr = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const dayIndex = today.getDay();
   const todayLabel = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dayIndex];
   const schedule = scheduleId === 'custom' && customSchedule ? customSchedule : SCHEDULES[scheduleId];
-  const days = schedule?.days ?? [];
+  const days = editing && editDays ? editDays : (schedule?.days ?? []);
 
-  React.useEffect(() => {
-    if (scheduleId === 'custom' && customSchedule) {
-      localStorage.setItem('weekly-custom-schedule', JSON.stringify(customSchedule));
-    }
-  }, [customSchedule, scheduleId]);
+  function startEdit() {
+    const src = scheduleId === 'custom' && customSchedule ? customSchedule : SCHEDULES[scheduleId];
+    setEditDays(deepCloneDays(src.days));
+    setEditing(true);
+    setScheduleId('custom');
+  }
+
+  function cancelEdit() {
+    setEditing(false);
+    setEditDays(null);
+    if (!customSchedule) setScheduleId('steady');
+  }
+
+  function saveEdit() {
+    if (!editDays) return;
+    const updated = { ...SCHEDULES.custom, days: editDays };
+    setCustomSchedule(updated);
+    localStorage.setItem('weekly-custom-schedule', JSON.stringify(updated));
+    setEditing(false);
+    setEditDays(null);
+  }
+
+  function updateTopic(dayIdx: number, slotPeriod: string, value: string) {
+    if (!editDays) return;
+    setEditDays(prev => prev!.map((d, i) => {
+      if (i !== dayIdx) return d;
+      return { ...d, slots: d.slots.map(s => s.period === slotPeriod ? { ...s, topic: value } : s) };
+    }));
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -64,13 +98,29 @@ export default function WeeklyPage() {
           <div className="text-xs text-zinc-600 tabular-nums">
             Week of {dateStr}
           </div>
-          <Link
-            href="/roadmaps"
-            className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 hover:border-amber-500/30 transition-all font-medium"
-          >
-            <BookMarked className="h-3.5 w-3.5" />
-            Study Resources
-          </Link>
+          <div className="flex items-center gap-2">
+            {editing ? (
+              <>
+                <Button size="sm" variant="ghost" onClick={cancelEdit}>
+                  <X className="h-4 w-4 mr-1" /> Cancel
+                </Button>
+                <Button size="sm" onClick={saveEdit}>
+                  <Check className="h-4 w-4 mr-1" /> Save
+                </Button>
+              </>
+            ) : (
+              <Button size="sm" variant="outline" onClick={startEdit}>
+                <Pencil className="h-4 w-4 mr-1" /> Edit
+              </Button>
+            )}
+            <Link
+              href="/roadmaps"
+              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 hover:border-amber-500/30 transition-all font-medium"
+            >
+              <BookMarked className="h-3.5 w-3.5" />
+              Study Resources
+            </Link>
+          </div>
         </div>
 
         {/* Schedule Tabs */}
@@ -80,7 +130,7 @@ export default function WeeklyPage() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setScheduleId(tab.id)}
+                onClick={() => { if (!editing) setScheduleId(tab.id); }}
                 className={cn(
                   'px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer',
                   isActive
@@ -96,7 +146,7 @@ export default function WeeklyPage() {
 
         {/* Weekly Calendar Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3">
-          {days.map((day) => {
+          {days.map((day, dayIdx) => {
             const isToday = day.day === todayLabel;
             return (
               <Card
@@ -136,10 +186,16 @@ export default function WeeklyPage() {
                             {slot.period}
                           </span>
                         </div>
-                        <p className="text-xs font-medium leading-snug">
-                          {slot.topic}
-                        </p>
-                        {slot.description && (
+                        {editing ? (
+                          <input
+                            value={slot.topic}
+                            onChange={e => updateTopic(dayIdx, slot.period, e.target.value)}
+                            className="w-full bg-zinc-800/60 border border-zinc-700 rounded px-1.5 py-0.5 text-xs text-zinc-200 outline-none focus:border-accent"
+                          />
+                        ) : (
+                          <p className="text-xs font-medium leading-snug">{slot.topic}</p>
+                        )}
+                        {slot.description && !editing && (
                           <p className="text-[10px] opacity-60">{slot.description}</p>
                         )}
                       </div>
@@ -170,9 +226,9 @@ export default function WeeklyPage() {
                 </tr>
               </thead>
               <tbody>
-                {days.map((day) => {
-                  const dayIdx = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(day.day);
-                  const isToday = dayIdx === dayIndex;
+                {days.map((day, dayIdx) => {
+                  const dayIdxOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(day.day);
+                  const isToday = dayIdxOfWeek === dayIndex;
                   return (
                     <tr
                       key={day.day}
@@ -191,10 +247,18 @@ export default function WeeklyPage() {
                         const Icon = SLOT_ICONS[slot.period] || Brain;
                         return (
                           <td key={slot.period} className="px-4 py-3">
-                            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-                              <Icon className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
-                              <span className="text-sm text-zinc-300">{slot.topic}</span>
-                            </div>
+                            {editing ? (
+                              <input
+                                value={slot.topic}
+                                onChange={e => updateTopic(dayIdx, slot.period, e.target.value)}
+                                className="w-full bg-zinc-800/60 border border-zinc-700 rounded px-1.5 py-0.5 text-sm text-zinc-300 outline-none focus:border-accent"
+                              />
+                            ) : (
+                              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                                <Icon className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
+                                <span className="text-sm text-zinc-300">{slot.topic}</span>
+                              </div>
+                            )}
                           </td>
                         );
                       })}
