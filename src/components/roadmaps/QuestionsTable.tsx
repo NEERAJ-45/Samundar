@@ -26,6 +26,7 @@ import {
   ExternalLink,
   Download,
   Clipboard,
+  Bookmark,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NotesDialog } from '@/components/shared/NotesDialog';
@@ -90,12 +91,14 @@ export default function QuestionsTable({
     completedMap,
     notesMap,
     customItems,
+    bookmarkMap,
     toggleCompleted,
     updateNote,
     handleAddItem,
     handleDeleteItem,
     resetAll,
     updateCompletionDate,
+    toggleBookmark,
   } = useTableSync({
     storagePrefix,
     allItems: allBaseItems,
@@ -103,13 +106,15 @@ export default function QuestionsTable({
   });
 
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [bookmarkedOnly, setBookmarkedOnly] = useState(false);
 
   const filteredQuestions = useMemo(() => {
     const all = [...questions, ...customItems] as QuestionItem[];
     return all.filter((q) =>
-      q.title.toLowerCase().includes(search.toLowerCase())
+      q.title.toLowerCase().includes(search.toLowerCase()) &&
+      (!bookmarkedOnly || bookmarkMap[q.id])
     );
-  }, [questions, customItems, search]);
+  }, [questions, customItems, search, bookmarkedOnly, bookmarkMap]);
 
   const columnHelper = createColumnHelper<QuestionItem>();
 
@@ -148,6 +153,32 @@ export default function QuestionsTable({
           },
           size: 36,
           minSize: 32,
+        }),
+        columnHelper.display({
+          id: 'bookmark',
+          header: 'Bookmark',
+          cell: (info) => {
+            const id = info.row.original.id;
+            const isBookmarked = !!bookmarkMap[id];
+            return (
+              <button
+                onClick={() => toggleBookmark(id)}
+                className="inline-flex items-center justify-center rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+                title={isBookmarked ? 'Remove bookmark' : 'Bookmark this topic'}
+              >
+                <Bookmark
+                  size={16}
+                  strokeWidth={1.5}
+                  className={cn(
+                    'transition-colors',
+                    isBookmarked && 'fill-amber-400 text-amber-400'
+                  )}
+                />
+              </button>
+            );
+          },
+          size: 44,
+          minSize: 36,
         }),
         columnHelper.accessor('title', {
           header: 'Question/Topic',
@@ -260,7 +291,7 @@ export default function QuestionsTable({
       );
       return cols;
     },
-    [columnHelper, completedMap, toggleCompleted, notesMap, updateNote, handleDeleteItem, pagination.pageIndex, pagination.pageSize, updateCompletionDate]
+    [columnHelper, completedMap, toggleCompleted, notesMap, updateNote, handleDeleteItem, pagination.pageIndex, pagination.pageSize, updateCompletionDate, bookmarkMap, toggleBookmark]
   );
 
   const table = useReactTable({
@@ -368,6 +399,19 @@ export default function QuestionsTable({
             />
           </div>
           <AddItemDialog onAdd={handleAddItem} />
+          <button
+            onClick={() => setBookmarkedOnly((v) => !v)}
+            className={cn(
+              'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors shrink-0',
+              bookmarkedOnly
+                ? 'border-amber-500/50 text-amber-400 bg-amber-500/15'
+                : 'border-border text-muted-foreground bg-muted/30 hover:bg-muted/60 hover:text-foreground'
+            )}
+            title="Show only bookmarked topics"
+          >
+            <Bookmark size={13} className={cn(bookmarkedOnly && 'fill-amber-400')} />
+            Bookmarked
+          </button>
           <button
             onClick={() => setShowResetConfirm(true)}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-red-800/40 text-red-400 bg-red-950/30 hover:bg-red-950/50 hover:border-red-700/60 transition-colors shrink-0"

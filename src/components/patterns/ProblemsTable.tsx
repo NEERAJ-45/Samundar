@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import {
-  ArrowLeft, ExternalLink, CheckCircle, Circle, Trash2,
+  ArrowLeft, ExternalLink, CheckCircle, Circle, Trash2, Bookmark,
   ChevronLeft, ChevronRight,
   ChevronsLeft, ChevronsRight, Loader2, AlertCircle
 } from "lucide-react";
@@ -62,6 +62,7 @@ export function ProblemsTable({
 
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [bookmarkedOnly, setBookmarkedOnly] = useState(false);
 
   const {
     data: apiData,
@@ -95,11 +96,13 @@ export function ProblemsTable({
     completedMap,
     notesMap,
     customItems,
+    bookmarkMap,
     toggleCompleted,
     updateNote,
     handleAddItem,
     handleDeleteItem,
     updateCompletionDate,
+    toggleBookmark,
   } = useTableSync({
     storagePrefix: patternName,
     completedStorageKey: `completed-${patternName}`,
@@ -166,6 +169,24 @@ export function ProblemsTable({
           );
         },
         size: 36, minSize: 32,
+      }),
+      columnHelper.display({
+        id: "bookmark",
+        header: "Bookmark",
+        cell: (info) => {
+          const id = info.row.original.id;
+          const isBookmarked = !!bookmarkMap[id];
+          return (
+            <button onClick={() => toggleBookmark(id)}
+              className="inline-flex items-center justify-center rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+              title={isBookmarked ? "Remove bookmark" : "Bookmark this problem"}
+            >
+              <Bookmark size={16} strokeWidth={1.5}
+                className={cn("transition-colors", isBookmarked && "fill-amber-400 text-amber-400")} />
+            </button>
+          );
+        },
+        size: 44, minSize: 36,
       }),
       columnHelper.accessor("title", {
         header: "Title",
@@ -264,10 +285,12 @@ export function ProblemsTable({
         size: 40, minSize: 36,
       }),
     ],
-    [columnHelper, completedMap, toggleCompleted, notesMap, updateNote, handleDeleteItem, isServerPaginated, pagination.pageIndex, pagination.pageSize, displayName, diffOrder, updateCompletionDate]
+    [columnHelper, completedMap, toggleCompleted, notesMap, updateNote, handleDeleteItem, isServerPaginated, pagination.pageIndex, pagination.pageSize, displayName, diffOrder, updateCompletionDate, bookmarkMap, toggleBookmark]
   );
 
-  const tableDisplayData = allProblems;
+  const tableDisplayData = bookmarkedOnly
+    ? allProblems.filter((p) => bookmarkMap[p.id])
+    : allProblems;
   const table = useReactTable({
     data: tableDisplayData,
     columns,
@@ -307,6 +330,18 @@ export function ProblemsTable({
           {isFetching && <Loader2 className="inline ml-1 h-3 w-3 animate-spin" />}
         </span>
         {!isServerPaginated && <AddItemDialog onAdd={handleAddItem} itemLabel="Problem" titlePlaceholder="e.g. Merge K Sorted Lists" linkPlaceholder="e.g. https://leetcode.com/problems/..." />}
+        <button onClick={() => setBookmarkedOnly((v) => !v)}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium border transition-colors shrink-0",
+            bookmarkedOnly
+              ? "border-amber-500/50 bg-amber-500/15 text-amber-400"
+              : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+          )}
+          title="Show only bookmarked problems"
+        >
+          <Bookmark size={13} className={cn(bookmarkedOnly && "fill-amber-400")} />
+          Bookmarked
+        </button>
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border relative">

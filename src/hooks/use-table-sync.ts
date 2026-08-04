@@ -6,6 +6,7 @@ import { useProfile } from '@/components/providers/ProfileProvider';
 
 export type CompletedMap = Record<string, string>;
 export type NotesMap = Record<string, string>;
+export type BookmarkMap = Record<string, boolean>;
 
 export interface ItemWithId {
   id: number;
@@ -34,6 +35,7 @@ export interface UseTableSyncOptions {
   completedStorageKey?: string;
   notesStorageKey?: string;
   customStorageKey?: string;
+  bookmarkStorageKey?: string;
   defaultCompletedIds?: number[];
   allItems?: ItemWithId[];
 }
@@ -43,6 +45,7 @@ export function useTableSync({
   completedStorageKey: customCompletedKey,
   notesStorageKey: customNotesKey,
   customStorageKey: customCustomKey,
+  bookmarkStorageKey: customBookmarkKey,
   defaultCompletedIds = [],
   allItems = [],
 }: UseTableSyncOptions) {
@@ -55,10 +58,12 @@ export function useTableSync({
   const compKey = customCompletedKey ?? `${storagePrefix}-completed`;
   const noteKey = customNotesKey ?? `${storagePrefix}-notes`;
   const custKey = customCustomKey ?? `${storagePrefix}-custom-questions`;
+  const bookmarkKey = customBookmarkKey ?? `${storagePrefix}-bookmarks`;
 
   const [completedMap, setCompletedMap] = useState<CompletedMap>({});
   const [notesMap, setNotesMap] = useState<NotesMap>({});
   const [customItems, setCustomItems] = useState<ItemWithId[]>([]);
+  const [bookmarkMap, setBookmarkMap] = useState<BookmarkMap>({});
   const [dbConnected, setDbConnected] = useState(false);
   const synced = useRef(false);
 
@@ -92,10 +97,15 @@ export function useTableSync({
     saveLocalData(custKey, items);
   }, [custKey]);
 
+  const persistBookmarks = useCallback((map: BookmarkMap) => {
+    saveLocalData(bookmarkKey, map);
+  }, [bookmarkKey]);
+
   useEffect(() => {
     if (synced.current) return;
     const initialCompleted = loadLocalData<CompletedMap>(compKey, {});
     const initialNotes = loadLocalData<NotesMap>(noteKey, {});
+    const initialBookmarks = loadLocalData<BookmarkMap>(bookmarkKey, {});
     let initialCustom: ItemWithId[] = [];
     if (typeof window !== 'undefined') {
       const raw = localStorage.getItem(custKey);
@@ -115,6 +125,7 @@ export function useTableSync({
     setCompletedMap(initialCompleted);
     setNotesMap(initialNotes);
     setCustomItems(initialCustom);
+    setBookmarkMap(initialBookmarks);
 
     async function syncWithDB() {
       try {
@@ -197,7 +208,7 @@ export function useTableSync({
 
     syncWithDB();
     synced.current = true;
-  }, [compKey, noteKey, custKey, userEmail, getRequestHeaders, defaultCompletedIds, persistCompleted, persistNotes, persistCustom, allItems]);
+  }, [compKey, noteKey, custKey, userEmail, getRequestHeaders, defaultCompletedIds, persistCompleted, persistNotes, persistCustom, allItems, bookmarkKey, persistBookmarks]);
 
   const toggleCompleted = useCallback((id: number, extraTitle?: string) => {
     const key = String(id);
@@ -260,6 +271,12 @@ export function useTableSync({
       persistNotes(next);
       return next;
     });
+    setBookmarkMap((prev) => {
+      const next = { ...prev };
+      delete next[String(id)];
+      persistBookmarks(next);
+      return next;
+    });
 
     const deletedItem = customItems.find(q => q.id === id);
     deleteCustomTopic.mutate({ storagePrefix: custKey, id });
@@ -271,12 +288,14 @@ export function useTableSync({
     localStorage.removeItem(compKey);
     localStorage.removeItem(noteKey);
     localStorage.removeItem(custKey);
+    localStorage.removeItem(bookmarkKey);
     setCompletedMap({});
     setNotesMap({});
     setCustomItems([]);
+    setBookmarkMap({});
     broadcastProgress();
     synced.current = false;
-  }, [compKey, noteKey, custKey, broadcastProgress]);
+  }, [compKey, noteKey, custKey, bookmarkKey, broadcastProgress]);
 
   const updateCompletionDate = useCallback((id: number, dateStr: string | null) => {
     setCompletedMap((prev) => {
@@ -288,12 +307,24 @@ export function useTableSync({
     });
   }, [persistCompleted]);
 
+  const toggleBookmark = useCallback((id: number) => {
+    setBookmarkMap((prev) => {
+      const key = String(id);
+      const next = { ...prev };
+      if (next[key]) delete next[key];
+      else next[key] = true;
+      persistBookmarks(next);
+      return next;
+    });
+  }, [persistBookmarks]);
+
   const solvedCount = Object.keys(completedMap).length;
 
   return {
     completedMap,
     notesMap,
     customItems,
+    bookmarkMap,
     dbConnected,
     solvedCount,
     setCompletedMap,
@@ -304,5 +335,6 @@ export function useTableSync({
     handleDeleteItem,
     resetAll,
     updateCompletionDate,
+    toggleBookmark,
   };
 }
