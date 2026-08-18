@@ -5,13 +5,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Loader2, Play, Save, Trash2, ArrowLeft, FileText, Download,
-  Maximize2, Minimize2, AlertTriangle,
+  Maximize2, Minimize2, AlertTriangle, ScanSearch,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import { useProfile } from '@/components/providers/ProfileProvider';
 import { useQueryClient } from '@tanstack/react-query';
+import AtsAnalyzer from '@/components/resume/ats-analyzer';
 
 const PdfViewer = dynamic(
   () => import('@/app/(reader)/books/[slug]/pdf-viewer'),
@@ -74,6 +75,7 @@ export default function ResumeEditor() {
   const [error, setError] = React.useState<string | null>(null);
   const [localBlobUrl, setLocalBlobUrl] = React.useState<string | null>(null);
   const [pdfExpanded, setPdfExpanded] = React.useState(false);
+  const [atsOpen, setAtsOpen] = React.useState(false);
   const [splitPercent, setSplitPercent] = React.useState(55);
   const dragging = React.useRef(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -340,6 +342,15 @@ export default function ResumeEditor() {
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setAtsOpen(true)}
+            className="text-zinc-400 hover:text-blue-300 hover:bg-zinc-800 text-xs h-7 px-1.5 sm:px-2.5"
+          >
+            <ScanSearch className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline ml-1">Analyze</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleCompile}
             disabled={compiling}
             className="text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 text-xs h-7 px-1.5 sm:px-2.5"
@@ -488,6 +499,14 @@ export default function ResumeEditor() {
           </div>
         </div>
       </div>
+      {atsOpen && (
+        <AtsAnalyzer
+          source={source}
+          resumeId={resumeId}
+          onApply={(s) => setSource(s)}
+          onClose={() => setAtsOpen(false)}
+        />
+      )}
     </motion.div>
   );
 }

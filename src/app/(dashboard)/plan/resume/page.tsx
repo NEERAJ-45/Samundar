@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText, Plus, Trash2,
-  Loader2, Search, AlertCircle, FileDown, Inbox,
+  Loader2, Search, AlertCircle, FileDown, Inbox, ScanSearch,
 } from 'lucide-react';
 import {
   useReactTable,
@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import { useResumesQuery, useDeleteResume, type ResumeData } from '@/hooks/use-resumes';
+import AtsAnalyzer from '@/components/resume/ats-analyzer';
 
 const companyBadge: Record<string, { dot: string; text: string }> = {
   google: { dot: 'bg-blue-400', text: 'text-blue-300' },
@@ -51,6 +52,7 @@ const columnHelper = createColumnHelper<ResumeData>();
 export default function ResumeDashboard() {
   const router = useRouter();
   const [search, setSearch] = React.useState('');
+  const [analyzeRow, setAnalyzeRow] = React.useState<ResumeData | null>(null);
   const { data: resumesData, isLoading, isFetching, error, refetch } = useResumesQuery();
   const deleteResume = useDeleteResume();
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -149,6 +151,13 @@ export default function ResumeDashboard() {
       header: '',
       cell: (info) => (
         <div className="flex items-center justify-end gap-1">
+          <button
+            onClick={(e) => { e.stopPropagation(); setAnalyzeRow(info.row.original); }}
+            className="p-2 rounded-md hover:bg-zinc-800 text-zinc-500 hover:text-blue-400 transition-colors"
+            title="Analyze with ATS"
+          >
+            <ScanSearch className="h-4 w-4" />
+          </button>
           <button
             onClick={(e) => handleDownloadPdf(e, info.row.original)}
             className="p-2 rounded-md hover:bg-zinc-800 text-zinc-500 hover:text-zinc-200 transition-colors"
@@ -307,6 +316,14 @@ export default function ResumeDashboard() {
           </div>
         )}
       </div>
+      {analyzeRow && (
+        <AtsAnalyzer
+          source={analyzeRow.latexSource}
+          resumeId={analyzeRow._id}
+          onApply={(s) => { setAnalyzeRow(null); toast({ title: 'Optimized source copied' }); }}
+          onClose={() => setAnalyzeRow(null)}
+        />
+      )}
     </motion.div>
   );
 }
