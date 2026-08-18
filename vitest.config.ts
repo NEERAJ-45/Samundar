@@ -15,5 +15,10 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/lib/__tests__/setup.ts',
     include: ['src/**/*.test.{ts,tsx}'],
+    server: {
+      deps: {
+        inline: ['@excalidraw/excalidraw'],
+      },
+    },
   },
 });
