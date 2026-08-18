@@ -256,23 +256,27 @@ function PatternsContent() {
   // ---- Early returns for drill-downs ----
   if (striverDay) {
     return (
-      <ProblemsTable
-        patternName={`striver-${striverDay.key}`}
-        easy={striverDay.problems.easy}
-        medium={striverDay.problems.medium}
-        hard={striverDay.problems.hard}
-        onBack={() => setSelectedDay(null)}
-        backLabel="Striver Sheet"
-      />
+      <div className="flex h-full flex-col p-4 md:p-6">
+        <ProblemsTable
+          patternName={`striver-${striverDay.key}`}
+          easy={striverDay.problems.easy}
+          medium={striverDay.problems.medium}
+          hard={striverDay.problems.hard}
+          onBack={() => setSelectedDay(null)}
+          backLabel="Striver Sheet"
+        />
+      </div>
     );
   }
 
   if (selectedKey && view === "patterns") {
     return (
-      <ProblemsTable
-        patternKey={selectedKey}
-        onBack={() => setSelectedKey(null)}
-      />
+      <div className="flex h-full flex-col p-4 md:p-6">
+        <ProblemsTable
+          patternKey={selectedKey}
+          onBack={() => setSelectedKey(null)}
+        />
+      </div>
     );
   }
 
