@@ -7,7 +7,6 @@ export interface ChecklistItem {
 
 export interface ChecklistGroup {
   title: string;
-  emoji: string;
   items: ChecklistItem[];
 }
 
@@ -18,10 +17,10 @@ const item = (text: string, checked: boolean, depth: number = 0): ChecklistItem 
   id: nid(), text, depth, checked,
 });
 
-const G = (title: string, emoji: string, items: ChecklistItem[]): ChecklistGroup => ({ title, emoji, items });
+const G = (title: string, items: ChecklistItem[]): ChecklistGroup => ({ title, items });
 
 const groups: ChecklistGroup[] = [
-  G('Databases', '1️⃣', [
+  G('Databases', [
     item('Relational Databases', true),
     item('B+ Tree Indexing', true),
     item('Understand node structure (internal vs leaf nodes)', true, 1),
@@ -95,7 +94,7 @@ const groups: ChecklistGroup[] = [
     item('Multi-Leader Conflicts', true),
     item('Split Brain', true),
   ]),
-  G('Caching', '2️⃣', [
+  G('Caching', [
     item('Core Patterns', true),
     item('Cache-Aside', true, 1),
     item('Write-Through', true, 2),
@@ -130,7 +129,7 @@ const groups: ChecklistGroup[] = [
     item('Cluster Mode', false, 1),
     item('Slot-Based Sharding', false, 1),
   ]),
-  G('Async Processing', '3️⃣', [
+  G('Async Processing', [
     item('Messaging Fundamentals', false),
     item('At-Most-Once', false, 1),
     item('At-Least-Once', false, 1),
@@ -159,7 +158,7 @@ const groups: ChecklistGroup[] = [
     item('Network Partition', false, 1),
     item('Data Loss Scenarios', false, 1),
   ]),
-  G('Load Balancing & Resiliency', '4️⃣', [
+  G('Load Balancing & Resiliency', [
     item('Load Balancers', false),
     item('L4 vs L7', false, 1),
     item('Round Robin', false, 1),
@@ -179,7 +178,7 @@ const groups: ChecklistGroup[] = [
     item('Heartbeats', false, 1),
     item('Majority Consensus Logic', false, 1),
   ]),
-  G('Estimation Practice', '5️⃣', [
+  G('Estimation Practice', [
     item('QPS Estimation', false),
     item('Storage Estimation', false),
     item('Bandwidth Estimation', false),
@@ -187,7 +186,7 @@ const groups: ChecklistGroup[] = [
     item('Read/Write Ratio Impact', false),
     item('2-Minute Estimation Drill', false),
   ]),
-  G('API Design Principles', '6️⃣', [
+  G('API Design Principles', [
     item('When to use (gRPC vs REST)', false),
     item('Protobuf advantages', false),
     item('REST best practices', false),
@@ -212,7 +211,7 @@ const groups: ChecklistGroup[] = [
     item('Index optimization', false, 1),
     item('Avoid over-fetching', false, 1),
   ]),
-  G('DNS & Traffic Routing', '7️⃣', [
+  G('DNS & Traffic Routing', [
     item('DNS Resolution Flow', false),
     item('Recursive vs Iterative Resolution', false, 1),
     item('Root → TLD → Authoritative flow', false, 1),
@@ -230,7 +229,7 @@ const groups: ChecklistGroup[] = [
     item('Health check limitations', false, 1),
     item('Failover challenges', false, 1),
   ]),
-  G('CDN', '8️⃣', [
+  G('CDN', [
     item('CDN Architecture', false),
     item('Global edge network', false, 1),
     item('Cache hierarchy', false, 1),
@@ -247,7 +246,7 @@ const groups: ChecklistGroup[] = [
     item('Latency reduction', false, 1),
     item('Bandwidth savings', false, 1),
   ]),
-  G('Proxies', '9️⃣', [
+  G('Proxies', [
     item('Forward Proxy', false),
     item('Client-side proxying', false, 1),
     item('Use cases (privacy, filtering)', false, 1),
@@ -261,7 +260,7 @@ const groups: ChecklistGroup[] = [
     item('Encryption differences', false, 1),
     item('Network-level vs app-level', false, 1),
   ]),
-  G('Core Distributed System Characteristics', '🔟', [
+  G('Core Distributed System Characteristics', [
     item('Scalability', false),
     item('Horizontal scaling patterns', false, 1),
     item('Auto-scaling triggers', false, 1),
@@ -285,7 +284,7 @@ const groups: ChecklistGroup[] = [
     item('Redundancy strategies', false, 1),
     item('Failover mechanisms', false, 1),
   ]),
-  G('Network Essentials', '1️⃣1️⃣', [
+  G('Network Essentials', [
     item('HTTP vs HTTPS', false),
     item('TLS handshake basics', false, 1),
     item('Certificate validation', false, 1),
@@ -306,7 +305,7 @@ const groups: ChecklistGroup[] = [
     item('URL as locator', false, 1),
     item('URN as name-based identifier', false, 1),
   ]),
-  G('Data Integrity & System Signals', '1️⃣5️⃣', [
+  G('Data Integrity & System Signals', [
     item('Checksum', false),
     item('Data integrity verification', false, 1),
     item('Corruption detection', false, 1),
@@ -322,7 +321,7 @@ const groups: ChecklistGroup[] = [
     item('Write quorum (W)', false, 1),
     item('R + W > N rule', false, 1),
   ]),
-  G('Security', '1️⃣6️⃣', [
+  G('Security', [
     item('Authentication', false),
     item('Session-based auth', false, 1),
     item('Token-based auth', false, 1),
@@ -340,7 +339,7 @@ const groups: ChecklistGroup[] = [
     item('Traffic filtering', false, 1),
     item('CDN protection', false, 1),
   ]),
-  G('Distributed File Systems', '1️⃣7️⃣', [
+  G('Distributed File Systems', [
     item('DFS Architecture', false),
     item('Master node', false, 1),
     item('Worker nodes', false, 1),
@@ -354,7 +353,7 @@ const groups: ChecklistGroup[] = [
     item('Node failure recovery', false, 1),
     item('Re-replication mechanisms', false, 1),
   ]),
-  G('Bloom Filters', '1️⃣8️⃣', [
+  G('Bloom Filters', [
     item('Core Concept', false),
     item('Probabilistic membership check', false, 1),
     item('Internal Working', false),
@@ -367,7 +366,7 @@ const groups: ChecklistGroup[] = [
     item('Cache filtering', false, 1),
     item('Database query optimization', false, 1),
   ]),
-  G('Real-Time Communication', '1️⃣9️⃣', [
+  G('Real-Time Communication', [
     item('Long Polling', false),
     item('Client waits for response', false, 1),
     item('WebSockets', false),
@@ -377,7 +376,7 @@ const groups: ChecklistGroup[] = [
     item('Tradeoffs', false),
     item('Scalability vs latency', false, 1),
   ]),
-  G('System Design Tradeoffs', '2️⃣0️⃣', [
+  G('System Design Tradeoffs', [
     item('CAP Theorem', false),
     item('Consistency vs Availability', false, 1),
     item('Partition tolerance', false, 1),

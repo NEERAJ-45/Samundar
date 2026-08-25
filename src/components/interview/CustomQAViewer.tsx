@@ -380,6 +380,12 @@ export default function CustomQAViewer() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const copyQuestionWithAnswer = (q: { id: string; question: string; answer: string }) => {
+    navigator.clipboard.writeText(`${q.question}\n\n${q.answer}`);
+    setCopiedQId(q.id);
+    setTimeout(() => setCopiedQId(null), 2000);
+  };
+
   // Export selected subject
   const handleExportSubject = () => {
     if (!activeSubject) return;
@@ -853,13 +859,9 @@ export default function CustomQAViewer() {
                                   {/* Buttons status indicators */}
                                   <div className="flex items-center gap-1 shrink-0">
                                     <button
-                                      onClick={() => {
-                                        navigator.clipboard.writeText(q.question);
-                                        setCopiedQId(q.id);
-                                        setTimeout(() => setCopiedQId(null), 2000);
-                                      }}
+                                      onClick={() => copyQuestionWithAnswer(q)}
                                       className="p-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 text-zinc-500 hover:text-zinc-200 transition-all"
-                                      title="Copy Question"
+                                      title="Copy Question & Answer"
                                     >
                                       {copiedQId === q.id ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                                     </button>
@@ -909,17 +911,13 @@ export default function CustomQAViewer() {
                                             <Button
                                               variant="ghost"
                                               size="sm"
-                                              onClick={() => {
-                                                navigator.clipboard.writeText(q.question);
-                                                setCopiedQId(q.id);
-                                                setTimeout(() => setCopiedQId(null), 2000);
-                                              }}
+                                              onClick={() => copyQuestionWithAnswer(q)}
                                               className="h-6 gap-1 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800 px-1.5"
                                             >
                                               {copiedQId === q.id ? (
                                                 <><Check className="h-3 w-3 text-emerald-400" /><span>Copied</span></>
                                               ) : (
-                                                <><Copy className="h-3 w-3" /><span>Copy Question</span></>
+                                                <><Copy className="h-3 w-3" /><span>Copy Q&A</span></>
                                               )}
                                             </Button>
                                             <Button

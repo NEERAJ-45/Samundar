@@ -60,8 +60,7 @@ export default function GroupDetailPage() {
             Back to System Design Concepts
           </Link>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-              <span>{group.emoji}</span>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
               {group.title}
             </h1>
             <p className="text-sm text-zinc-500 mt-1">{group.items.length} topics</p>

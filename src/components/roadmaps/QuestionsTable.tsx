@@ -10,6 +10,7 @@ import {
   flexRender,
   createColumnHelper,
   SortingState,
+  type ColumnDef,
 } from '@tanstack/react-table';
 import {
   CheckCircle,
@@ -118,12 +119,19 @@ export default function QuestionsTable({
 
   const columnHelper = createColumnHelper<QuestionItem>();
 
+  const srnoById = useMemo(() => {
+    const m = new Map<number, number>();
+    ([...questions, ...customItems] as QuestionItem[]).forEach((q, i) => m.set(q.id, i + 1));
+    return m;
+  }, [questions, customItems]);
+
   const columns = useMemo(
     () => {
-      const cols = [
-        columnHelper.display({
+      const cols: ColumnDef<QuestionItem, any>[] = [
+        columnHelper.accessor((row) => srnoById.get(row.id) ?? Number.MAX_SAFE_INTEGER, {
           id: 'srno',
           header: '#',
+          sortingFn: 'basic',
           cell: (info) => (
             <span className="text-xs text-muted-foreground tabular-nums">
               {info.row.index + 1 + pagination.pageIndex * pagination.pageSize}
@@ -132,9 +140,10 @@ export default function QuestionsTable({
           size: 44,
           minSize: 36,
         }),
-        columnHelper.display({
+        columnHelper.accessor((row) => !!completedMap[row.id], {
           id: 'done',
           header: 'Done',
+          sortingFn: 'basic',
           cell: (info) => {
             const id = info.row.original.id;
             const done = !!completedMap[id];
@@ -154,9 +163,10 @@ export default function QuestionsTable({
           size: 36,
           minSize: 32,
         }),
-        columnHelper.display({
+        columnHelper.accessor((row) => !!bookmarkMap[row.id], {
           id: 'bookmark',
           header: 'Bookmark',
+          sortingFn: 'basic',
           cell: (info) => {
             const id = info.row.original.id;
             const isBookmarked = !!bookmarkMap[id];
@@ -216,9 +226,10 @@ export default function QuestionsTable({
       ];
 
       cols.push(
-        columnHelper.display({
+        columnHelper.accessor((row) => (row.link ? 1 : 0), {
           id: 'open',
           header: 'Open',
+          sortingFn: 'basic',
           cell: (info) => {
             const link = info.row.original.link;
             if (!link) return null;
@@ -234,9 +245,10 @@ export default function QuestionsTable({
           size: 80,
           minSize: 70,
         }),
-        columnHelper.display({
+        columnHelper.accessor((row) => notesMap[row.id] ?? '', {
           id: 'notes',
           header: 'My Notes',
+          sortingFn: 'basic',
           cell: (info) => {
             const id = info.row.original.id;
             const val = notesMap[id] ?? '';
@@ -272,9 +284,10 @@ export default function QuestionsTable({
           size: 88,
           minSize: 72,
         }),
-        columnHelper.display({
+        columnHelper.accessor((row) => completedMap[row.id] ?? '', {
           id: 'completedAt',
           header: 'Completed On',
+          sortingFn: 'basic',
           cell: (info) => {
             const id = info.row.original.id;
             const dateStr = completedMap[id];
@@ -291,7 +304,7 @@ export default function QuestionsTable({
       );
       return cols;
     },
-    [columnHelper, completedMap, toggleCompleted, notesMap, updateNote, handleDeleteItem, pagination.pageIndex, pagination.pageSize, updateCompletionDate, bookmarkMap, toggleBookmark]
+    [columnHelper, srnoById, completedMap, toggleCompleted, notesMap, updateNote, handleDeleteItem, pagination.pageIndex, pagination.pageSize, updateCompletionDate, bookmarkMap, toggleBookmark]
   );
 
   const table = useReactTable({
@@ -393,9 +406,12 @@ export default function QuestionsTable({
             <Search className="h-4 w-4 shrink-0 text-zinc-500" />
             <input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPagination((p) => ({ ...p, pageIndex: 0 }));
+              }}
               placeholder={searchPlaceholder}
-              className="w-full bg-transparent py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none"
+              className="flex-1 min-w-0 bg-transparent py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none"
             />
           </div>
           <AddItemDialog onAdd={handleAddItem} />
