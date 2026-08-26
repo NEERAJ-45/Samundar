@@ -5,9 +5,8 @@ import Link from 'next/link';
 import { CalendarDays, Moon, Brain, BookOpen, Sparkles, BookMarked, Pencil, Check, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { SCHEDULES, type ScheduleId, type DaySchedule, type Slot } from '@/data/schedules';
+import { SCHEDULES, type ScheduleId, type DaySchedule } from '@/data/schedules';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 const SCHEDULE_TABS: { id: ScheduleId; label: string; color: string }[] = [
   { id: 'steady', label: 'Steady', color: 'text-blue-400 border-blue-500/30 bg-blue-500/10' },

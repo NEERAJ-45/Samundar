@@ -124,7 +124,7 @@ export function useDeleteResumeAnalysis() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, resumeId }: { id: string; resumeId?: string | null }) => {
+    mutationFn: async ({ id }: { id: string; resumeId?: string | null }) => {
       const res = await fetch(`/api/db/resume-analyses?id=${encodeURIComponent(id)}`, {
         method: 'DELETE',
         headers: getHeaders(),

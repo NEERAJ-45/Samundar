@@ -320,7 +320,7 @@ export default function ResumeDashboard() {
         <AtsAnalyzer
           source={analyzeRow.latexSource}
           resumeId={analyzeRow._id}
-          onApply={(s) => { setAnalyzeRow(null); toast({ title: 'Optimized source copied' }); }}
+          onApply={(s) => { navigator.clipboard.writeText(s).catch(() => toast({ variant: 'destructive', title: 'Failed to copy optimized source' })); setAnalyzeRow(null); }}
           onClose={() => setAnalyzeRow(null)}
         />
       )}

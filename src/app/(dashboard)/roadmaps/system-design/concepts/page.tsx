@@ -54,7 +54,6 @@ export default function SystemDesignConceptsPage() {
       const cmp = va < vb ? -1 : va > vb ? 1 : 0;
       return sort.dir === 'asc' ? cmp : -cmp;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, search, sort.key, sort.dir]);
 
   const setTopicsDone = (items: { id: number }[], doneState: boolean) => {
