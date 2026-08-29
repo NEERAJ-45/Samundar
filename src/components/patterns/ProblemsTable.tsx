@@ -24,6 +24,7 @@ import { AddItemDialog } from "@/components/shared/AddItemDialog";
 import { CompletionDatePicker } from "@/components/shared/CompletionDatePicker";
 import { cn } from "@/lib/utils";
 import { useTableSync, type ItemWithId } from '@/hooks/use-table-sync';
+import { buildCsv, escapeCsv } from '@/lib/export-utils';
 
 interface ProblemItem {
   id: number;
@@ -117,6 +118,13 @@ export function ProblemsTable({
     const pageSize = 15;
     let hasMore = true;
 
+    interface ApiProblem {
+      id: number;
+      title: string;
+      link: string;
+      difficulty: string;
+    }
+
     while (hasMore) {
       const params = new URLSearchParams({
         pattern: patternKey,
@@ -124,9 +132,9 @@ export function ProblemsTable({
         pageSize: String(pageSize),
       });
       const res = await fetch(`/api/patterns?${params}`);
-      if (!res.ok) throw new Error("Failed to fetch problems");
+      if (!res.ok) throw new Error(`Failed to fetch problems: ${res.status}`);
       const data = await res.json();
-      const problems = (data.problems ?? []).map((p: any) => ({
+      const problems = (data.problems ?? []).map((p: ApiProblem) => ({
         ...p,
         _difficultyOrder: p.difficulty === "EASY" ? 0 : p.difficulty === "HARD" ? 2 : 1,
       }));
@@ -189,16 +197,16 @@ export function ProblemsTable({
   ): string {
     const header = ["#", "Title", "Link", "Difficulty", "Completed", "CompletedAt", "Notes", "Bookmarked"];
     const rows = problems.map((p, i) => [
-      String(i + 1),
-      p.title,
-      p.link,
-      p.difficulty,
-      completedMap[p.id] ? "true" : "false",
-      completedMap[p.id] || "",
-      notesMap[p.id] || "",
-      bookmarkMap[p.id] ? "true" : "false",
+      escapeCsv(String(i + 1)),
+      escapeCsv(p.title),
+      escapeCsv(p.link),
+      escapeCsv(p.difficulty),
+      escapeCsv(completedMap[p.id] ? "true" : "false"),
+      escapeCsv(completedMap[p.id] || ""),
+      escapeCsv(notesMap[p.id] || ""),
+      escapeCsv(bookmarkMap[p.id] ? "true" : "false"),
     ]);
-    return [header.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    return buildCsv(header, rows);
   }
 
   const apiProblems: ProblemWithDifficulty[] = useMemo(() => {
