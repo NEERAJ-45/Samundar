@@ -112,18 +112,18 @@ export function ProblemsTable({
     allItems: localItems,
   });
 
+  interface ApiProblem {
+    id: number;
+    title: string;
+    link: string;
+    difficulty: string;
+  }
+
   async function fetchAllProblems(patternKey: string): Promise<ProblemWithDifficulty[]> {
     const allProblems: ProblemWithDifficulty[] = [];
     let page = 1;
     const pageSize = 15;
     let hasMore = true;
-
-    interface ApiProblem {
-      id: number;
-      title: string;
-      link: string;
-      difficulty: string;
-    }
 
     while (hasMore) {
       const params = new URLSearchParams({
@@ -211,7 +211,7 @@ export function ProblemsTable({
 
   const apiProblems: ProblemWithDifficulty[] = useMemo(() => {
     if (!apiData?.problems) return [];
-    return apiData.problems.map((p: { id: number; title: string; link: string; difficulty: string }) => ({
+    return apiData.problems.map((p: ApiProblem) => ({
       ...p,
       _difficultyOrder: p.difficulty === "EASY" ? 0 : p.difficulty === "HARD" ? 2 : 1,
     }));
