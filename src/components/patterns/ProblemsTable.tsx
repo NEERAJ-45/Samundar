@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -24,7 +24,8 @@ import { AddItemDialog } from "@/components/shared/AddItemDialog";
 import { CompletionDatePicker } from "@/components/shared/CompletionDatePicker";
 import { cn } from "@/lib/utils";
 import { useTableSync, type ItemWithId } from '@/hooks/use-table-sync';
-import { buildCsv, escapeCsv } from '@/lib/export-utils';
+import { buildCsv, copyToClipboard, escapeCsv } from '@/lib/export-utils';
+import { toast } from '@/components/ui/toast';
 
 interface ProblemItem {
   id: number;
@@ -385,6 +386,57 @@ export function ProblemsTable({
     ],
     [columnHelper, completedMap, toggleCompleted, notesMap, updateNote, handleDeleteItem, isServerPaginated, pagination.pageIndex, pagination.pageSize, displayName, diffOrder, updateCompletionDate, bookmarkMap, toggleBookmark]
   );
+
+  const handleCopyJSON = useCallback(async () => {
+    if (!patternKey) return;
+    try {
+      const allProblems = await fetchAllProblems(patternKey);
+      const json = buildProblemsJSON(
+        patternKey,
+        displayName,
+        apiData?.description ?? null,
+        allProblems,
+        completedMap,
+        notesMap,
+        bookmarkMap
+      );
+      copyToClipboard(JSON.stringify(json, null, 2), `${patternName} problems (JSON)`);
+      toast({ title: `Copied ${json.total} problems as JSON` });
+    } catch {
+      toast({ variant: "destructive", title: "Copy failed" });
+    }
+  }, [patternKey, patternName, displayName, apiData?.description, completedMap, notesMap, bookmarkMap, fetchAllProblems]);
+
+  const handleCopyMarkdown = useCallback(async () => {
+    if (!patternKey) return;
+    try {
+      const allProblems = await fetchAllProblems(patternKey);
+      const md = buildMarkdownChecklist(displayName, allProblems, completedMap);
+      copyToClipboard(md, `${patternName} problems (Markdown)`);
+      toast({ title: `Copied ${allProblems.length} problems as Markdown checklist` });
+    } catch {
+      toast({ variant: "destructive", title: "Copy failed" });
+    }
+  }, [patternKey, patternName, displayName, completedMap, fetchAllProblems]);
+
+  const handleExportCSV = useCallback(async () => {
+    if (!patternKey) return;
+    try {
+      const allProblems = await fetchAllProblems(patternKey);
+      const csv = buildProblemsCSV(allProblems, completedMap, notesMap, bookmarkMap);
+      const bom = "\uFEFF";
+      const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${patternKey}-problems.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: `Exported ${allProblems.length} problems as CSV` });
+    } catch {
+      toast({ variant: "destructive", title: "Export failed" });
+    }
+  }, [patternKey, completedMap, notesMap, bookmarkMap, fetchAllProblems]);
 
   const tableDisplayData = bookmarkedOnly
     ? allProblems.filter((p) => bookmarkMap[p.id])
