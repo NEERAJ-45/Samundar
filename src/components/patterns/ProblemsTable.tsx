@@ -111,6 +111,96 @@ export function ProblemsTable({
     allItems: localItems,
   });
 
+  async function fetchAllProblems(patternKey: string): Promise<ProblemWithDifficulty[]> {
+    const allProblems: ProblemWithDifficulty[] = [];
+    let page = 1;
+    const pageSize = 15;
+    let hasMore = true;
+
+    while (hasMore) {
+      const params = new URLSearchParams({
+        pattern: patternKey,
+        page: String(page),
+        pageSize: String(pageSize),
+      });
+      const res = await fetch(`/api/patterns?${params}`);
+      if (!res.ok) throw new Error("Failed to fetch problems");
+      const data = await res.json();
+      const problems = (data.problems ?? []).map((p: any) => ({
+        ...p,
+        _difficultyOrder: p.difficulty === "EASY" ? 0 : p.difficulty === "HARD" ? 2 : 1,
+      }));
+      allProblems.push(...problems);
+      hasMore = problems.length === pageSize && page < (data.totalPages ?? 1);
+      page++;
+    }
+    return allProblems;
+  }
+
+  function buildProblemsJSON(
+    patternKey: string,
+    patternName: string,
+    description: string | null | undefined,
+    problems: ProblemWithDifficulty[],
+    completedMap: Record<string, string>,
+    notesMap: Record<string, string>,
+    bookmarkMap: Record<string, boolean>
+  ) {
+    const enriched = problems.map((p) => ({
+      id: p.id,
+      title: p.title,
+      link: p.link,
+      difficulty: p.difficulty,
+      completed: !!completedMap[p.id],
+      completedAt: completedMap[p.id] || null,
+      notes: notesMap[p.id] || "",
+      bookmarked: !!bookmarkMap[p.id],
+    }));
+    const solved = enriched.filter((p) => p.completed).length;
+    return {
+      pattern: patternKey,
+      patternName,
+      description: description ?? "",
+      problems: enriched,
+      total: enriched.length,
+      solved,
+    };
+  }
+
+  function buildMarkdownChecklist(
+    patternName: string,
+    problems: ProblemWithDifficulty[],
+    completedMap: Record<string, string>
+  ): string {
+    const lines = [`# ${patternName} Problems`, ""];
+    for (const p of problems) {
+      const done = !!completedMap[p.id];
+      const checkbox = done ? "[x]" : "[ ]";
+      lines.push(`- ${checkbox} ${p.title} - ${p.link} (${p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()})`);
+    }
+    return lines.join("\n");
+  }
+
+  function buildProblemsCSV(
+    problems: ProblemWithDifficulty[],
+    completedMap: Record<string, string>,
+    notesMap: Record<string, string>,
+    bookmarkMap: Record<string, boolean>
+  ): string {
+    const header = ["#", "Title", "Link", "Difficulty", "Completed", "CompletedAt", "Notes", "Bookmarked"];
+    const rows = problems.map((p, i) => [
+      String(i + 1),
+      p.title,
+      p.link,
+      p.difficulty,
+      completedMap[p.id] ? "true" : "false",
+      completedMap[p.id] || "",
+      notesMap[p.id] || "",
+      bookmarkMap[p.id] ? "true" : "false",
+    ]);
+    return [header.join(","), ...rows.map((r) => r.join(","))].join("\n");
+  }
+
   const apiProblems: ProblemWithDifficulty[] = useMemo(() => {
     if (!apiData?.problems) return [];
     return apiData.problems.map((p: { id: number; title: string; link: string; difficulty: string }) => ({
