@@ -105,7 +105,8 @@ export async function getMessages(): Promise<StoredMessage[]> {
 
 export async function addMessage(message: StoredMessage): Promise<number> {
   const store = await txStore('messages', 'readwrite');
-  return requestToPromise(store.add(message));
+  const result = await requestToPromise(store.add(message));
+  return result as number;
 }
 
 export async function updateMessageStatus(
@@ -123,7 +124,7 @@ export async function updateMessageStatus(
 export async function getLastSeenSeq(senderId: string): Promise<number> {
   const store = await txStore('syncState', 'readonly');
   const result = await requestToPromise(store.get(`seq:${senderId}`));
-  return result?.value ?? 0;
+  return (result?.value as number) ?? 0;
 }
 
 export async function setLastSeenSeq(senderId: string, seq: number): Promise<void> {

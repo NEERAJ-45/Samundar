@@ -12,10 +12,5 @@ const ChatKeySchema = new Schema<IChatKey>({
   updatedAt: { type: Date, default: Date.now },
 });
 
-ChatKeySchema.pre('save', function (next) {
-  this.updatedAt = new Date();
-  next();
-});
-
 export const ChatKey =
   mongoose.models.ChatKey || mongoose.model<IChatKey>('ChatKey', ChatKeySchema);
