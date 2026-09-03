@@ -135,7 +135,7 @@ Routes use the existing auth pattern (`auth()` for session check). The `userId` 
 
 ## 5. Client Architecture
 
-### IndexedDB Storage (`lib/db.ts`)
+### IndexedDB Storage (`lib/chat-db.ts`)
 
 Four object stores:
 
@@ -245,7 +245,7 @@ Chat page with sidebar contact list and main message area.
 | File | Layer | Purpose |
 |------|-------|---------|
 | `src/lib/crypto.ts` | Crypto | libsodium wrappers: keygen, encrypt, decrypt, safetyCode |
-| `src/lib/db.ts` | Client DB | IndexedDB CRUD for identity, contacts, messages, syncState |
+| `src/lib/chat-db.ts` | Client DB | IndexedDB CRUD for identity, contacts, messages, syncState |
 | `src/lib/sync.ts` | Sync | Polling loop, decrypt-and-store, app-level across all contacts |
 | `src/lib/models/ChatKey.ts` | Server | Mongoose model for public key registry |
 | `src/lib/models/ChatMessage.ts` | Server | Mongoose model for ciphertext store |
