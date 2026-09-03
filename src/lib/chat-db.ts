@@ -1,4 +1,4 @@
-import { type IdentityKeypair, type MessagePayload } from './crypto';
+import { type IdentityKeypair } from './crypto';
 
 const DB_NAME = 'samundar-e2ee-chat';
 const DB_VERSION = 1;
