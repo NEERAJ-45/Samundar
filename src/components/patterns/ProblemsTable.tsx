@@ -15,7 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft, ExternalLink, CheckCircle, Circle, Trash2, Star,
   ChevronLeft, ChevronRight,
-  ChevronsLeft, ChevronsRight, Loader2, AlertCircle
+  ChevronsLeft, ChevronsRight, Loader2, AlertCircle, Download, Clipboard, FileText
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProblemDesc } from "./ProblemDesc";
@@ -26,6 +26,12 @@ import { cn } from "@/lib/utils";
 import { useTableSync, type ItemWithId } from '@/hooks/use-table-sync';
 import { buildCsv, copyToClipboard, escapeCsv } from '@/lib/export-utils';
 import { toast } from '@/components/ui/toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ProblemItem {
   id: number;
@@ -467,7 +473,7 @@ export function ProblemsTable({
 
   return (
     <div className='mt-10'>
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-4 flex items-center gap-3 flex-wrap">
         <button onClick={onBack}
           className="rounded-md px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground inline-flex items-center gap-1.5"
         >
@@ -480,6 +486,8 @@ export function ProblemsTable({
           {isFetching && <Loader2 className="inline ml-1 h-3 w-3 animate-spin" />}
         </span>
         {!isServerPaginated && <AddItemDialog onAdd={handleAddItem} itemLabel="Problem" titlePlaceholder="e.g. Merge K Sorted Lists" linkPlaceholder="e.g. https://leetcode.com/problems/..." />}
+        
+        {/* Bookmarked filter */}
         <button onClick={() => setBookmarkedOnly((v) => !v)}
           className={cn(
             "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium border transition-colors shrink-0",
@@ -492,6 +500,27 @@ export function ProblemsTable({
           <Star size={13} className={cn(bookmarkedOnly && "fill-amber-400")} />
           Bookmarked
         </button>
+
+        {/* Export Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium border border-border bg-muted/30 text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors shrink-0">
+              <Download size={13} />
+              Export
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-popover border-border text-popover-foreground min-w-[180px]">
+            <DropdownMenuItem onClick={handleCopyJSON} className="text-xs cursor-pointer focus:bg-zinc-800 focus:text-zinc-100 gap-2">
+              <Clipboard size={12} /> Copy as JSON
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleCopyMarkdown} className="text-xs cursor-pointer focus:bg-zinc-800 focus:text-zinc-100 gap-2">
+              <FileText size={12} /> Copy as Markdown Checklist
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportCSV} className="text-xs cursor-pointer focus:bg-zinc-800 focus:text-zinc-100 gap-2">
+              <Download size={12} /> Export as CSV
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border relative">

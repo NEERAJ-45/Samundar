@@ -4,7 +4,9 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import groups from '../../../../../../../../samundar-data/system-design-checklist';
+import hldGroups from '../../../../../../../../../samundar-data/system-design-hld';
+import lldGroups from '../../../../../../../../../samundar-data/system-design-lld';
+import type { ChecklistGroup } from '../../../../../../../../../samundar-data/system-design-checklist';
 
 const QuestionsTable = dynamic(() => import('@/components/roadmaps/QuestionsTable'), {
   ssr: false,
@@ -16,13 +18,21 @@ const QuestionsTable = dynamic(() => import('@/components/roadmaps/QuestionsTabl
   ),
 });
 
+const DATA_SOURCES: Record<string, { groups: ChecklistGroup[]; prefix: string; label: string }> = {
+  hld: { groups: hldGroups, prefix: 'system-design-hld', label: 'HLD' },
+  lld: { groups: lldGroups, prefix: 'system-design-lld', label: 'LLD' },
+};
+
 export default function GroupDetailPage() {
   const params = useParams();
+  const cardKey = params?.cardKey as string;
   const slug = params?.slug as string;
   const idx = parseInt(slug, 10);
-  const group = !isNaN(idx) && idx >= 1 && idx <= groups.length ? groups[idx - 1] : null;
 
-  if (!group) {
+  const source = DATA_SOURCES[cardKey];
+  const group = source && !isNaN(idx) && idx >= 1 && idx <= source.groups.length ? source.groups[idx - 1] : null;
+
+  if (!group || !source) {
     return (
       <div className="flex flex-col h-full ">
         <div className="flex-1 p-4 md:p-6 overflow-y-auto max-w-7xl mx-auto w-full">
@@ -60,6 +70,7 @@ export default function GroupDetailPage() {
             Back to System Design Concepts
           </Link>
           <div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">{source.label}</span>
             <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
               {group.title}
             </h1>
@@ -69,7 +80,7 @@ export default function GroupDetailPage() {
 
         <QuestionsTable
           questions={questions}
-          storagePrefix="system-design-concepts"
+          storagePrefix={source.prefix}
           searchPlaceholder={`Search ${group.title.toLowerCase()}...`}
           sourceName={group.title}
         />

@@ -14,8 +14,8 @@ const pillars = [
     hours: 140,
     difficulty: 'Medium-Hard',
     domains: [
-      { name: 'Databases & Caching', progress: 78 },
-      { name: 'System & Infra Principles', progress: 0 },
+      { name: 'High-Level Design (HLD)', progress: 78 },
+      { name: 'Low-Level Design (LLD)', progress: 0 },
     ],
   },
   {
@@ -55,13 +55,13 @@ function computeSystemDesignProgress() {
     }
   };
 
-  const conceptsOverallCount = getOverallCount('system-design-concepts');
-  const conceptsDatabasesCount = getCompletedCountInRange('system-design-concepts', 401, 447);
-  const conceptsInfraCount = getCompletedCountInRange('system-design-concepts', 448, 477);
+  const hldTotal = 333;
+  const lldTotal = 180;
+  const hldCount = getOverallCount('system-design-hld');
+  const lldCount = getOverallCount('system-design-lld');
 
-  const sdConceptsOverall = conceptsOverallCount !== null ? conceptsOverallCount : 37;
-  const sdConceptsDatabases = conceptsDatabasesCount !== null ? conceptsDatabasesCount : 37;
-  const sdConceptsInfra = conceptsInfraCount !== null ? conceptsInfraCount : 0;
+  const sdHld = hldCount !== null ? hldCount : 0;
+  const sdLld = lldCount !== null ? lldCount : 0;
 
   const problemsOverallCount = getOverallCount('system-design-problems');
   const problemsCoreCount = getCompletedCountInRange('system-design-problems', 501, 515);
@@ -73,9 +73,9 @@ function computeSystemDesignProgress() {
 
   return {
     concepts: {
-      overall: Math.round((sdConceptsOverall / 77) * 100),
-      databases: Math.round((sdConceptsDatabases / 47) * 100),
-      infra: Math.round((sdConceptsInfra / 30) * 100),
+      overall: Math.round(((sdHld + sdLld) / (hldTotal + lldTotal)) * 100),
+      hld: Math.round((sdHld / hldTotal) * 100),
+      lld: Math.round((sdLld / lldTotal) * 100),
     },
     problems: {
       overall: Math.round((sdProblemsOverall / 27) * 100),
@@ -105,8 +105,8 @@ export default function SystemDesignRoadmapPage() {
         ...pillars[0],
         progress: progressData.concepts.overall,
         domains: [
-          { ...pillars[0].domains[0], progress: progressData.concepts.databases },
-          { ...pillars[0].domains[1], progress: progressData.concepts.infra },
+          { ...pillars[0].domains[0], progress: progressData.concepts.hld },
+          { ...pillars[0].domains[1], progress: progressData.concepts.lld },
         ]
       },
       {
