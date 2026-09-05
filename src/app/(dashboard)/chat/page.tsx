@@ -9,7 +9,7 @@ export default function ChatPage() {
   const [username] = useState(userName || 'Anonymous');
 
   return (
-    <div className="flex h-full w-full">
+    <div className="flex flex-col h-full w-full min-h-0">
       <ChatThread username={username} />
     </div>
   );

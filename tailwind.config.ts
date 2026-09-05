@@ -33,6 +33,10 @@ const config: Config = {
         md: 'calc(var(--radius) - 2px)',
         lg: 'var(--radius)',
       },
+      fontFamily: {
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        handwritten: ['var(--font-caveat)', 'var(--font-kalam)', 'cursive'],
+      },
       animation: {
         shimmer: 'shimmer 3s ease-in-out infinite',
       },

@@ -1,4 +1,6 @@
-import { useEffect, useRef } from 'react';
+'use client';
+
+import { useEffect, useRef, memo } from 'react';
 import twemoji from 'twemoji';
 
 interface Props {
@@ -6,7 +8,7 @@ interface Props {
   className?: string;
 }
 
-export function EmojiText({ text, className }: Props) {
+export const EmojiText = memo(function EmojiText({ text, className }: Props) {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -24,6 +26,7 @@ export function EmojiText({ text, className }: Props) {
       ref={ref}
       className={className}
       style={{ lineHeight: '1.4' }}
+      aria-label={text}
     />
   );
-}
+});

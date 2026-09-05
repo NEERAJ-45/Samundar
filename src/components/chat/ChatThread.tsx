@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { MessageBubble } from './MessageBubble';
 import { MessageInput } from './MessageInput';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Users } from 'lucide-react';
+import { Users, MessageCircle } from 'lucide-react';
 
 interface ChatMsg {
   id: string;
@@ -29,15 +28,21 @@ function DateSeparator({ date }: { date: string }) {
     ? 'Today'
     : isYesterday
       ? 'Yesterday'
-      : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
   return (
-    <div className="flex items-center gap-3 my-4">
-      <div className="flex-1 h-px bg-border" />
-      <span className="text-xs text-muted-foreground font-medium shrink-0">{label}</span>
-      <div className="flex-1 h-px bg-border" />
+    <div className="flex items-center gap-3 my-4 px-3 sm:px-4" role="separator" aria-label={label}>
+      <div className="flex-1 h-px bg-border/60" />
+      <span className="text-[11px] font-medium text-muted-foreground/70 select-none tracking-wide uppercase">
+        {label}
+      </span>
+      <div className="flex-1 h-px bg-border/60" />
     </div>
   );
+}
+
+function isNearBottom(el: HTMLElement) {
+  return el.scrollHeight - el.scrollTop - el.clientHeight < 120;
 }
 
 export function ChatThread({ username }: Props) {
@@ -46,8 +51,10 @@ export function ChatThread({ username }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastFetchRef = useRef<string>('');
   const bottomRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
 
   const loadMessages = useCallback(async () => {
+    if (pausedRef.current) return;
     try {
       const params = new URLSearchParams();
       if (lastFetchRef.current) params.set('since', lastFetchRef.current);
@@ -56,27 +63,43 @@ export function ChatThread({ username }: Props) {
       const data = await res.json();
       const msgs: ChatMsg[] = data.messages ?? [];
       if (msgs.length > 0) {
+        const scrollEl = scrollRef.current;
+        const wasAtBottom = scrollEl ? isNearBottom(scrollEl) : true;
+
         setMessages((prev) => {
           const existing = new Set(prev.map((m) => m.id));
           const newMsgs = msgs.filter((m) => !existing.has(m.id));
           return newMsgs.length > 0 ? [...prev, ...newMsgs] : prev;
         });
         lastFetchRef.current = msgs[msgs.length - 1].createdAt;
+
+        if (wasAtBottom) {
+          requestAnimationFrame(() => {
+            bottomRef.current?.scrollIntoView();
+          });
+        }
       }
     } catch {
       // silent
     }
   }, []);
 
+  // Poll — pause when tab hidden
   useEffect(() => {
     loadMessages();
-    const interval = setInterval(loadMessages, 2000);
-    return () => clearInterval(interval);
-  }, [loadMessages]);
+    const interval = setInterval(loadMessages, 5000);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    const onVisibility = () => {
+      pausedRef.current = document.hidden;
+      if (!document.hidden) loadMessages();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [loadMessages]);
 
   const handleSend = async (text: string) => {
     setSending(true);
@@ -107,30 +130,40 @@ export function ChatThread({ username }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-background">
+    <div className="flex flex-col h-full min-h-0" role="main" aria-label="Group chat">
       {/* Header */}
-      <div className="shrink-0 border-b bg-background/80 backdrop-blur-sm px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-            <Users className="h-4 w-4 text-primary" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-sm leading-tight">Group Chat</h3>
-            <p className="text-xs text-muted-foreground">Everyone can see messages</p>
-          </div>
+      <header className="shrink-0 border-b bg-background/90 backdrop-blur-sm px-3 sm:px-4 py-2.5 flex items-center gap-3 pt-[env(safe-area-inset-top)]">
+        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center" aria-hidden="true">
+          <Users className="h-4 w-4 text-primary" />
         </div>
-      </div>
+        <div className="flex-1 min-w-0">
+          <h1 className="font-semibold text-sm leading-tight truncate">Group Chat</h1>
+          <p className="text-[11px] text-muted-foreground/70 leading-tight">Everyone can see messages</p>
+        </div>
+        <div className="flex items-center gap-1.5" aria-label="Online">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+          <span className="text-[11px] text-muted-foreground/60 font-medium">Live</span>
+        </div>
+      </header>
 
       {/* Messages */}
-      <ScrollArea className="flex-1" ref={scrollRef}>
-        <div className="px-2 py-4">
+      <div
+        ref={scrollRef}
+        className="flex-1 min-h-0 overflow-y-auto overscroll-contain"
+        role="log"
+        aria-label="Messages"
+        aria-live="polite"
+      >
+        <div className="py-3 sm:py-4">
           {messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center h-64 text-center">
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                <Users className="h-7 w-7 text-muted-foreground" />
+            <div className="flex flex-col items-center justify-center h-56 sm:h-64 text-center px-4">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-muted/60 flex items-center justify-center mb-3 sm:mb-4" aria-hidden="true">
+                <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground/50" />
               </div>
-              <p className="text-muted-foreground font-medium mb-1">No messages yet</p>
-              <p className="text-sm text-muted-foreground/70">Start the conversation!</p>
+              <p className="text-sm font-medium text-foreground/80 mb-1">No messages yet</p>
+              <p className="text-[13px] text-muted-foreground/60 max-w-[240px]">
+                Start the conversation by sending a message below.
+              </p>
             </div>
           )}
           {messages.map((msg, idx) => (
@@ -149,10 +182,10 @@ export function ChatThread({ username }: Props) {
           ))}
           <div ref={bottomRef} />
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Input */}
-      <div className="shrink-0">
+      <div className="shrink-0 border-t pb-[env(safe-area-inset-bottom)]">
         <MessageInput onSend={handleSend} disabled={sending} />
       </div>
     </div>
