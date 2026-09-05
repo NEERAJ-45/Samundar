@@ -31,6 +31,7 @@ import {
   ChevronDown,
   Code2,
   NotebookPen,
+  MessageSquare,
 } from "lucide-react";
 
 interface NavItem {
@@ -86,6 +87,12 @@ const navGroups: NavGroup[] = [
     label: "Career",
     items: [
       { label: "Career Hub", href: "/career", icon: Rocket },
+    ],
+  },
+  {
+    label: "Communicate",
+    items: [
+      { label: "E2EE Chat", href: "/chat", icon: MessageSquare },
     ],
   },
 ];
